@@ -76,7 +76,8 @@ const RIG_CELL = (t, { dawn = 0 } = {}) => dawn ? {
   vignette: .6, grain: .024, shadowTint: '#18243a', highTint: '#eef0f4', sat: .62, contrast: 1.06,
   rays: { center: [840, 500], thresh: .5, srcRad: 220, samples: 40, step: .018, decay: .965, col: '#e8eef8', int: .6 },
 } : {
-  lights: [{ pos: [930, 1000, 160], col: '#ffdcb0', int: 2.2 * (.92 + .08 * flkSeam(t, 4)), rad: 620, shin: 26 }, { pos: [840, 500, -220], col: '#a8bcf0', int: .9, rad: 900, shin: 24 },
+  lights: [{ pos: [930, 1000, 160], col: '#ffdcb0', int: 2.2 * (.92 + .08 * flkSeam(t, 4)), rad: 820, shin: 26 }, { pos: [840, 500, -220], col: '#a8bcf0', int: .9, rad: 900, shin: 24 },
+    { pos: [250, 1000, 500], col: '#c8b8a0', int: .45, rad: 900, shin: 16 },
     { pos: [500, 1500, 1600], col: '#8a9cd0', int: .26, rad: 5000, shin: 12 }],
   amb: '#343c52', ambGround: '#241e1a', ambInt: .26, bgLight: .45, exposure: 1.15, bloom: .32, bloomThresh: .78, normalStrength: .95, specScale: .3,
   vignette: .6, grain: .022, shadowTint: '#121a2c', highTint: '#f6e2c4', sat: .88, contrast: 1.1,
@@ -195,16 +196,18 @@ const SHOTS = [
   { at: 13.05,
     draw(v, t) {
       const BC = [660, 2121, .95], b = brS(t, 1.1, 1.2);
-      const k = clamp((t - 13.25) / .45), st = k - Math.floor(k), n = Math.floor(k), scr = t < 14.6 ? (n < 3 ? easeInOut(Math.min(1, st * 1.4)) : 1) : 1;
-      const off = easeInOut(seg(t, 14.7, 15.1)), x0 = -150 + 8 * Math.min(n, 2);
-      const tip = lerp2([x0, -1040], [x0 - 4, -980], scr);
-      const A = off < 1 ? tArm(-1, lerp2(tip, [-122, -716], off), 'grip', { bend: 1 }) : tHang(-1);
-      const fc = fistAt(A, 1.05), nail = off < .9 ? `<path d="M${F1(fc[0] - 4)} ${F1(fc[1] - 2)} L${F1(fc[0] - 42)} ${F1(fc[1] - 6)} L${F1(fc[0] - 4)} ${F1(fc[1] + 6)} Z" fill="#5a5a60"/>` : '';
+      const k = Math.max(0, (t - 13.25) / .45), st = k - Math.floor(k), n = Math.floor(k), scr = t < 14.6 ? (n < 3 ? easeInOut(Math.min(1, st * 1.4)) : 1) : 1;
+      const off = easeInOut(seg(t, 14.7, 15.1));
+      // the nail is held in his fist, point down and out; each stroke drags the point down the stone
+      const armAt = (i, q) => tArm(-1, lerp2([-205 + 10 * i, -1030], [-209 + 10 * i, -975], q), 'grip', { bend: 1 });
+      const tipOf = A => { const f = fistAt(A, 1.05); return [f[0] - 30, f[1] + 30]; };
+      const A = off < 1 ? (off > 0 ? tArm(-1, lerp2(armAt(2, 1).wr, [-122, -716], off), 'grip', { bend: 1 }) : armAt(Math.min(n, 2), scr)) : tHang(-1);
+      const fc = fistAt(A, 1.05), nail = off < .9 ? `<path d="M${F1(fc[0] - 8)} ${F1(fc[1] + 2)} L${F1(fc[0] - 30)} ${F1(fc[1] + 30)} L${F1(fc[0] - 1)} ${F1(fc[1] + 14)} Z" fill="#c8ccd4" stroke="#2a2a30" stroke-width="2.5"/>` : '';
       const turn = easeInOut(seg(t, 15.0, 15.4)), smile = easeInOut(seg(t, 15.35, 15.9));
-      const marks = [0, 1, 2].filter(i => i < n || (i === n && t < 14.6)).map(i => { const xx = -150 + 8 * i, q = i < n ? 1 : scr; const w0 = toWorld([xx - 44, -1040], ...BC, b), w1 = toWorld([xx - 48, lerp(-1040, -980, q)], ...BC, b);
-        return `<path d="M${F1(w0[0])} ${F1(w0[1])} L${F1(w1[0])} ${F1(w1[1])}" stroke="#e0d8c8" stroke-width="3.4" stroke-linecap="round" opacity=".75"/>`; }).join('');
+      const marks = [0, 1, 2].filter(i => i < n || (i === n && t < 14.7)).map(i => { const q = i < n ? 1 : scr; const w0 = toWorld(tipOf(armAt(i, 0)), ...BC, b), w1 = toWorld(tipOf(armAt(i, q)), ...BC, b);
+        return `<path d="M${F1(w0[0])} ${F1(w0[1])} L${F1(w1[0])} ${F1(w1[1])}" stroke="#e8e0d0" stroke-width="3.6" stroke-linecap="round" opacity=".85"/>`; }).join('');
       const pan = easeInOut(seg(t, 14.55, 15.6));
-      const C = camT(t, lerp(250, 664, pan), lerp(1000, 1104, pan), lerp(1.95, 2.7, pan), { hh: .7 });
+      const C = camT(t, lerp(300, 664, pan), lerp(1020, 1104, pan), lerp(1.95, 2.7, pan), { hh: .7 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_CELL(t))}${cellRoom(t, { blur: pan > .5 ? 'dofLight' : null })}${marks}
         ${outlined(manb(...BC, TASTER, { armL: A, armR: tHang(1), breath: b, bust: 0, look: lerp(-8, 1, turn), lookY: lerp(-1, 0, turn), turn: lerp(-.45, 0, turn), smirk: lerp(-.1, .9, smile), lid: lidB(t, lerp(.2, .35, smile), [13.9]), bIn: lerp(4, -2, smile), bOut: lerp(0, 3, smile), tilt: lerp(-4, 2, turn) })
           + atb(...BC, nail + redraw(-1, A, SKBt, 'fair', 1.05), b))}</g>`;
