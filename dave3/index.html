@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Montserrat;font-weight:700;src:url(fonts/montserrat-latin-700-normal.woff2)}
+@font-face{font-family:Montserrat;font-weight:800;src:url(fonts/montserrat-latin-800-normal.woff2)}
+@font-face{font-family:Montserrat;font-weight:900;src:url(fonts/montserrat-latin-900-normal.woff2)}
+html,body{margin:0;background:#000}canvas{display:block}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script src="data.js"></script><script src="lib.js"></script><script src="film.js"></script>
+<script>
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const tmp = document.createElement('canvas'); tmp.width = W; tmp.height = H; const tctx = tmp.getContext('2d');
+const shotAt = T => SHOTS.find(s => T >= s.a && T < s.b) || SHOTS[SHOTS.length - 1];
+function drawScene(c, T) {
+  const s = shotAt(T);
+  c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.filter = 'none'; c.globalCompositeOperation = 'source-over';
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+  s.draw(c, T - s.a, T); c.restore();
+}
+window.SUBS = 6; window.SHUTTER = .5 / 30;
+window.renderFrame = async (T) => {
+  const s = shotAt(T), N = window.SUBS;
+  let times = N === 1 ? [T] : Array.from({ length: N }, (_, k) => T + window.SHUTTER * (k / (N - 1) - .5));
+  times = times.map(x => Math.min(Math.max(x, s.a), s.b - 1e-4));
+  for (const tk of times) if (s.prep) await s.prep(tk - s.a, tk);
+  if (N === 1) drawScene(ctx, T);
+  else { ctx.globalAlpha = 1; times.forEach((tk, k) => { drawScene(tctx, tk); ctx.globalAlpha = 1 / (k + 1); ctx.drawImage(tmp, 0, 0); }); ctx.globalAlpha = 1; }
+  caption(ctx, T);
+  return cv.toDataURL('image/jpeg', .94);
+};
+window.ready = loadAll().then(() => true);
+</script></body></html>

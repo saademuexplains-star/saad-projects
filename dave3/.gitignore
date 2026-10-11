@@ -1,0 +1,5 @@
+# large / user-supplied media stays local
+src/
+assets/
+work/
+out/
