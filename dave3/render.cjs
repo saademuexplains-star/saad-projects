@@ -26,7 +26,7 @@ const save = (file, url) => fs.writeFileSync(file, Buffer.from(url.split(',')[1]
   const browser = await chromium.launch({ args: ['--disable-gpu-vsync', '--enable-unsafe-swiftshader'] });
   if (mode === 'stills') {
     const p = await page(browser, port);
-    for (const t of a.split(',').map(Number)) save(path.join(out, `t${t.toFixed(2)}.jpg`), await p.evaluate(t => renderFrame(t), t));
+    for (const t of a.split(',').map(Number)) save(path.join(out, `t${t.toFixed(2)}.${process.env.EXT||'jpg'}`), await p.evaluate(t => renderFrame(t), t));
   } else {
     const from = Math.round(Number(a) * 30), to = Math.round(Number(b) * 30), W = Number(wk || 4);
     const idx = []; for (let i = from; i < to; i++) idx.push(i);

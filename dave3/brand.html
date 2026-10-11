@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Montserrat;font-weight:700;src:url(fonts/montserrat-latin-700-normal.woff2)}
+@font-face{font-family:Montserrat;font-weight:800;src:url(fonts/montserrat-latin-800-normal.woff2)}
+@font-face{font-family:Montserrat;font-weight:900;src:url(fonts/montserrat-latin-900-normal.woff2)}body{margin:0}</style></head><body>
+<canvas id="c"></canvas>
+<script src="data.js"></script><script src="lib.js"></script>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+window.ready=(async()=>{await loadAll(); IMG.sunset=await loadImg('src/Beach_at_sunset.jpg'); return true;})();
+function stamp(c,x,y,s,rot,txt='NO'){ // red rubber-stamp
+  c.save(); c.translate(x,y); c.rotate(rot); c.scale(s,s);
+  c.font='900 150px Montserrat'; c.textAlign='center'; c.textBaseline='middle';
+  const w=c.measureText(txt).width+70;
+  c.shadowColor='rgba(0,0,0,.35)'; c.shadowBlur=14; c.shadowOffsetY=6;
+  rrect(c,-w/2,-95,w,190,28); c.fillStyle='#e8262e'; c.fill(); c.shadowColor='transparent';
+  c.lineWidth=12; c.strokeStyle='#111'; c.stroke();
+  rrect(c,-w/2+16,-79,w-32,158,18); c.lineWidth=7; c.strokeStyle='#fff'; c.stroke();
+  c.fillStyle='#fff'; c.fillText(txt,0,8); c.restore();
+}
+function logo(c,x,y,s){
+  c.save(); c.translate(x,y); c.scale(s,s); c.textAlign='center'; c.textBaseline='middle'; c.lineJoin='round';
+  c.font='900 150px Montserrat';
+  const l1='NATURE SAID'; c.lineWidth=34; c.strokeStyle='#111'; c.strokeText(l1,-95,-10);
+  c.fillStyle='#fff'; c.fillText(l1,-95,-10);
+  c.restore();
+  stamp(c,x+ (95+505)*s, y-6*s, 1.05*s, -.1);
+}
+function bgRadial(c,w,h,a,b){const g=c.createRadialGradient(w/2,h*.45,0,w/2,h/2,Math.max(w,h)*.75);g.addColorStop(0,a);g.addColorStop(1,b);c.fillStyle=g;c.fillRect(0,0,w,h);}
+window.renderFrame=async(T)=>{
+  if(T===0){ // profile picture 1200x1200
+    cv.width=1200;cv.height=1200; bgRadial(ctx,1200,1200,'#3fd2c7','#0f6f7a');
+    // sun rays
+    ctx.save(); ctx.translate(600,560); ctx.globalAlpha=.13; ctx.fillStyle='#fff';
+    for(let i=0;i<16;i++){ctx.rotate(TAU/16);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-90,-900);ctx.lineTo(90,-900);ctx.closePath();ctx.fill();} ctx.restore();
+    dave(ctx,{x:600,y:1010,s:.9,eye:{top:.34,tilt:.32,lx:-.1,ly:.15,pupil:.24},mouth:{type:'wavy',w:120},clawUp:[0,1.9],clawOpen:[0,.9],shadowA:.35});
+    sweat(ctx,800,520,1.0);
+    stamp(ctx,600,240,1.15,-.1);
+  } else if(T===1){ // banner 2560x1440, safe area 1546x423 centred
+    cv.width=2560;cv.height=1440;
+    const im=IMG.sunset, cs=Math.max(2560/im.width,1440/im.height)*1.05;
+    ctx.filter='blur(3px) saturate(1.1)'; ctx.drawImage(im,(2560-im.width*cs)/2,560-im.height*cs*.33,im.width*cs,im.height*cs); ctx.filter='none';
+    ctx.fillStyle='rgba(10,20,40,.28)'; ctx.fillRect(0,0,2560,1440);
+    const g=ctx.createRadialGradient(1280,720,300,1280,720,1500); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,.55)'); ctx.fillStyle=g; ctx.fillRect(0,0,2560,1440);
+    logo(ctx,1215,672,.94);
+    ctx.font='800 50px Montserrat'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.lineJoin='round';
+    const tg='Weird animal stories. Very unfair endings.'; ctx.lineWidth=14; ctx.strokeStyle='#111'; ctx.strokeText(tg,1280,830); ctx.fillStyle='#ffe14a'; ctx.fillText(tg,1280,830);
+    // Dave left in the band, Barbara right
+    dave(ctx,{x:270,y:915,s:.42,eye:{top:.4,tilt:.32,ly:.2},mouth:{type:'frown',w:110},shadowA:.5});
+    barbara(ctx,{x:2235,y:740,s:.42,rot:-.08,eye:{top:.1,lx:-.2},mouth:{type:'grin',open:.8},blush:1});
+    heartShape(ctx,2365,560,70,'#ff3d7f',8); sparkle(ctx,2080,585,34,.3); sparkle(ctx,2410,860,26,.8);
+  }
+  return cv.toDataURL('image/png');
+};
+</script></body></html>
