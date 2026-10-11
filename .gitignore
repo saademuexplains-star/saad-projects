@@ -12,3 +12,6 @@
 __pycache__/
 *.tmp
 *.tmp.jpg
+**/out/
+**/audio/takes/*.wav
+**/audio/score*.wav
