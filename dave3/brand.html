@@ -15,7 +15,7 @@ function wordmark(c,x,y,size){
   c.save(); c.textBaseline='alphabetic'; c.font=`900 ${size}px Montserrat`;
   if('letterSpacing' in c) c.letterSpacing=`${size*.02}px`;
   const a='NATURE SAID ', b='NO';
-  const wa=c.measureText(a).width, wb=c.measureText(b).width, x0=x-(wa+wb)/2;
+  const wa=c.measureText(a).width, wb=c.measureText(b).width, x0=x-(wa+wb+size*.22)/2;
   c.fillStyle='#fff'; c.textAlign='left'; c.fillText(a,x0,y);
   c.fillStyle=CORAL; c.fillText(b,x0+wa,y);
   // period-dot accent
@@ -34,13 +34,11 @@ window.renderFrame=async(T)=>{
     // subtle wave lines
     ctx.save(); ctx.strokeStyle='rgba(243,230,204,.06)'; ctx.lineWidth=3;
     for(let k=0;k<14;k++){ctx.beginPath(); for(let x=0;x<=2560;x+=20){const y=360+k*55+Math.sin(x/220+k)*14; x?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke();} ctx.restore();
-    const [x0,x1]=wordmark(ctx,1515,735,100);
-    ctx.save(); ctx.font='700 30px Montserrat'; if('letterSpacing' in ctx) ctx.letterSpacing='10px'; ctx.textAlign='center'; ctx.fillStyle=SAND; ctx.globalAlpha=.85;
-    ctx.fillText('WEIRD TRUE ANIMAL STORIES',(x0+x1)/2,808); ctx.restore();
+    const [x0,x1]=wordmark(ctx,1280,742,120);
+    ctx.save(); ctx.font='700 34px Montserrat'; if('letterSpacing' in ctx) ctx.letterSpacing='12px'; ctx.textAlign='center'; ctx.fillStyle=SAND; ctx.globalAlpha=.85;
+    ctx.fillText('WEIRD TRUE ANIMAL STORIES',1280,822); ctx.restore();
     // thin coral rule
-    ctx.fillStyle=CORAL; ctx.fillRect((x0+x1)/2-50,628,100,6);
-    // mascot to the left of the wordmark, inside the band
-    dave(ctx,{x:745,y:850,s:.28,eye:{top:.42,lx:.35,ly:.05},mouth:{type:'flat',w:95},shadowA:.4});
+    ctx.fillStyle=CORAL; ctx.fillRect(1280-55,612,110,7);
     grain(ctx,2560,1440,.03);
   }
   return cv.toDataURL('image/png');
