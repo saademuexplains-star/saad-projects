@@ -1,0 +1,18 @@
+{
+  "duration": 5.45,
+  "cues": [
+    {"type": "whoosh", "t": 0.0, "d": 0.42, "gain": 0.4, "rise": false, "note": "whip-out reveal"},
+    {"type": "pop", "t": 0.67, "f": 620, "gain": 0.28, "note": "rabbit peeks in on 'things'"},
+    {"type": "whoosh", "t": 1.76, "d": 0.24, "note": "zoom dissolve into close-up"},
+    {"type": "sparkle", "t": 2.03, "note": "na-PO-leon"},
+    {"type": "swell", "t": 2.40, "d": 0.9, "note": "dark mood for 'worst'"},
+    {"type": "whoosh", "t": 2.42, "d": 0.22, "gain": 0.22},
+    {"type": "whoosh", "t": 3.28, "d": 0.2, "gain": 0.3},
+    {"type": "pop", "t": 3.49, "f": 520, "gain": 0.3, "note": "rabbit pops up"},
+    {"type": "whoosh", "t": 3.93, "d": 0.1, "gain": 0.25},
+    {"type": "thump", "t": 4.00, "gain": 0.75, "note": "LOST impact"},
+    {"type": "whoosh", "t": 4.52, "d": 0.16, "gain": 0.35},
+    {"type": "thump", "t": 4.62, "gain": 0.5, "f0": 120, "note": "RAB-"},
+    {"type": "thump", "t": 5.02, "gain": 0.45, "f0": 130, "note": "-BITS"}
+  ]
+}

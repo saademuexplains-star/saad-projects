@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Painted Short</title>
+<!-- Poppins for captions; if the network blocks Google Fonts the sans-serif fallback is used. -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  svg { position: absolute; inset: 0; }
+  #L1, #L2 { transform-origin: 540px 960px; }
+  #flash { position: absolute; inset: 0; background: #fff6e0; opacity: 0; pointer-events: none; }
+  /* DEFAULT captions: one word at a time, as spoken (normal casing + punctuation), just below the middle.
+     White for ordinary words, yellow for key words (names, numbers, punchlines). Thin dark outline + soft shadow. */
+  .capWord { position: absolute; left: 40px; right: 40px; top: 1215px; text-align: center; font: 800 80px Poppins, sans-serif;
+    color: #fffdf5; -webkit-text-stroke: 5px #121212; paint-order: stroke fill; letter-spacing: .5px;
+    text-shadow: 0 4px 10px rgba(0,0,0,.7), 0 0 3px rgba(0,0,0,.9); transform-origin: 50% 60%; }
+  .capWord.key { color: #ffd21f; }
+  /* optional alternative: short phrase in the lower third */
+  .capPhrase { position: absolute; left: 60px; right: 60px; top: 1520px; text-align: center; font: 600 58px Poppins, sans-serif; color: #fff;
+    text-shadow: 0 2px 3px rgba(0,0,0,.9), 0 0 18px rgba(0,0,0,.55); }
+  .label { position: absolute; font: 600 44px Poppins, sans-serif; color: #fff; text-shadow: 0 2px 3px rgba(0,0,0,.9), 0 0 14px rgba(0,0,0,.5); }
+</style>
+</head>
+<body>
+<svg id="L1" viewBox="0 0 1080 1920" width="1080" height="1920"></svg>
+<svg id="L2" viewBox="0 0 1080 1920" width="1080" height="1920"></svg>
+<svg id="L3" viewBox="0 0 1080 1920" width="1080" height="1920"></svg>
+<div id="flash"></div>
+<div id="text"></div>
+<script src="engine.js"></script>
+<script src="fx.js"></script>
+<script src="sets_base.js"></script>
+<script src="rigs_base.js"></script>
+<script src="kit.js"></script>
+<script src="sets.js"></script>
+<script src="rigs.js"></script>
+<script src="sheet.js"></script>
+</body>
+</html>
