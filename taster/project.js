@@ -248,7 +248,7 @@ const SHOTS = [
   // 11 "Like crushed almonds." — inside the goblet: a pale, oily film turning on the wine, flecks drifting in it
   { at: 21.18,
     draw(v, t) {
-      const C = camT(t, 540, 960, lerp(1.05, 1.3, seg(t, 21.18, 22.55)), { r: lerp(0, 8, seg(t, 21.18, 22.55)), hh: .5 });
+      const C = camT(t, 540, 960, lerp(1.6, 1.85, seg(t, 21.18, 22.55)), { r: lerp(0, 8, seg(t, 21.18, 22.55)), hh: .5 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_WINE(t))}${wineMacro(t, 21.18)}</g>`;
     } },
 
