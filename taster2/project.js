@@ -450,8 +450,12 @@ const SHOTS = [
   //   before her, her eyes darting for a way out — the light closes in
   { at: 51.92,
     draw(v, t) {
-      if (t < 52.8) return (() => { const C = camF(t, t => [540, 1300, lerp(1.1, 1.18, seg(t, 51.92, 52.8))]);
-        return `<g transform="${C.tf}">${lights(C.v, RIG_NAVE2(t, { k: .9 }))}${hallNave2(t, { heads: (i, key) => { const q = easeInOut(seg(t, 51.98 + key * .05, 52.32 + key * .05)); return { turn: lerp(0, .38, q), look: lerp(0, 10, q), lookY: 0, lid: 0, bIn: 6, bOut: 3, smirk: lerp(.4, -.2, q), shock: .3 * q }; } })}</g>`; })();
+      const C = camF(t, t => [540, 1300, lerp(1.1, 1.18, seg(t, 51.92, 52.8))]);
+      return `<g transform="${C.tf}">${lights(C.v, RIG_NAVE2(t, { k: .9 }))}${hallNave2(t, { heads: (i, key) => { const q = easeInOut(seg(t, 51.98 + key * .05, 52.32 + key * .05)); return { turn: lerp(0, .38, q), look: lerp(0, 10, q), lookY: 0, lid: 0, bIn: 6, bOut: 3, smirk: lerp(.4, -.2, q), shock: .3 * q }; } })}</g>`;
+    } },
+  // 25b her face, pale, the goblet before her, eyes darting for a way out — the light closes in
+  { at: 52.8,
+    draw(v, t) {
       const p = easeInOut(seg(t, 52.8, 55.15)), dart = kf(t, [[52.8, -2], [53.4, -2], [53.55, -9], [54.1, -9], [54.25, 6], [54.8, 6], [54.95, 0]]);
       const C = camF(t, t => [1100, lerp(1230, 1216, easeInOut(seg(t, 52.8, 55.15))), lerp(3.8, 5.0, easeInOut(seg(t, 52.8, 55.15))), { r: lerp(0, -3, easeInOut(seg(t, 52.8, 55.15))) }]);
       const rig = RIG_DAIS2(t, { warm: .75, cold: .4 }); rig.vignette = lerp(.55, .85, p);
@@ -484,8 +488,6 @@ const TRANS = [
   [24.38, 24.26, 24.5, 'whip', { dir: 1 }],
   [25.38, 25.32, 25.44, 'punch'],
   [27.82, 27.7, 27.94, 'whip', { dir: -1 }],
-  [29.32, 29.29, 29.35, 'cut'],
-  [29.98, 29.95, 30.01, 'cut'],
   [30.25, 30.21, 30.31, 'flash'],
   [31.58, 31.42, 31.7, 'zoom', { at: [700, 960], to: [540, 900], big: 3.2, big2: 1.4 }],
   [33.46, 33.34, 33.58, 'whip', { dir: 1 }],
@@ -496,8 +498,6 @@ const TRANS = [
   [44.35, 44.29, 44.41, 'punch'],
   [47.32, 47.2, 47.44, 'whip', { dir: 1 }],
   [48.62, 48.5, 48.74, 'whip', { dir: -1 }],
-  [50.15, 50.12, 50.18, 'cut'],
-  [50.8, 50.77, 50.83, 'cut'],
   [51.92, 51.88, 51.96, 'cut'],
   [52.8, 52.68, 52.92, 'whip', { dir: 1 }],
   [55.15, 55.03, 55.27, 'whip', { dir: -1 }],

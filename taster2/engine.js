@@ -621,7 +621,7 @@ function makeTimeline({ shots, trans = [], words = [], strong = [], phrases = []
     window.__L = {}; window.__T = t;
     const L1 = document.getElementById('L1'), L2 = document.getElementById('L2'), L3 = document.getElementById('L3');
     let k = 0; while (k + 1 < shots.length && t >= shots[k + 1].at) k++;
-    const tr = trans.find(([, a, b]) => t >= a && t < b);
+    const tr = trans.find(([cut, a, b]) => t >= a && t < b && shots.findIndex(s => s.at === cut) > 0);
     if (L3) L3.innerHTML = '';
     // ---- transitions: no crossfades. Strip whips (both shots side by side, like a real pan), zoom-throughs and
     // punch-ins that cut at the midpoint, flashes, dips to black. The relight rig follows each layer's transform;
