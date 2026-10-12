@@ -6,9 +6,10 @@ d, out, t0, t1, st = sys.argv[1], sys.argv[2], float(sys.argv[3]), float(sys.arg
 cols = int(sys.argv[6]) if len(sys.argv) > 6 else 8
 w = int(sys.argv[7]) if len(sys.argv) > 7 else 216
 h = w * 16 // 9
+LAST = max(int(f[:5]) for f in os.listdir(d) if f[:5].isdigit())
 idx = []; t = t0
 while t <= t1 + 1e-6:
-    idx.append(min(1319, int(round(t * 30)))); t += st
+    idx.append(min(LAST, int(round(t * 30)))); t += st
 rows = (len(idx) + cols - 1) // cols
 W = Image.new('RGB', (w * cols, (h + 16) * rows)); D = ImageDraw.Draw(W)
 for k, i in enumerate(idx):
