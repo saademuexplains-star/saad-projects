@@ -142,7 +142,7 @@ const SHOTS = [
   { at: 5.1,
     draw(v, t) {
       const up = easeInOut(seg(t, 5.12, 5.48)), bite = t > 5.6, crunch = snap(t, 5.56, .14);
-      const P = lerp2([-120, -820], [-36, -990], up), A = gripArm(tArm, -1, P, { hs: 1.05, bend: 1, hrot: lerp(0, -20, up) });
+      const P = lerp2([-116, -952], [-110, -1008], up), A = gripArm(tArm, -1, P, { hs: 1.05, bend: 'out', upright: 82, flip: 1 });
       const top = heldRoll(A, -1, 1.05, .62, SKB2, { bite });
       const chew = t > 5.7 ? .1 + .16 * Math.abs(Math.sin((t - 5.7) * 13)) : 0;
       const crumbs = bite ? Array.from({ length: 7 }, (_, i) => { const u = t - 5.6, R = rng(i + 5), x = -30 + (R() - .5) * 60 + (R() - .5) * 220 * u, y = -1000 + (R() - .3) * 30 + 900 * u * u - 160 * u;
@@ -167,8 +167,8 @@ const SHOTS = [
     draw(v, t) {
       const point = easeInOut(seg(t, 7.25, 7.6)) * (1 - easeInOut(seg(t, 7.95, 8.15))), toM = easeInOut(seg(t, 8.0, 8.22)) * (1 - easeInOut(seg(t, 8.55, 8.85)));
       const drop = t > 10.12, freeze = easeInOut(seg(t, 9.05, 9.4));
-      const P = lerp2(lerp2([-150, -800], [-150, -930], point), [-58, -1010], toM);
-      const A = gripArm(kArm2, -1, P, { hs: 1.75, bend: 'out', hrot: lerp(0, 40, point) });
+      const P = lerp2(lerp2([-150, -800], [-160, -900], point), [-128, -1000], toM);
+      const A = gripArm(kArm2, -1, P, { hs: 1.75, bend: 'out', upright: lerp(lerp(0, 70, point), 84, toM) });
       const fall = drop ? t - 10.12 : 0, F0 = propAt(A, -1, 1.75, .5, 110);
       const leg = drop ? `<g transform="translate(0 ${F1(4200 * fall * fall)}) rotate(${F1(fall * 200)} ${F1(F0[0])} ${F1(F0[1])})">${roastLeg(F0[0], F0[1], .5, F0[2], 1)}</g>` + redraw(-1, { ...A, hand: 'open', spread: .6 }, SKR2[0], 'ruddy', 1.75)
         : heldLeg(A, -1, 1.75, .5, SKR2, { bite: t > 8.2 ? 1 : 0 });
