@@ -373,12 +373,12 @@ const SHOTS = [
       }
       if (t < 40.78) {
         const tip = easeInOut(seg(t, 39.36, 39.75)), tongue = easeInOut(seg(t, 39.6, 39.95));
-        const A = gripArm(tArm, 1, lerp2([150, -900], [24, -1150], tip), { hs: 1.05, bend: -1, flip: 0 });
+        const A = gripArm(tArm, 1, lerp2([150, -900], [-6, -1162], tip), { hs: 1.05, bend: -1, flip: 0 });
         const F = fistAt(A, 1.05), top = heldVial(A, 1, 1.05, 1.15, SKB2, { cork: 0, fill: .5, flip: 1 });
         const mouthW = [0, -1150 + 200], dT = t - 40.42, form = clamp((t - 40.0) / .4);
         const tipPt = propPoint(A, 1, 1.05, 1.15, -8, 38);
-        const drop = dT < 0 ? (form > 0 ? poisonDrop(tipPt[0], tipPt[1] + 4 * form, 4 + 4 * form) : '') : dT < .22 ? poisonDrop(tipPt[0], lerp(tipPt[1], -998, (dT / .22) ** 2), 8) : dT < .4 ? `<g filter="url(#pe)"><ellipse cx="${F1(tipPt[0])}" cy="-996" rx="${F1(12 * (1 - (dT - .22) / .18) + 2)}" ry="3" fill="#8af0b8" opacity="${F2(1 - (dT - .22) / .18)}"/></g>` : '';
-        const C = camF(t, t => [540 + 10 * .95, 2231 - 1030 * .95, lerp(6.0, 6.8, seg(t, 39.34, 40.78)), { hh: .4 }]);
+        const drop = dT < 0 ? (form > 0 ? poisonDrop(tipPt[0], tipPt[1] + 4 * form, 4 + 4 * form) : '') : dT < .22 ? poisonDrop(lerp(tipPt[0], 0, dT / .22), lerp(tipPt[1], -998, (dT / .22) ** 2), 8) : dT < .4 ? `<g filter="url(#pe)"><ellipse cx="0" cy="-996" rx="${F1(12 * (1 - (dT - .22) / .18) + 2)}" ry="3" fill="#8af0b8" opacity="${F2(1 - (dT - .22) / .18)}"/></g>` : '';
+        const C = camF(t, t => [540, 2231 - 1000 * .95, lerp(7.0, 7.6, seg(t, 39.34, 40.78)), { hh: .4 }]);
         return `<g transform="${C.tf}">${lights(C.v, RIG_CELL2(t, { light: 1 }))}${cell2(t, { light: 1, blur: 'dofHeavy', candle: 0 })}
           ${figS({ armR: A, look: 0, lookY: -7, tilt: 0, talk: .62 * tongue, tongue, lid: .1, bIn: 6, bOut: 2 }, top + `<g>${drop}</g>`)}</g>`;
       }
@@ -463,14 +463,9 @@ const SHOTS = [
         it: { qcup: [1060, 1428 - 168 * .5, 1.5 * Math.sin(t * 17), .5], kcup: 0 }, only: ['q'] })}</g>`;
     } },
 
-  // 26 the boy again: the first frame of the film (his eyes over the rim; a breath of a smile)
+  // 26 the boy again: the first frame of the film, drawn by the opening shot itself (its state at t = 0) so the loop is exact
   { at: 55.15,
-    draw(v, t) {
-      const p = easeInOut(seg(t, 55.15, 55.6)), A = gobOpen();
-      const C = camF(t, t => [OPEN_CAM[0], OPEN_CAM[1], OPEN_CAM[2], { r: 0, hh: .4 }]);
-      return `<g transform="${C.tf}">${lights(C.v, RIG_DAIS2(t))}${dais(t, C, { blur: 'dofHeavy', bp: { ...OPEN, look: lerp(9, OPEN.look, p), smirk: lerp(.5, OPEN.smirk, p), armR: A, armL: tHang(-1) },
-        bTop: heldGoblet(A, 1, 1.05, .9, SKB2, { wine: .8 }), only: ['k', 'b'], kp: { armR: kHang(1), armL: kHang(-1), look: 6, lookY: 2, turn: .25, lid: .35, smirk: .4, squint: .3, bIn: -3, bOut: 3 }, it: { kcup: 0 } })}</g>`;
-    } },
+    draw(v, t) { const k = window.__shot; window.__shot = k; return SHOTS[0].draw(v, Math.min(0, t - DUR)); } },
 ];
 
 // transitions: [cut, from, to, style, options]
