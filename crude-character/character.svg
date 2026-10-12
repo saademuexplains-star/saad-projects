@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 600 800" width="600" height="800">
+  <title>Crude little guy</title>
+
+  <defs>
+    <!-- wobble every edge a bit so nothing is a clean line -->
+    <filter id="wobble" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="paper">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="3"/>
+      <feColorMatrix values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.28  0 0 0 0.09 0"/>
+    </filter>
+
+    <!-- shapes (reused for the off-register fill + the ink line) -->
+    <path id="hair"  d="M240 135 L226 70 L272 108 L292 50 L320 106 L364 60 L358 132 Z"/>
+    <path id="shirt" d="M222 322 C255 352 352 350 386 322 L412 540 C360 566 250 562 194 546 Z"/>
+    <path id="head"  d="M190 222 C178 140 250 100 312 110 C392 104 428 162 421 232 C427 302 372 342 300 336 C228 342 184 298 190 222 Z"/>
+    <path id="earL"  d="M196 208 C165 196 150 240 182 262 C192 266 198 258 198 250"/>
+    <path id="earR"  d="M414 200 C448 190 460 236 428 258 C418 262 412 254 412 246"/>
+    <path id="bootL" d="M232 700 C232 678 292 676 294 700 C308 712 303 732 282 732 L236 734 C222 731 221 712 232 700 Z"/>
+    <path id="bootR" d="M345 692 C350 670 394 674 396 693 C418 698 428 719 406 726 L350 723 C337 715 337 702 345 692 Z"/>
+    <path id="handL" d="M82 318 C78 292 118 286 122 312 C134 306 142 322 128 332 C128 352 94 356 84 340 C72 334 72 324 82 318 Z"/>
+    <path id="handR" d="M414 548 C408 530 448 526 452 548 C464 556 456 574 444 574 C438 590 412 586 410 570 C400 564 404 554 414 548 Z"/>
+    <path id="nose"  d="M305 234 C288 262 312 280 330 262 C332 250 320 238 305 234 Z"/>
+    <path id="mouth" d="M248 288 C274 330 342 324 376 274 C340 297 290 297 248 288 Z"/>
+    <path id="star"  d="M300 395 L312 429 L348 431 L320 452 L330 487 L300 466 L270 486 L281 452 L252 430 L288 428 Z"/>
+  </defs>
+
+  <!-- paper -->
+  <rect width="600" height="800" fill="#f3edde"/>
+  <rect width="600" height="800" filter="url(#paper)"/>
+
+  <g filter="url(#wobble)" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- scribbly ground shadow -->
+    <path d="M170 742 C240 756 350 758 450 740 M190 756 C260 770 340 770 430 756" fill="none" stroke="#8a7f68" stroke-width="5" opacity=".7"/>
+
+    <!-- legs (ink first, skin colour on top, uneven lengths) -->
+    <path d="M268 548 L256 696" stroke="#1b1712" stroke-width="36" fill="none"/>
+    <path d="M268 548 L256 696" stroke="#e9b97c" stroke-width="22" fill="none" transform="translate(4 3)"/>
+    <path d="M348 550 L368 688" stroke="#1b1712" stroke-width="36" fill="none"/>
+    <path d="M348 550 L368 688" stroke="#e9b97c" stroke-width="22" fill="none" transform="translate(4 3)"/>
+
+    <!-- boots -->
+    <use href="#bootL" fill="#5b6f3a" transform="translate(6 5)"/>
+    <use href="#bootL" fill="none" stroke="#1b1712" stroke-width="7"/>
+    <use href="#bootR" fill="#5b6f3a" transform="translate(6 5)"/>
+    <use href="#bootR" fill="none" stroke="#1b1712" stroke-width="7"/>
+
+    <!-- arm hanging down (behind shirt edge) -->
+    <path d="M392 376 Q452 440 432 540" stroke="#1b1712" stroke-width="30" fill="none"/>
+    <path d="M392 376 Q452 440 432 540" stroke="#e9b97c" stroke-width="17" fill="none" transform="translate(3 3)"/>
+    <use href="#handR" fill="#e9b97c" transform="translate(5 4)"/>
+    <use href="#handR" fill="none" stroke="#1b1712" stroke-width="7"/>
+
+    <!-- shirt -->
+    <use href="#shirt" fill="#d8553f" transform="translate(7 6)"/>
+    <use href="#shirt" fill="none" stroke="#1b1712" stroke-width="8"/>
+    <use href="#star"  fill="#f2c94c" transform="translate(4 4)"/>
+    <use href="#star"  fill="none" stroke="#1b1712" stroke-width="5"/>
+    <!-- bad hem scribble -->
+    <path d="M205 520 C250 534 340 538 400 518" fill="none" stroke="#1b1712" stroke-width="4" opacity=".6"/>
+
+    <!-- waving arm (in front of shirt) -->
+    <path d="M216 374 Q128 436 104 340" stroke="#1b1712" stroke-width="30" fill="none"/>
+    <path d="M216 374 Q128 436 104 340" stroke="#e9b97c" stroke-width="17" fill="none" transform="translate(3 3)"/>
+    <use href="#handL" fill="#e9b97c" transform="translate(5 4)"/>
+    <use href="#handL" fill="none" stroke="#1b1712" stroke-width="7"/>
+    <!-- motion ticks -->
+    <path d="M52 296 L74 306 M46 330 L70 330 M60 262 L80 282" stroke="#1b1712" stroke-width="5" fill="none"/>
+
+    <!-- hair (behind head) -->
+    <use href="#hair" fill="#4a3426" transform="translate(5 4)"/>
+    <use href="#hair" fill="none" stroke="#1b1712" stroke-width="8"/>
+
+    <!-- ears -->
+    <use href="#earL" fill="#e9b97c" transform="translate(4 4)"/>
+    <use href="#earL" fill="none" stroke="#1b1712" stroke-width="7"/>
+    <use href="#earR" fill="#e9b97c" transform="translate(4 4)"/>
+    <use href="#earR" fill="none" stroke="#1b1712" stroke-width="7"/>
+
+    <!-- head -->
+    <use href="#head" fill="#f0c590" transform="translate(7 6)"/>
+    <use href="#head" fill="none" stroke="#1b1712" stroke-width="8"/>
+
+    <!-- eyes: one big, one small, nobody is looking the same way -->
+    <ellipse cx="260" cy="214" rx="31" ry="34" fill="#fffdf4" stroke="#1b1712" stroke-width="6"/>
+    <circle  cx="272" cy="224" r="12" fill="#1b1712"/>
+    <ellipse cx="352" cy="212" rx="20" ry="22" fill="#fffdf4" stroke="#1b1712" stroke-width="6"/>
+    <circle  cx="344" cy="214" r="8"  fill="#1b1712"/>
+
+    <!-- brows, one grumpy one surprised -->
+    <path d="M222 166 L288 184" stroke="#1b1712" stroke-width="9" fill="none"/>
+    <path d="M330 170 L382 154" stroke="#1b1712" stroke-width="9" fill="none"/>
+
+    <!-- nose -->
+    <use href="#nose" fill="#e3a46d" transform="translate(3 3)"/>
+    <use href="#nose" fill="none" stroke="#1b1712" stroke-width="6"/>
+
+    <!-- mouth with two mismatched teeth, one missing -->
+    <use href="#mouth" fill="#8a2a2a"/>
+    <path d="M280 305 L280 322 L296 323 L296 306 Z" fill="#fffdf4" stroke="#1b1712" stroke-width="3.5"/>
+    <path d="M318 304 L317 318 L331 317 L331 302 Z" fill="#fffdf4" stroke="#1b1712" stroke-width="3.5"/>
+    <use href="#mouth" fill="none" stroke="#1b1712" stroke-width="7"/>
+
+    <!-- face junk: cheek scribble, pimple, stubble -->
+    <path d="M214 262 L230 252 M222 276 L240 264" stroke="#d8553f" stroke-width="5" fill="none"/>
+    <circle cx="388" cy="262" r="6" fill="#d8553f" stroke="#1b1712" stroke-width="2.5"/>
+    <path d="M262 346 l2 6 M284 350 l1 7 M318 349 l-1 7 M342 344 l-2 6" stroke="#1b1712" stroke-width="3" fill="none" opacity=".55"/>
+
+    <!-- "hi" scrawled next to the wave -->
+    <path d="M38 372 L36 428 M36 404 C46 386 72 388 70 428" stroke="#1b1712" stroke-width="7" fill="none"/>
+    <path d="M94 396 L92 428" stroke="#1b1712" stroke-width="7" fill="none"/>
+    <circle cx="96" cy="378" r="5" fill="#1b1712"/>
+  </g>
+</svg>
