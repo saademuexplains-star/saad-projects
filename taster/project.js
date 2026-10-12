@@ -207,7 +207,7 @@ const SHOTS = [
       const marks = [0, 1, 2].filter(i => i < n || (i === n && t < 14.7)).map(i => { const q = i < n ? 1 : scr; const w0 = toWorld(tipOf(armAt(i, 0)), ...BC, b), w1 = toWorld(tipOf(armAt(i, q)), ...BC, b);
         return `<path d="M${F1(w0[0])} ${F1(w0[1])} L${F1(w1[0])} ${F1(w1[1])}" stroke="#e8e0d0" stroke-width="3.6" stroke-linecap="round" opacity=".85"/>`; }).join('');
       const pan = easeInOut(seg(t, 14.55, 15.6));
-      const C = camT(t, lerp(300, 664, pan), lerp(1020, 1104, pan), lerp(1.95, 2.7, pan), { hh: .7 });
+      const C = camT(t, lerp(278, 664, pan), lerp(1020, 1104, pan), lerp(1.95, 2.7, pan), { hh: .7 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_CELL(t))}${cellRoom(t, { blur: pan > .5 ? 'dofLight' : null })}${marks}
         ${outlined(manb(...BC, TASTER, { armL: A, armR: tHang(1), breath: b, bust: 0, look: lerp(-8, 1, turn), lookY: lerp(-1, 0, turn), turn: lerp(-.45, 0, turn), smirk: lerp(-.1, .9, smile), lid: lidB(t, lerp(.2, .35, smile), [13.9]), bIn: lerp(4, -2, smile), bOut: lerp(0, 3, smile), tilt: lerp(-4, 2, turn) })
           + atb(...BC, nail + redraw(-1, A, SKBt, 'fair', 1.05), b))}</g>`;
@@ -346,7 +346,7 @@ const SHOTS = [
       }
       if (t < 40.72) {
         const tip = easeInOut(seg(t, 39.35, 39.75)), tongue = easeInOut(seg(t, 39.6, 39.95));
-        const A = tArm(1, lerp2([150, -900], [40, -1094], tip), 'grip', { bend: -1 }), fc = fistAt(A, 1.05), vr = lerp(0, 205, tip) * Math.PI / 180;
+        const A = tArm(1, lerp2([150, -900], [20, -1094], tip), 'grip', { bend: -1 }), fc = fistAt(A, 1.05), vr = lerp(0, 205, tip) * Math.PI / 180;
         const vl = vial(fc[0] - 2, fc[1] + 4, 1.15, { rot: lerp(0, 205, tip), cork: 0, fill: .5 });
         const m = [fc[0] - 2 + Math.sin(vr) * 36 * 1.15, fc[1] + 4 - Math.cos(vr) * 36 * 1.15], dT = t - 40.42, form = clamp((t - 40.05) / .37);
         const drop = dT < 0 ? (form > 0 ? `<ellipse cx="${F1(m[0])}" cy="${F1(m[1] + 6 * form)}" rx="${F1(3 + 3 * form)}" ry="${F1(3 + 5 * form)}" fill="#9ae0b8"/>` : '')
