@@ -9,7 +9,7 @@ function heroFrame(t = 0) {
   // left arm: elbow in, finger to the lips (the hand is redrawn on top of the face)
   const LA0 = tArm(-1, [-20, -902], 'none', { hs: HS });
   const LA = { ...aim(LA0, -90), gh: 'point', front: true };   // the arm crosses the body: its upper arm is drawn in front of the surcoat
-  const thief = manb(THIEF_X, THIEF_Y, THIEF_S, THIEF, { smirk: 1.0, side: .6, bIn: -6, bOut: 8, lid: .3, look: 0, lookY: 0, turn: .0, tilt: -4,
+  const thief = manb(THIEF_X, THIEF_Y, THIEF_S, THIEF, { smirk: 1.0, side: .6, bIn: -6, bOut: 8, lid: .5, look: 0, lookY: 0, turn: .0, tilt: -4,
     armR: GA, armL: LA, breath: 0 });
   const held = atb(THIEF_X, THIEF_Y, THIEF_S, bucketProp(F[0], F[1] - 2, .94, { rot: -2 }) + gripHandOn(GA, 1, SB, SKB, HS) + gripHandOn(LA, -1, SB, SKB, HS), 0);
   const guard = manb(120, 2190, 1.12, WATCHMAN, { lid: 2, smirk: -.2, talk: .14, tilt: 9, bIn: 4, bOut: 2, turn: .15, armL: gArm(-1, [-170, -520], 'back', { bend: 1 }), armR: gHang(1) });
@@ -21,8 +21,8 @@ const SHOTS = [{ at: 0, draw(v, t) {
   return `<g transform="${C.tf}">
     ${lights(C.v, RIG.cine(0))}
     ${villageSunset({ t: 0, blur: 'dofHeavy' })}
-    <g filter="url(#dofLight)">${outlined(H.guard)}</g>
-    ${outlined(H.thief + H.held)}
+    <g filter="url(#dofLight)">${outlined(textured(H.guard))}</g>
+    ${outlined(textured(H.thief + H.held), 0, { px: 1.3, col: '#1a120c', op: .5 })}
   </g>`; } }];
 TL = makeTimeline({ shots: SHOTS, trans: [], words: [], strong: [], captions: 'none', fps: 30, duration: 7 });
 render(0);

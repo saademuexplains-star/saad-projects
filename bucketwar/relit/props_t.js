@@ -3,7 +3,7 @@
 
 addDefs(`
   <linearGradient id="oakA" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e2ab62"/><stop offset=".5" stop-color="#c58a45"/><stop offset="1" stop-color="#8e5d2c"/></linearGradient>
-  <linearGradient id="ironB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a929c"/><stop offset=".45" stop-color="#5a616b"/><stop offset="1" stop-color="#2e333b"/></linearGradient>
+  <linearGradient id="ironB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c8084"/><stop offset=".45" stop-color="#4e5256"/><stop offset="1" stop-color="#26282c"/></linearGradient>
   <radialGradient id="pitG" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#7a5232"/><stop offset=".6" stop-color="#3a2212"/><stop offset="1" stop-color="#1a0e06"/></radialGradient>
 `);
 
@@ -20,6 +20,19 @@ function ribbon(pts, w) {
 const bez = (p0, p1, p2, p3, n = 20) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n, u = 1 - t;
   return [u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]; });
 
+// ---------- surface texture for the cast (flat pass only; the normal pass drops it): woven fibre + soft mottling, so cloth reads
+// as wool and linen instead of smooth plastic. Applied before any depth-of-field blur, so out-of-focus figures blur it too.
+addDefs(`<filter id="clothTex" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency=".7 .16" numOctaves="2" seed="3" result="a"/>
+  <feTurbulence type="fractalNoise" baseFrequency=".16 .7" numOctaves="2" seed="7" result="b"/>
+  <feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="3" seed="11" result="c"/>
+  <feComposite in="a" in2="b" operator="arithmetic" k2=".5" k3=".5" result="ab"/>
+  <feComposite in="ab" in2="c" operator="arithmetic" k2=".55" k3=".45" result="n"/>
+  <feColorMatrix in="n" type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 1" result="g"/>
+  <feComposite in="SourceGraphic" in2="g" operator="arithmetic" k1=".5" k2=".75" result="t"/>
+  <feComposite in="t" in2="SourceAlpha" operator="in"/></filter>`);
+const textured = svg => `<g filter="url(#clothTex)">${svg}</g>`;
+
 // ---------- the bucket: origin = the handle's apex (the grip point); it hangs below. s = scale, rot = swing (deg about the apex) ----------
 function bucketProp(x, y, s = 1, { rot = 0, glint = 0, t = 0, pit = 1 } = {}) {
   const RIMY = 152, TOPR = 108, BOTR = 84, H = 178, RYT = 30, RYB = 22;
@@ -28,32 +41,32 @@ function bucketProp(x, y, s = 1, { rot = 0, glint = 0, t = 0, pit = 1 } = {}) {
   const R = rng(21);
   const staves = Array.from({ length: 9 }, (_, i) => {
     const a = [xt(i), yt(xt(i))], b = [xt(i + 1), yt(xt(i + 1))], c = [xb(i + 1), yb(xb(i + 1))], d = [xb(i), yb(xb(i))];
-    const k = i / 8, base = mix(mix('#e6b36a', '#c18843', Math.min(1, k * 1.4)), '#7a4a22', Math.max(0, k - .55) * 1.1), col = mix(base, R() < .5 ? '#d29a52' : '#b27a38', .25);
-    const grain = [0, 1, 2].map(j => `<path d="M${F1(a[0] * (.78 + j * .08) + b[0] * (.22 - j * .08))} ${F1(a[1] + 14 + j * 7)} L${F1(d[0] * (.7 + j * .1) + c[0] * (.3 - j * .1))} ${F1(d[1] - 20 - j * 9)}" stroke="#4a2a10" stroke-width="1.4" opacity="${F1(.18 + R() * .16)}"/>`).join('');
+    const k = i / 8, base = mix(mix('#b4946a', '#94744e', Math.min(1, k * 1.4)), '#5a4028', Math.max(0, k - .55) * 1.1), col = mix(base, R() < .5 ? '#a68a64' : '#86684a', .3);
+    const grain = [0, 1, 2].map(j => `<path d="M${F1(a[0] * (.78 + j * .08) + b[0] * (.22 - j * .08))} ${F1(a[1] + 14 + j * 7)} L${F1(d[0] * (.7 + j * .1) + c[0] * (.3 - j * .1))} ${F1(d[1] - 20 - j * 9)}" stroke="#3a2614" stroke-width="1.4" opacity="${F1(.26 + R() * .2)}"/>`).join('');
     return `<path d="M${F1(a[0])} ${F1(a[1])} L${F1(b[0])} ${F1(b[1])} L${F1(c[0])} ${F1(c[1])} L${F1(d[0])} ${F1(d[1])} Z" fill="${col}" filter="url(#pcs)"/>${grain}`;
   }).join('');
   const hoop = (y0, h) => { const a = x_ => TOPR - (TOPR - BOTR) * ((y0 - RIMY) / H), b = TOPR - (TOPR - BOTR) * ((y0 + h - RIMY) / H);
     return `<path d="M${-a(0)} ${y0} Q0 ${y0 + 2 * RYT * .98} ${a(0)} ${y0} L${b} ${y0 + h} Q0 ${y0 + h + 2 * RYT * .94} ${-b} ${y0 + h} Z" fill="url(#ironB)" filter="url(#pcsl)"/>
-      ${[-.8, -.45, -.1, .25, .6].map(f => `<circle cx="${F1(f * a(0))}" cy="${F1(y0 + h / 2 + RYT * .98 * Math.sqrt(1 - f * f) * 1.0)}" r="3.2" fill="#aeb6c0"/>`).join('')}`; };
+      ${[-.8, -.45, -.1, .25, .6].map(f => `<circle cx="${F1(f * a(0))}" cy="${F1(y0 + h / 2 + RYT * .98 * Math.sqrt(1 - f * f) * 1.0)}" r="3.2" fill="#7e8286"/>`).join('')}`; };
   const handle = bez([-TOPR + 4, RIMY], [-TOPR - 8, 56], [-54, -2], [0, -2], 18).concat(bez([0, -2], [54, -2], [TOPR + 8, 56], [TOPR - 4, RIMY], 18).slice(1));
   return `<g transform="translate(${F1(x)} ${F1(y)}) rotate(${F1(rot)}) scale(${s})">
     <path d="${ribbon(handle, 12)}" fill="url(#ironB)" filter="url(#pcsl)"/>
-    <path d="${ribbon(handle.slice(3, 16), 3)}" fill="#c9d1da" opacity=".5"/>
+    <path d="${ribbon(handle.slice(3, 16), 3)}" fill="#a4a8ac" opacity=".3"/>
     <path d="M${-TOPR} ${RIMY} L${-BOTR} ${RIMY + H} L${BOTR} ${RIMY + H} L${TOPR} ${RIMY} Z" fill="#2a160a"/>
     ${staves}
     <path d="M${-BOTR} ${RIMY + H} Q0 ${RIMY + H + 2 * RYB} ${BOTR} ${RIMY + H}" stroke="#2a160a" stroke-width="5" fill="none" opacity=".7"/>
     ${hoop(RIMY + 34, 22)}${hoop(RIMY + 128, 22)}
-    <ellipse cx="0" cy="${RIMY}" rx="${TOPR + 3}" ry="${RYT + 2}" fill="#d8a45a" filter="url(#pcsl)"/>
+    <ellipse cx="0" cy="${RIMY}" rx="${TOPR + 3}" ry="${RYT + 2}" fill="#a88c66" filter="url(#pcsl)"/>
     <ellipse cx="0" cy="${RIMY + 2}" rx="${TOPR - 11}" ry="${RYT - 8}" fill="url(#pitG)"/>
-    <path d="M${-TOPR + 14} ${RIMY - 4} Q0 ${RIMY - RYT * 1.1 + 6} ${TOPR - 14} ${RIMY - 4}" stroke="#f0cf90" stroke-width="3" fill="none" opacity=".5"/>
+    <path d="M${-TOPR + 14} ${RIMY - 4} Q0 ${RIMY - RYT * 1.1 + 6} ${TOPR - 14} ${RIMY - 4}" stroke="#d0b892" stroke-width="3" fill="none" opacity=".35"/>
     <ellipse cx="-26" cy="${RIMY + 2}" rx="${TOPR * .46}" ry="6" fill="#000" opacity=".3"/>
     <g filter="url(#pcsl)"><circle cx="${-TOPR + 2}" cy="${RIMY}" r="10" fill="url(#ironB)"/><circle cx="${TOPR - 2}" cy="${RIMY}" r="10" fill="url(#ironB)"/></g>
     <g transform="translate(${TOPR - 2} ${RIMY})">
       <path d="M2 4 C22 22 14 52 30 84 C38 102 34 122 40 138" stroke="#2a1a0c" stroke-width="15" fill="none" stroke-linecap="round" opacity=".5" transform="translate(3 4)"/>
-      <path d="M2 4 C22 22 14 52 30 84 C38 102 34 122 40 138" stroke="#cdb078" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#pcs)"/>
-      <path d="M2 4 C22 22 14 52 30 84 C38 102 34 122 40 138" stroke="#7a5a30" stroke-width="3" fill="none" stroke-dasharray="6 8" opacity=".7"/>
-      <ellipse cx="6" cy="6" rx="13" ry="11" fill="#bda068" filter="url(#pcsl)"/><path d="M-4 2 q10 -6 18 2 M-4 9 q10 -6 18 2" stroke="#6a4a24" stroke-width="2" fill="none" opacity=".7"/>
-      <path d="M40 138 l-9 24 M40 138 l2 28 M40 138 l12 22 M40 138 l-3 26" stroke="#d6bc84" stroke-width="3.4" stroke-linecap="round"/></g>
+      <path d="M2 4 C22 22 14 52 30 84 C38 102 34 122 40 138" stroke="#a8946c" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#pcs)"/>
+      <path d="M2 4 C22 22 14 52 30 84 C38 102 34 122 40 138" stroke="#5a4628" stroke-width="3" fill="none" stroke-dasharray="6 8" opacity=".7"/>
+      <ellipse cx="6" cy="6" rx="13" ry="11" fill="#9c8660" filter="url(#pcsl)"/><path d="M-4 2 q10 -6 18 2 M-4 9 q10 -6 18 2" stroke="#6a4a24" stroke-width="2" fill="none" opacity=".7"/>
+      <path d="M40 138 l-9 24 M40 138 l2 28 M40 138 l12 22 M40 138 l-3 26" stroke="#b09c76" stroke-width="3.4" stroke-linecap="round"/></g>
     ${glint ? `<g opacity="${F1(glint)}"><path d="M-50 ${RIMY + 70} l0 -44 l6 38 l44 4 l-44 6 l-6 42 l-6 -42 l-44 -6 l44 -4 Z" fill="#fff4c8" transform="scale(.8)"/></g>` : ''}
   </g>`;
 }
@@ -153,7 +166,7 @@ RIG.cine = (t, { sun = [868, 1046], k = 1 } = {}) => ({
     { pos: [-200, 1300, 1100], col: '#8a9ad0', int: .26, rad: 3600, shin: 10 },      // faint cool fill from camera-left
     { pos: [820, 2000, 240], col: '#ffb47e', int: .45, rad: 1200, shin: 16 },        // warm bounce off the sunlit street
   ],
-  amb: '#46508a', ambGround: '#3a2830', ambInt: .2, bgLight: .32, exposure: 1.12, bloom: .5, bloomThresh: .78, white: 2.2, tonemap: 'soft',
-  normalStrength: 1.75, specScale: .55, vignette: .7, grain: .016, shadowTint: '#0f2238', highTint: '#ffd8a8', shadowAmt: .28, highAmt: .1, sat: .98, contrast: 1.16,
+  amb: '#46508a', ambGround: '#3a2830', ambInt: .2, bgLight: .32, exposure: 1.18, bloom: .5, bloomThresh: .78, white: 2.2, tonemap: 'soft',
+  normalStrength: 1.6, specScale: .28, vignette: .72, grain: .016, shadowTint: '#13243a', highTint: '#f6d6a8', shadowAmt: .3, highAmt: .1, sat: .9, contrast: 1.12,
   rays: { center: sun, thresh: .32, srcRad: 300, samples: 64, step: .02, decay: .975, col: '#ffcf9a', int: 2.0 * k },
 });

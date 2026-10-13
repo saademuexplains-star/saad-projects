@@ -281,7 +281,7 @@ function person(o = {}, e = {}, v = (typeof window !== 'undefined' && window.VAR
     ${linG(g('pants'), [lighten(col.pants, .25), col.pants, darken(col.pants, .25)])}
     ${linG(g('robe'), [lighten(col.robe, .16), col.robe, darken(col.robe, .45)])}
     ${linG(g('trim'), [lighten(col.trim, .35), col.trim, darken(col.trim, .35)])}
-    <clipPath id="${g('face')}"><path d="${FACE}"/></clipPath>
+    <clipPath id="${g('face')}"><path d="${o.facePath || FACE}"/></clipPath>
   </defs>`;
 
   // ----- legs & feet -----
@@ -476,7 +476,7 @@ function person(o = {}, e = {}, v = (typeof window !== 'undefined' && window.VAR
   <g filter="url(#tex)">
     ${hair !== 'long' ? backHair : ''}
     ${o.ears ? o.ears({ g, u, S, sk, turn }) : `<ellipse cx="${F1(-73 - turn * 4)}" cy="-1075" rx="${F1(12 * (1 - .85 * Math.max(0, -turn)))}" ry="22" fill="${S.ear}" filter="url(#pks_${sk})"/><ellipse cx="${F1(73 - turn * 4)}" cy="-1075" rx="${F1(12 * (1 - .85 * Math.max(0, turn)))}" ry="22" fill="${S.earDk}" filter="url(#pks_${sk})"/>`}
-    <path d="${FACE}" fill="${u('skin')}" filter="url(#pk_${sk})"/>
+    <path d="${o.facePath || FACE}" fill="${u('skin')}" filter="url(#pk_${sk})"/>
     <g clip-path="url(#${g('face')})"><g filter="url(#soft)" transform="translate(${TX} 0)">
       <ellipse cx="-28" cy="-1088" rx="26" ry="13" fill="${S.shade}" opacity="${o.child ? .22 : .45}"/>
       <ellipse cx="28" cy="-1088" rx="26" ry="13" fill="${S.shade}" opacity="${o.child ? .26 : .5}"/>

@@ -68,6 +68,29 @@ def grid():
     return _GRID['g']
 
 
+_TEX = {}
+def tex_fields():
+    """fixed noise fields for surface texture: fine grain, woven fibre (cross streaks), soft mottling, painted canvas"""
+    if 'f' not in _TEX:
+        r = np.random.default_rng(7)
+        nz = lambda: r.standard_normal((H, W)).astype(np.float32)
+        norm = lambda a: a / (a.std() + 1e-6)
+        fine = norm(blur(nz(), .9))
+        fibre = norm(box(nz(), 3, 1) + box(nz(), 3, 0))
+        mott = norm(blur(nz(), 9) * .7 + blur(nz(), 30) * .3 * 3)
+        canvas = norm(blur(nz(), .7) + .6 * (box(nz(), 2, 1) + box(nz(), 2, 0)))
+        _TEX['f'] = (fine, fibre, mott, canvas)
+    return _TEX['f']
+
+
+def tex_mult(tx, char, skin):
+    fine, fibre, mott, _ = tex_fields()
+    cloth = char * (1 - skin)
+    m = 1 + cloth * (tx.get('cloth', 0) * fine + tx.get('fibre', 0) * fibre + tx.get('mottle', 0) * mott) \
+          + skin * (tx.get('skin', 0) * fine + tx.get('skinMottle', 0) * mott)
+    return np.clip(m, .7, 1.3)
+
+
 def shade(flat, nrm, cfg):
     alb = _S2L[np.asarray(Image.open(flat).convert('RGB'))]
     n = _U8[np.asarray(Image.open(nrm).convert('RGB'))]
@@ -75,6 +98,7 @@ def shade(flat, nrm, cfg):
     emis = smooth(.84, .97, mat)                       # emissive pieces (flames, glass, glows): blue = 255
     char = smooth(.13, .24, mat) * (1 - emis)          # character pieces vs background
     skin = smooth(.36, .48, mat) * (1 - emis)
+    if cfg.get('texture'): alb = alb * tex_mult(cfg['texture'], char, skin)[..., None]
     k = cfg.get('normalStrength', 1.7)
     nx = (n[..., 0] - .5) * 2 * k * char; ny = (n[..., 1] - .5) * 2 * k * char
     inv = 1 / np.sqrt(nx * nx + ny * ny + 1)
@@ -217,6 +241,8 @@ def post(lin, cfg, char=None):
         s = s * (1 - ta) + s * tn * 1.25 * ta
     if cfg.get('lift'):
         s = s + hexf(cfg['lift']) * cfg.get('liftAmt', .06) * (1 - lum)
+    cv = (cfg.get('texture') or {}).get('canvas', 0)
+    if cv: s = s * (1 + cv * tex_fields()[3])[..., None]          # painted-canvas tooth over the whole frame
     s = aberr(np.clip(s, 0, 1), cfg.get('ca', 0))
     # vignette
     Y, X = grid()

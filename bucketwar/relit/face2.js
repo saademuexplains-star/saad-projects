@@ -70,8 +70,8 @@ function eyes2(e, P) {
         <ellipse cx="${F1(ix)}" cy="${F1(iy + ir * .38)}" rx="${F1(ir * .6)}" ry="${F1(ir * .38)}" fill="${irLt}" opacity=".55"/>
         <circle cx="${F1(ix)}" cy="${F1(iy)}" r="${F1(pr)}" fill="#070403"/>
         <path d="${band2(up.map(([x, y]) => [x, y + h * .2]), h * .5, h * .5, h * .7)}" fill="#3a2420" opacity=".28" filter="url(#softW2)"/>
-        <circle cx="${F1(ix - ir * .34)}" cy="${F1(iy - ir * .4)}" r="${F1(ir * .27)}" fill="#fff" opacity=".95"/>
-        <circle cx="${F1(ix + ir * .36)}" cy="${F1(iy + ir * .3)}" r="${F1(ir * .12)}" fill="#fff" opacity=".7"/></g>
+        <circle cx="${F1(ix - ir * .34)}" cy="${F1(iy - ir * .4)}" r="${F1(ir * .27 * (P.catchR ?? 1))}" fill="#fff" opacity="${F1(.95 * (P.catch ?? 1))}"/>
+        <circle cx="${F1(ix + ir * .36)}" cy="${F1(iy + ir * .3)}" r="${F1(ir * .12)}" fill="#fff" opacity="${F1(.7 * (P.catch ?? 1))}"/></g>
       <path d="${band2(up.concat([[X(1.12 + (P.wing || 0) * .25), ycorner(1) - h * (.12 + (P.wing || 0) * .5)]]), .7 * lw, (.9 + 1.4 * (P.wing || 0)) * lw, 3.2 * lw)}" fill="${P.lash}"/>
       <path d="${cr2(lo.slice(2, 12))}" stroke="${P.lowLine}" stroke-width="${F1(1.3 * size)}" fill="none" opacity=".38" stroke-linecap="round"/>
       <path d="${cr2(up.slice(2, 12).map(([x, y], i) => [x, y - h * (.42 + .3 * (1 - open)) - 3]))}" stroke="${P.crease}" stroke-width="${F1(1.6 * size)}" fill="none" opacity=".32" stroke-linecap="round"/>`;

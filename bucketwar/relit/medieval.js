@@ -6,14 +6,16 @@
 SKIN_TONES.ruddy = { hi: '#f2c8aa', mid: '#dca07e', lo: '#b06c50', ear: '#d08e70', earDk: '#b8785c', neck: '#c4866a', shade: '#9a5a44', deep: '#884a36',
   blush: '#e0705a', nostril: '#5a2a1e', line: '#8a4a36', lip: '#c06a5a', mouth: '#6a2a20', rim: '#7a3424' };
 const handAng = A => Math.atan2(A.wr[1] - A.el[1], A.wr[0] - A.el[0]) * 180 / Math.PI - 90 + (A.hrot || 0);
+SKIN_TONES.olive.blush = '#a87458'; SKIN_TONES.ruddy.blush = '#b87a62';   // mature cast: weathered cheeks, no rosy blush
 const SKO = SKIN_TONES.olive, SKR = SKIN_TONES.ruddy;
 
 addDefs(`
-  <linearGradient id="steelH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f1f4f8"/><stop offset=".3" stop-color="#b5bcc6"/><stop offset=".7" stop-color="#6c7480"/><stop offset="1" stop-color="#363b44"/></linearGradient>
-  <linearGradient id="steelV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9edf2"/><stop offset=".5" stop-color="#97a0ac"/><stop offset="1" stop-color="#4a505a"/></linearGradient>
-  <radialGradient id="gemG" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff9a8a"/><stop offset=".45" stop-color="#c4182a"/><stop offset="1" stop-color="#5a0610"/></radialGradient>
-  <linearGradient id="featherG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#8e1a1c"/><stop offset=".55" stop-color="#d8402e"/><stop offset="1" stop-color="#f08a5a"/></linearGradient>
-  <linearGradient id="leatherG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a34"/><stop offset=".5" stop-color="#5e3a1e"/><stop offset="1" stop-color="#3a2210"/></linearGradient>
+  <linearGradient id="steelH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c4c6c6"/><stop offset=".3" stop-color="#8e9294"/><stop offset=".7" stop-color="#585c60"/><stop offset="1" stop-color="#2a2c30"/></linearGradient>
+  <linearGradient id="steelV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bcbebe"/><stop offset=".5" stop-color="#7a7e82"/><stop offset="1" stop-color="#3a3c40"/></linearGradient>
+  <radialGradient id="gemG" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#a86a5e"/><stop offset=".45" stop-color="#5e2422"/><stop offset="1" stop-color="#2a0e0e"/></radialGradient>
+  <radialGradient id="brassG" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#d2bf92"/><stop offset=".45" stop-color="#8a7044"/><stop offset="1" stop-color="#3a2a14"/></radialGradient>
+  <linearGradient id="featherG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2a1c12"/><stop offset=".55" stop-color="#6a4a30"/><stop offset="1" stop-color="#a88660"/></linearGradient>
+  <linearGradient id="leatherG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6e4e34"/><stop offset=".5" stop-color="#4a3220"/><stop offset="1" stop-color="#2a1a0e"/></linearGradient>
 `);
 
 // ---------- hands: a fist closed around a bar (the bucket handle). Wrist at (0,0), fingers toward +y, thumb toward +x for k = -1 ----------
@@ -71,11 +73,11 @@ function cotteBody({ tunic = '#2f7d4a', sleeve = '#e0a834', trim = '#e8c050', ho
     // belt, buckle, hanging pouch
     const beltSVG = `<path d="M${X(-140)} -704 Q0 -686 ${X(140)} -704 L${X(138)} -664 Q0 -646 ${X(-138)} -664 Z" fill="${belt}" filter="url(#pcsl)"/>
       <path d="M${X(-136)} -690 Q0 -672 ${X(136)} -690" stroke="${lighten(belt, .3)}" stroke-width="2.4" fill="none" stroke-dasharray="9 7" opacity=".6"/>
-      <g filter="url(#pcsl)"><rect x="${X(-22)}" y="-708" width="${F1(42 * w)}" height="48" rx="6" fill="url(#goldG)"/></g>
-      <rect x="${X(-10)}" y="-698" width="${F1(18 * w)}" height="28" rx="3" fill="${darken(belt, .3)}"/><path d="M${X(-4)} -694 L${X(14)} -684" stroke="#e8c050" stroke-width="4" stroke-linecap="round"/>
+      <g filter="url(#pcsl)"><rect x="${X(-22)}" y="-708" width="${F1(42 * w)}" height="48" rx="6" fill="url(#brassG)"/></g>
+      <rect x="${X(-10)}" y="-698" width="${F1(18 * w)}" height="28" rx="3" fill="${darken(belt, .3)}"/><path d="M${X(-4)} -694 L${X(14)} -684" stroke="#a08a5c" stroke-width="4" stroke-linecap="round"/>
       <path d="M${X(20)} -668 C${X(28)} -640 ${X(24)} -600 ${X(32)} -560" stroke="${belt}" stroke-width="12" fill="none" stroke-linecap="round" filter="url(#pcs)"/>
       ${pouch ? `<g transform="translate(${X(96)} -650)"><path d="M-34 0 C-44 30 -40 80 -22 96 Q0 106 22 96 C40 80 44 30 34 0 Z" fill="url(#leatherG)" filter="url(#pcl)"/>
-        <path d="M-34 0 L34 0 C32 22 20 36 0 38 C-20 36 -32 22 -34 0 Z" fill="${lighten('#6a4426', .08)}" filter="url(#pcsl)"/><circle cx="0" cy="34" r="6" fill="url(#goldG)"/>
+        <path d="M-34 0 L34 0 C32 22 20 36 0 38 C-20 36 -32 22 -34 0 Z" fill="#4e3622" filter="url(#pcsl)"/><circle cx="0" cy="34" r="6" fill="url(#brassG)"/>
         <path d="M-26 8 C-30 40 -28 70 -16 88 M26 8 C30 40 28 70 16 88" stroke="#2a1a0e" stroke-width="2" fill="none" stroke-dasharray="5 5" opacity=".55"/></g>
         <path d="M${X(96)} -662 L${X(96)} -650" stroke="${belt}" stroke-width="10"/>` : ''}`;
     // folds drawn as soft dark / light strokes (the relight pass rounds them)
@@ -91,7 +93,7 @@ function cotteBody({ tunic = '#2f7d4a', sleeve = '#e0a834', trim = '#e8c050', ho
     const emb = emblem === 'cross' ? `<g filter="url(#pcsl)" fill="${emblemCol}"><path d="M${X(-24)} -980 L${X(24)} -980 L${X(24)} -842 L${X(112)} -842 L${X(112)} -792 L${X(24)} -792 L${X(24)} -450 L${X(-24)} -450 L${X(-24)} -792 L${X(-112)} -792 L${X(-112)} -842 L${X(-24)} -842 Z"/></g>
       <path d="M${X(-24)} -970 L${X(-24)} -842 M${X(-112)} -842 L${X(-24)} -842" stroke="${lighten(emblemCol, .4)}" stroke-width="3" opacity=".5"/>` : '';
     // a row of covered buttons down the front, and the shoulder yoke seam
-    const buttons = emblem ? '' : `<g>${[-930, -890, -850, -810, -770, -730].map(y => `<g filter="url(#pcsl)"><circle cx="${F1(X(0))}" cy="${y}" r="8" fill="${trim}"/></g><circle cx="${F1(X(-2))}" cy="${y - 2}" r="2.4" fill="#fff" opacity=".6"/>`).join('')}</g>
+    const buttons = emblem ? '' : `<g>${[-930, -890, -850, -810, -770, -730].map(y => `<g filter="url(#pcsl)"><circle cx="${F1(X(0))}" cy="${y}" r="8" fill="${trim}"/></g><circle cx="${F1(X(-2))}" cy="${y - 2}" r="2" fill="#fff" opacity=".12"/>`).join('')}</g>
       <path d="M${X(-128)} -952 C${X(-96)} -912 ${X(-70)} -900 ${X(-34)} -898 M${X(128)} -952 C${X(96)} -912 ${X(70)} -900 ${X(34)} -898" stroke="${td}" stroke-width="3" fill="none" opacity=".55"/>`;
     // laced V-neck over the undershirt
     const neckSVG = `<path d="M${X(-50)} -1002 C${X(-24)} -958 ${X(24)} -958 ${X(50)} -1002 L${X(30)} -1004 L0 -944 L${X(-30)} -1004 Z" fill="${sleeve}" filter="url(#pcsl)"/>
@@ -107,7 +109,7 @@ function cotteBody({ tunic = '#2f7d4a', sleeve = '#e0a834', trim = '#e8c050', ho
         <path d="M${X(-60)} -1004 C${X(-34)} -950 ${X(34)} -950 ${X(60)} -1004" stroke="${trim}" stroke-width="8" fill="none" filter="url(#pcs)"/>
         <g filter="url(#softW)" opacity=".55"><path d="M${X(-146)} -956 C${X(-154)} -930 ${X(-160)} -910 ${X(-166)} -892 M${X(-88)} -948 C${X(-92)} -926 ${X(-94)} -908 ${X(-92)} -892 M${X(146)} -956 C${X(154)} -930 ${X(160)} -910 ${X(166)} -892 M${X(88)} -948 C${X(92)} -926 ${X(94)} -908 ${X(92)} -892" stroke="${cd}" stroke-width="13" fill="none"/>
           <path d="M${X(-118)} -990 C${X(-146)} -966 ${X(-166)} -946 ${X(-182)} -922" stroke="${cl}" stroke-width="11" fill="none" opacity=".6"/></g>
-        <g filter="url(#pcsl)"><circle cx="0" cy="-946" r="17" fill="url(#goldG)"/></g><circle cx="0" cy="-946" r="9" fill="url(#gemG)"/><circle cx="-3" cy="-950" r="2.6" fill="#fff" opacity=".8"/>`; })() : '';
+        <g filter="url(#pcsl)"><circle cx="0" cy="-946" r="17" fill="url(#brassG)"/></g><circle cx="0" cy="-946" r="9" fill="url(#gemG)"/><circle cx="-3" cy="-950" r="2.6" fill="#fff" opacity=".8"/>`; })() : '';
     return `<defs>${linG(id + 't', [lighten(tunic, .16), tunic, darken(tunic, .3)], { user: [-170 * w, 0, 170 * w, 0] })}${linG(id + 'm', [lighten(sleeve, .2), sleeve, darken(sleeve, .28)], { user: [-190, 0, 190, 0] })}</defs>
       ${legs}${softNeck(S, sk, 38, -960)}
       <g filter="url(#pcl)" fill="url(#${id}m)">${L.front ? '' : `<path d="${up(L, -1)}"/>`}${R.front ? '' : `<path d="${up(R, 1)}"/>`}</g>
@@ -142,42 +144,68 @@ function kettleHat({ dent = 0 } = {}) {
     <rect x="-58" y="-974" width="16" height="13" rx="2" fill="none" stroke="#d8b050" stroke-width="3" transform="rotate(-24 -50 -968)"/>`;
 }
 // soft felt cap with a rolled brim, a gold brooch and a red feather with barbs
-function featherCap({ tilt = 0 } = {}) {
-  return ({ g }) => `${hairLocks('#15100c', '#6a5848')}<g transform="rotate(${tilt} 0 -1120)"><path d="M-100 -1112 C-112 -1220 -48 -1270 18 -1266 C84 -1262 118 -1204 104 -1112 Q0 -1142 -100 -1112 Z" fill="url(#${g('hat')})" filter="url(#pcl)"/>
-    <path d="M-88 -1170 C-70 -1212 -30 -1236 6 -1240 M40 -1236 C70 -1226 90 -1196 98 -1156" stroke="${darken('#2f7a4a', .55)}" stroke-width="5" fill="none" opacity=".55" filter="url(#softW2)"/>
-    <path d="M-104 -1116 Q0 -1152 108 -1116 L106 -1088 Q0 -1118 -102 -1086 Z" fill="${darken('#2f7a4a', .18)}" filter="url(#pcsl)"/>
-    <path d="M-100 -1100 Q0 -1126 104 -1100" stroke="${lighten('#2f7a4a', .3)}" stroke-width="3" fill="none" opacity=".55"/>
-    <g filter="url(#pcsl)"><circle cx="58" cy="-1120" r="15" fill="url(#goldG)"/></g><circle cx="58" cy="-1120" r="8" fill="url(#gemG)"/><circle cx="55" cy="-1124" r="2.4" fill="#fff" opacity=".8"/>
+function featherCap({ tilt = 0, col = '#2f7a4a', hair = '#15100c' } = {}) {
+  return ({ g }) => `${hairLocks(hair, '#6a5848')}<g transform="rotate(${tilt} 0 -1120)"><path d="M-100 -1112 C-112 -1220 -48 -1270 18 -1266 C84 -1262 118 -1204 104 -1112 Q0 -1142 -100 -1112 Z" fill="url(#${g('hat')})" filter="url(#pcl)"/>
+    <path d="M-88 -1170 C-70 -1212 -30 -1236 6 -1240 M40 -1236 C70 -1226 90 -1196 98 -1156" stroke="${darken(col, .55)}" stroke-width="5" fill="none" opacity=".55" filter="url(#softW2)"/>
+    <path d="M-104 -1116 Q0 -1152 108 -1116 L106 -1088 Q0 -1118 -102 -1086 Z" fill="${darken(col, .18)}" filter="url(#pcsl)"/>
+    <path d="M-100 -1100 Q0 -1126 104 -1100" stroke="${lighten(col, .22)}" stroke-width="3" fill="none" opacity=".55"/>
+    <g filter="url(#pcsl)"><circle cx="58" cy="-1120" r="15" fill="url(#brassG)"/></g><circle cx="58" cy="-1120" r="8" fill="url(#gemG)"/><circle cx="55" cy="-1124" r="2.4" fill="#fff" opacity=".8"/>
     <path d="M52 -1128 C102 -1236 192 -1292 252 -1250 C230 -1210 176 -1180 108 -1170 Z" fill="url(#featherG)" filter="url(#pcsl)"/>
-    <path d="M58 -1130 C120 -1214 190 -1250 244 -1246" stroke="#5e0e10" stroke-width="3.4" fill="none" opacity=".75"/>
-    ${[0, 1, 2, 3, 4, 5, 6].map(i => { const t = .12 + i * .13, x = 58 + 186 * t, y = -1130 - 116 * Math.sin(t * 2.2); return `<path d="M${F1(x)} ${F1(y)} l${F1(-14 + i)} 26 M${F1(x)} ${F1(y)} l${F1(18 - i)} ${F1(-4 + i * 2)}" stroke="#7a1416" stroke-width="2" opacity=".55"/>`; }).join('')}
+    <path d="M58 -1130 C120 -1214 190 -1250 244 -1246" stroke="#1e140c" stroke-width="3" fill="none" opacity=".7"/>
+    ${[0, 1, 2, 3, 4, 5, 6].map(i => { const t = .12 + i * .13, x = 58 + 186 * t, y = -1130 - 116 * Math.sin(t * 2.2); return `<path d="M${F1(x)} ${F1(y)} l${F1(-14 + i)} 26 M${F1(x)} ${F1(y)} l${F1(18 - i)} ${F1(-4 + i * 2)}" stroke="#1e140c" stroke-width="2.4" opacity=".6"/>`; }).join('')}
     </g>`;
 }
 
-// ---------- faces ----------
-const stubble = (g, amt = .5, seed = 4) => { const R = rng(seed); let d = '';
-  for (let i = 0; i < 170; i++) { const a = R() * 2 * Math.PI, r = 20 + R() * 56, x = Math.cos(a) * r * .95, y = -985 + Math.sin(a) * r * .55 + 34;
-    if (y < -1022 + Math.abs(x) * .25 && Math.abs(x) < 30) continue; d += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(.9 + R() * .9)}"/>`; }
-  return `<g clip-path="url(#${g('face')})"><g filter="url(#softW)" opacity="${F1(.34 * amt)}"><path d="M-80 -1040 C-74 -990 -44 -950 0 -946 C44 -950 74 -990 80 -1040 C54 -1004 34 -996 0 -1000 C-34 -996 -54 -1004 -80 -1040 Z" fill="#1c120c"/></g>
-    <g fill="#241810" opacity="${F1(.5 * amt)}">${d}</g></g>`; };
-const EYE_T = { iris: '#5a3a1e', lash: '#120804', size: 1.06, w: 21, h: 11.5, sep: 28, tilt: .05, crease: '#8a5438', lowLine: '#7a4a34', iris_r: 10 };
-const BROW_T = { col: '#17100a', w: 9, len: 26, y: -1106, arch: 5, lineCol: '#8a5438' };
-const MOUTH_T = { w: 18, y: -1012, lip: '#b06a58', mouth: '#4a1c18', line: '#4e241c', teeth: '#f2ebe0', crease: '#8a5438', lipK: .85 };
-const noseForm = (S, side = 1) => `<g filter="url(#softW2)"><ellipse cx="-3" cy="-1050" rx="7" ry="17" fill="#fff0e0" opacity=".28"/><ellipse cx="-3" cy="-1036" rx="9" ry="6" fill="#fff0e0" opacity=".3"/></g><g filter="url(#softW)"><path d="M${12 * side} -1070 C${19 * side} -1052 ${17 * side} -1038 ${11 * side} -1031" stroke="${S.shade}" stroke-width="7" fill="none" opacity=".3"/></g>`;
-const thiefFace = ({ g, S, e }) => `${stubble(g, .55)}${noseForm(S, 1)}
-  <g clip-path="url(#${g('face')})"><g filter="url(#softW)"><ellipse cx="-34" cy="-1068" rx="22" ry="7" fill="#5a3a2a" opacity=".3"/><ellipse cx="34" cy="-1068" rx="22" ry="7" fill="#5a3a2a" opacity=".3"/>
-    <ellipse cx="-50" cy="-1030" rx="13" ry="20" fill="#7a4a36" opacity=".18"/><ellipse cx="50" cy="-1030" rx="13" ry="20" fill="#7a4a36" opacity=".2"/></g></g>
-  ${eyes2(e, EYE_T)}${brows2(e, BROW_T)}${mouth2(e, MOUTH_T)}${sweat2(e, S)}`;
-const EYE_G = { iris: '#3d5a80', lash: '#1a0e08', size: 1.0, w: 21, h: 10.5, sep: 28, tilt: -.02, crease: '#9a5a44', lowLine: '#8a4a36', iris_r: 9.6 };
-const BROW_G = { col: '#4a2c18', w: 12, len: 28, y: -1107, arch: 3, lineCol: '#9a5a44' };
-const MOUTH_G = { w: 20, y: -1011, lip: '#b86858', mouth: '#4a1814', line: '#5a2a20', teeth: '#efe6d8', crease: '#9a5a44', lipK: .7 };
-const guardFace = ({ g, S, e }) => `<g clip-path="url(#${g('face')})"><g filter="url(#softW)"><ellipse cx="-46" cy="-1040" rx="22" ry="14" fill="#d8604c" opacity=".35"/><ellipse cx="46" cy="-1040" rx="22" ry="14" fill="#d8604c" opacity=".33"/><ellipse cx="0" cy="-1048" rx="11" ry="10" fill="#d8604c" opacity=".3"/></g></g>
-  ${eyes2(e, EYE_G)}${brows2(e, BROW_G)}${mouth2(e, MOUTH_G)}${sweat2(e, S)}`;
+// ---------- faces (grown men: a longer face with a squared jaw, smaller heavy-lidded eyes, a trimmed beard) ----------
+const FACE_M = 'M-70 -1112 C-74 -1068 -71 -1032 -62 -1006 C-52 -980 -28 -962 0 -960 C28 -962 52 -980 62 -1006 C71 -1032 74 -1068 70 -1112 C64 -1152 34 -1174 0 -1174 C-34 -1174 -64 -1152 -70 -1112Z';
+// short trimmed beard along the jaw, joined to the sideburns, with a moustache; the base is soft-edged, strands give it texture
+function shortBeard(g, { col = '#1e1610', hi = '#5e4a3a', seed = 11, full = 1 } = {}) {
+  const R = rng(seed);
+  const outer = 'M-73 -1064 C-75 -1020 -66 -990 -50 -970 C-34 -953 -16 -947 0 -946 C16 -947 34 -953 50 -970 C66 -990 75 -1020 73 -1064';
+  const shape = outer + ' L64 -1058 C58 -1038 44 -1022 32 -1010 C24 -1001 12 -996 0 -995 C-12 -996 -24 -1001 -32 -1010 C-44 -1022 -58 -1038 -64 -1058 Z';
+  const yOut = x => -947 - 117 * Math.pow(Math.abs(x) / 73, 4.2), yIn = x => -996 - 62 * Math.pow(Math.abs(x) / 64, 1.6);
+  let st = '';
+  for (let i = 0; i < 260 * full; i++) {
+    const x = (R() * 2 - 1) * 70, y = lerp(yIn(x), yOut(x), R());
+    if (Math.abs(x) > 64 && y < -1050) continue;
+    const dx = -x / 73 * 3.4 + (R() - .5) * 2, dy = 6 + R() * 5, dark = R() < .55;
+    st += `<path d="M${F1(x)} ${F1(y)} q${F1(dx * .5 + (R() - .5) * 2)} ${F1(dy * .5)} ${F1(dx)} ${F1(dy)}" stroke="${dark ? '#0c0806' : hi}" stroke-width="${F1(1 + R() * .9)}" opacity="${F1(dark ? .5 : .35 + R() * .25)}"/>`;
+  }
+  const mus = 'M-34 -1016 C-24 -1031 -9 -1031 0 -1026 C9 -1031 24 -1031 34 -1016 C38 -1008 37 -998 33 -992 C28 -1006 15 -1014 0 -1014 C-15 -1014 -28 -1006 -33 -992 C-37 -998 -38 -1008 -34 -1016 Z';
+  let ms = '';
+  for (let i = 0; i < 70; i++) { const u = R() * 2 - 1, x = u * 32, y = -1026 + Math.abs(u) * 10 + R() * 8;
+    ms += `<path d="M${F1(x)} ${F1(y)} q${F1(u * 4)} 3 ${F1(u * 7)} ${F1(6 + R() * 3)}" stroke="${R() < .5 ? '#0c0806' : hi}" stroke-width="1.2" opacity=".45"/>`; }
+  const cb = g('bd' + seed), cm = g('ms' + seed);
+  return `<defs><clipPath id="${cb}"><path d="${shape}"/></clipPath><clipPath id="${cm}"><path d="${mus}"/></clipPath></defs>
+    <g clip-path="url(#${g('face')})"><g opacity=".5" filter="url(#softW2)"><path d="${shape}" fill="${col}"/></g></g>
+    <g filter="url(#pcs)"><path d="${shape}" fill="${col}"/></g>
+    <g clip-path="url(#${cb})" stroke-linecap="round" fill="none">${st}</g>
+    <g filter="url(#pcs)"><path d="${mus}" fill="${col}"/></g><g clip-path="url(#${cm})" stroke-linecap="round" fill="none">${ms}</g>`;
+}
+// under-eye bags, crow's feet and a cheekbone hollow: the marks of a grown man's face
+const ageLines = (S, k = 1) => [-1, 1].map(s => `<g stroke="${S.line}" fill="none" stroke-linecap="round">
+    <path d="M${s * 13} -1069 Q${s * 28} -1061 ${s * 44} -1071" stroke-width="1.7" opacity="${F1(.32 * k)}"/>
+    <path d="M${s * 51} -1090 l${s * 9} -4 M${s * 52} -1084 l${s * 10} 0 M${s * 51} -1078 l${s * 8} 4" stroke-width="1.3" opacity="${F1(.3 * k)}"/></g>
+  <g filter="url(#softW)"><ellipse cx="${s * 52}" cy="-1040" rx="12" ry="22" fill="${S.deep}" opacity="${F1(.22 * k)}"/><ellipse cx="${s * 28}" cy="-1068" rx="18" ry="6" fill="${S.deep}" opacity="${F1(.2 * k)}"/></g>`).join('');
+// a straighter, longer nose: bridge light, a shadowed side plane, the ball of the tip
+const noseForm = (S, side = 1) => `<g filter="url(#softW2)"><path d="M-2 -1092 C-4 -1072 -5 -1058 -4 -1046" stroke="#fff0e0" stroke-width="7" fill="none" opacity=".22"/><ellipse cx="-2" cy="-1042" rx="9" ry="6" fill="#fff0e0" opacity=".22"/></g>
+  <g filter="url(#softW)"><path d="M${11 * side} -1086 C${16 * side} -1066 ${18 * side} -1050 ${12 * side} -1036" stroke="${S.shade}" stroke-width="8" fill="none" opacity=".36"/></g>
+  <path d="M${-9 * side} -1092 C${-11 * side} -1074 ${-12 * side} -1060 ${-14 * side} -1048" stroke="${S.line}" stroke-width="1.3" fill="none" opacity=".2"/>`;
+const EYE_T = { iris: '#3a2616', lash: '#140c08', size: .9, w: 20, h: 10.5, sep: 28, tilt: .03, crease: '#6a3e2a', lowLine: '#6a3e2a', iris_r: 9.4, catch: .55, catchR: .8, white: '#e4dacd' };
+const BROW_T = { col: '#1a120c', w: 11, len: 30, y: -1102, arch: 3, lineCol: '#7a4a34' };
+const MOUTH_T = { w: 18, y: -1010, lip: '#a0604e', mouth: '#4a1c18', line: '#3e1e16', teeth: '#e8dfd0', crease: '#7a4a34', lipK: .7 };
+const thiefFace = ({ g, S, e }) => `${noseForm(S, 1)}<g clip-path="url(#${g('face')})">${ageLines(S, 1)}</g>
+  ${shortBeard(g)}${eyes2(e, EYE_T)}${brows2(e, BROW_T)}${mouth2(e, MOUTH_T)}${sweat2(e, S)}`;
+const EYE_G = { iris: '#3e4e5e', lash: '#1a0e08', size: .9, w: 20, h: 10, sep: 28, tilt: -.02, crease: '#7a4a36', lowLine: '#7a4a36', iris_r: 9, catch: .5, white: '#e0d6ca' };
+const BROW_G = { col: '#3a2818', w: 12, len: 30, y: -1104, arch: 2, lineCol: '#8a5a44' };
+const MOUTH_G = { w: 20, y: -1008, lip: '#a86858', mouth: '#3e1612', line: '#4a2418', teeth: '#e4dccc', crease: '#8a5a44', lipK: .6 };
+const guardFace = ({ g, S, e }) => `<g clip-path="url(#${g('face')})"><g filter="url(#softW)"><ellipse cx="-46" cy="-1040" rx="22" ry="14" fill="#b86a54" opacity=".16"/><ellipse cx="46" cy="-1040" rx="22" ry="14" fill="#b86a54" opacity=".15"/></g>${ageLines(S, 1.2)}</g>
+  ${noseForm(S, 1)}${shortBeard(g, { col: '#3a2a1e', hi: '#8a7a68', seed: 23 })}${eyes2(e, EYE_G)}${brows2(e, BROW_G)}${mouth2(e, MOUTH_G)}${sweat2(e, S)}`;
 
-// ---------- the people ----------
-const THIEF = { skin: 'olive', hair: 'bald', hairColor: 'black', beard: 'stubble', hat: 'feathercap', hatColor: '#2f7a4a', customHat: featherCap(), legs: 'none', top: 'vest',
-  eyeColor: '#5a3a1e', browW: .01, id: 'tf', ownFace: 1, noMustache: 1, faceExtra: thiefFace,
-  body: cotteBody({ tunic: '#2f7d4a', sleeve: '#e0a834', trim: '#e8c050', hose: ['#a8372f', '#c9962c'], boot: '#4a2f1c', w: 1, cape: '#8a2c30' }) };
-const WATCHMAN = { skin: 'ruddy', hair: 'bald', hairColor: 'brown', beard: 'mustache', hat: 'kettle', hatColor: '#9aa3ae', customHat: kettleHat({ dent: 1 }), legs: 'none', top: 'vest',
-  eyeColor: '#3d5a80', browW: .01, id: 'gd', ownFace: 1, faceExtra: guardFace,
-  body: cotteBody({ tunic: '#efe8d8', sleeve: '#b8302c', trim: '#c9262b', hose: ['#3f4a63', '#3f4a63'], boot: '#4a2f1c', belt: '#4a3018', w: 1.14, emblem: 'cross', mail: true, pouch: false, armFn: gArm, hangFn: gHang, sh: 156, r1: 36, r2: 28, r3: 22, hs: 1.7 }) };
+// ---------- the people (natural dyes: moss, oat, oxblood, umber; worn linen and a faded madder cross) ----------
+const THIEF = { skin: 'olive', hair: 'bald', hairColor: 'black', beard: 'none', hat: 'feathercap', hatColor: '#5a4632', customHat: featherCap({ col: '#5a4632', hair: '#1a130e' }), legs: 'none', top: 'vest',
+  eyeColor: '#3a2616', browW: .01, id: 'tf', ownFace: 1, noMustache: 1, faceExtra: thiefFace, facePath: FACE_M,
+  body: cotteBody({ tunic: '#4a5233', sleeve: '#94764f', trim: '#6a5638', hose: ['#4b3a2c', '#4b3a2c'], boot: '#2c1e14', belt: '#3a2614', w: 1, cape: '#5c2a24' }) };
+const WATCHMAN = { skin: 'ruddy', hair: 'bald', hairColor: 'brown', beard: 'none', hat: 'kettle', hatColor: '#9aa3ae', customHat: kettleHat({ dent: 1 }), legs: 'none', top: 'vest',
+  eyeColor: '#3e4e5e', browW: .01, id: 'gd', ownFace: 1, noMustache: 1, faceExtra: guardFace, facePath: FACE_M,
+  body: cotteBody({ tunic: '#c4b99e', sleeve: '#5e3a2e', trim: '#7a2a22', hose: ['#3a3632', '#3a3632'], boot: '#2c1e14', belt: '#3a2614', w: 1.14, emblem: 'cross', emblemCol: '#7c2a22', mail: true, pouch: false, armFn: gArm, hangFn: gHang, sh: 156, r1: 36, r2: 28, r3: 22, hs: 1.7 }) };
