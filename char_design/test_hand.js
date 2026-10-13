@@ -1,0 +1,10 @@
+const L = require('./lib');
+const H = require('./handkit');
+const doc = new L.Doc(1000, 700);
+const st = { light: [0.94, -0.33], cel: 1, lineW: 1.6, lineMode: 'ink', lineColor: '#2a1512', rimW: 4, shadowOp: 0.92 };
+const m = { base: '#d0956a', light: '#ecb680', hi: '#ffdcae', shadow: '#8c5c55', deep: '#56343a', rim: '#ffc35a', rimHot: '#fff3c8', bounce: '#e8995c', line: '#2a1512', nail: '#e6b49a', nailHi: '#fff0e0', nailTip: '#f6e0cf', vein: '#7a5a70' };
+let s = `<rect width="1000" height="700" fill="#7d8a92"/>`;
+s += `<g transform="translate(250,120) scale(3)">${H.openHand(doc, st, m)}</g>`;
+s += `<rect x="690" y="0" width="66" height="700" fill="#a0703f"/>`;
+s += `<g transform="translate(723,330) scale(3)">${H.fistGrip(doc, st, m)}</g>`;
+require('fs').writeFileSync('out/hand.svg', doc.svg(s));

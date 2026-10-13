@@ -1,0 +1,16 @@
+const L = require('./lib');
+const B = require('./body');
+const { face2 } = require('./face2');
+const p = JSON.parse(process.argv[2] || '{}');
+const W = JSON.parse(process.argv[3] || '{}');
+const doc = new L.Doc(1080, 1920);
+const J = B.skeleton(p);
+const g = B.warped(J, W);
+const col = { torso: '#c08a6a', neck: '#c89070', uaN: '#d09a78', faN: '#d8a080', uaF: '#a87a60', faF: '#b08068', thN: '#c89070', llN: '#d09a78', thF: '#a87a60', llF: '#b08068', ftN: '#e0a888', ftF: '#b88a70' };
+const order = ['uaF', 'faF', 'thF', 'llF', 'ftF', 'torso', 'neck', 'thN', 'llN', 'ftN', 'uaN', 'faN'];
+let s = `<rect width="1080" height="1920" fill="#7d8a92"/>`;
+for (let y = 0; y < 1920; y += 190 * 1) s += `<line x1="0" x2="1080" y1="${1850 - y}" y2="${1850 - y}" stroke="#fff" stroke-opacity="0.15"/>`;
+for (const k of order) s += `<path d="${L.path(g[k], true)}" fill="${col[k]}" stroke="#2a1512" stroke-width="2"/>`;
+s += `<g transform="translate(${J.head[0]},${J.head[1]}) scale(${J.headS})">${face2(doc, {}, { sc: J.headS })}</g>`;
+for (const [k, v] of Object.entries(J)) if (Array.isArray(v)) s += `<circle cx="${v[0]}" cy="${v[1]}" r="4" fill="#0f0"/>`;
+require('fs').writeFileSync('out/body.svg', doc.svg(s));
