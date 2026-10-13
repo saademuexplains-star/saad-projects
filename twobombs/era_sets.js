@@ -847,15 +847,17 @@ function hillGhosts(t, C, { ghost = 1 } = {}) {
   for (let i = 0; i < 220; i++) { const x = -500 + R() * 2100, y = crest(x) + R() * 14, h = 14 + R() * 30, sw = Math.sin(t * 1.4 + x * .01) * 5;
     grass += `<path d="M${F1(x)} ${F1(y)} q${F1(2 + sw * .5)} ${F1(-h * .5)} ${F1(3 + sw)} ${F1(-h)}" stroke="${pick(R, ['#3a2e3e', '#463848', '#2e2634'])}" stroke-width="${F1(1.6 + R() * 1.6)}" fill="none"/>`; }
   for (let i = 0; i < 90; i++) { const x = -400 + R() * 1900, y = crest(x) + 30 + R() * 700;
-    flowers += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(2 + R() * 3.4 * (y - 1300) / 700)}" fill="${pick(R, ['#d8c8e0', '#e8dcc8', '#c8b8d8'])}" opacity="${F1(.35 + R() * .3)}"/>`; }
+    flowers += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(2 + R() * 3.4 * (y - 1300) / 700)}" fill="${pick(R, ['#d8c8e0', '#e8dcc8', '#c8b8d8'])}" opacity="${F1(.45 + R() * .35)}"/>`; }
+  let tufts = ''; for (let i = 0; i < 140; i++) { const x = -400 + R() * 1900, y = crest(x) + 40 + Math.pow(R(), .7) * 760, h = (10 + R() * 18) * (.6 + (y - 1360) / 500), sw = Math.sin(t * 1.2 + x * .013) * 3;
+    tufts += `<path d="M${F1(x)} ${F1(y)} q${F1(1 + sw * .4)} ${F1(-h * .5)} ${F1(2 + sw)} ${F1(-h)} M${F1(x + 5)} ${F1(y)} q${F1(-1 + sw * .4)} ${F1(-h * .45)} ${F1(-3 + sw)} ${F1(-h * .85)}" stroke="${pick(R, ['#5e4a5e', '#6a5668', '#524052'])}" stroke-width="2.2" fill="none"/>`; }
   let d = 'M-1400 2800 L-1400 1700'; for (let x = -1400; x <= 2500; x += 50) d += ` L${x} ${F1(crest(x))}`; d += ' L2500 2800 Z';
   return `${par(C, .3, sky1945({ y0: -1400, y1: 1500, top: '#1e2240', mid: ['#4a4a72', '#b47a7a'], haze: '#eaa070' }), [540, 960])}
     ${par(C, .45, `<g filter="url(#b2)">${mushroomCloud(170, 1250, t, { s: .56, age: .95, glow: 0, seed: 3, op: .62 * ghost, ghost: 1, tint: '#f0c8c8', tintK: .45 })}${mushroomCloud(920, 1270, t * .8, { s: .52, age: .9, glow: 0, seed: 7, op: .58 * ghost, ghost: 1, tint: '#e8c4d0', tintK: .45 })}</g>`, [540, 960])}
     ${par(C, .5, `${hills(1250, ['#5a4a5a', '#4a3e4c'], { seed: 31, amp: 90, step: 140 })}<g filter="url(#pe8)" fill="#ffd8a0">${lights(170, 70, 5)}${lights(920, 60, 9)}</g>`, [540, 960])}
-    ${par(C, 1, `<defs>${linG('hgG', ['#6a5468', '#4a3a4c', '#2e2632'], { user: [0, 1350, 0, 2100] })}</defs><path d="${d}" fill="url(#hgG)"/>
+    ${par(C, 1, `<defs>${linG('hgG', ['#86707e', '#665462', '#4a3e4c'], { user: [0, 1350, 0, 2100] })}</defs><path d="${d}" fill="url(#hgG)"/>
       <path d="M-500 ${F1(crest(-500))} ${Array.from({ length: 43 }, (_, i) => { const x = -500 + i * 50; return `L${x} ${F1(crest(x))}`; }).join(' ')}" stroke="#c89aa0" stroke-width="5" fill="none" opacity=".35" filter="url(#softW2)"/>
       <path d="M560 1372 C600 1500 520 1640 620 1800 C680 1900 660 2000 700 2100" stroke="#7a6474" stroke-width="40" fill="none" opacity=".35" filter="url(#b10)"/>
-      ${flowers}${grass}`, [540, 960])}`;
+      ${tufts}${flowers}${grass}`, [540, 960])}`;
 }
 // a lecture room: blackboard, windows with daylight, rows of students (backs of heads, dark uniforms) in the foreground
 function lectureSet(t) {

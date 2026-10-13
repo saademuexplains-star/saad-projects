@@ -78,7 +78,7 @@ const RIG_ROOM = (t, o = {}) => ({ lights: [ { pos: [-300, 300, 900], col: '#fff
 const RIG_DUSK = t => ({ lights: [ { pos: [540, 1300, -300], col: '#ffb080', int: 2.0, rad: 2400, shin: 20 }, { pos: [-300, 400, 700], col: '#9a90c0', int: .6, rad: 3000, shin: 20 },
     { pos: [540, 2400, 1200], col: '#5a5070', int: .3, rad: 5000, shin: 12 } ],
   amb: '#4a4060', ambGround: '#2a2026', ambInt: .34, bgLight: .9, exposure: 1.08, bloom: .45, bloomThresh: .76, white: 2.2, tonemap: 'soft', normalStrength: 1.3, specScale: .2,
-  vignette: .6, grain: .018, shadowTint: '#1a1430', highTint: '#ffd0a8', shadowAmt: .25, highAmt: .1, sat: .9, contrast: 1.1 });
+  vignette: .5, grain: .018, shadowTint: '#1a1430', highTint: '#ffd0a8', shadowAmt: .25, highAmt: .1, sat: .9, contrast: 1.1 });
 
 // ---------- poses ----------
 const HS = 1.5;

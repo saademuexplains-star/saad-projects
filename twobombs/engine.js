@@ -679,7 +679,8 @@ function makeTimeline({ shots, trans = [], words = [], strong = [], phrases = []
     for (const [cut, a, b, st, opt] of trans) if (FL[st]) {
       const m = (a + b) / 2, hw = Math.max(.04, (b - a) / 2), d = t - m;
       const v2 = d < 0 ? Math.max(0, 1 + d / hw) ** 2 : Math.exp(-d / ((opt && opt.decay) || .09));
-      if (t >= a - .001 && t < b + .5) { const vv = FL[st][1] * v2 * ((opt && opt.k) ?? 1); if (vv > fl) { fl = vv; flc = (opt && opt.col) || FL[st][0]; } }
+      // keep the tail until the decay has died away (a slow decay cut off early leaves a visible step)
+      if (t >= a - .001 && t < b + Math.max(.5, 6 * ((opt && opt.decay) || .09))) { const vv = FL[st][1] * v2 * ((opt && opt.k) ?? 1); if (vv > fl) { fl = vv; flc = (opt && opt.col) || FL[st][0]; } }
     }
     if (window.__FLASH && window.__FLASH.op > fl) { fl = window.__FLASH.op; flc = window.__FLASH.col || flc; }
     window.__FLASH = null;
