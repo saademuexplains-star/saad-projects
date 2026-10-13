@@ -439,6 +439,7 @@ def paint(S):
     zone = np.clip(gblur(beard, 8) * 1.5, 0, 1) * (1 - bcover)
     A = A * (1 - (zone * (.30 + .30 * dots))[..., None] * (1 - np.array([.62, .64, .72], np.float32)))
     S['alpha'] = np.clip(np.maximum.reduce([skull, S['shirt'], S['neck'], S['ears'], bfill, cv, under]), 0, 1)
+    S['headalpha'] = np.clip(np.maximum.reduce([skull, S['ears'], bfill, cv, under]), 0, 1)
 
     # ---------------------------------------------------------------- micro relief (pores, hairs, weave)
     pores = noise(.9, 21) * .55 + noise(2.0, 22) * .45
@@ -548,6 +549,13 @@ def crop_view(img, box, path, scale=2):
 if __name__ == '__main__':
     mode = sys.argv[1] if len(sys.argv) > 1 else 'full'
     S = sculpt()
+    if mode == 'bake':                      # head layers for the full-body poses (body.py)
+        M = paint(S)
+        np.savez_compressed(os.path.join(SCR, 'head_layers.npz'), H=S['H'], headalpha=S['headalpha'],
+                            albedo=M['albedo'], gloss=M['gloss'], shin=M['shin'], skin=M['skin'], thin=M['thin'],
+                            bx=M['bump'][0], by=M['bump'][1])
+        print('baked head layers')
+        sys.exit(0)
     if mode == 'clay':
         M = dict(albedo=np.dstack([np.full((H, W), .42, np.float32)] * 3) * np.array([1, .9, .8], np.float32),
                  skin=np.ones((H, W), np.float32), gloss=np.full((H, W), .5, np.float32),
