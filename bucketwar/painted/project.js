@@ -2,8 +2,8 @@
 // Beat shown: "…soldiers stole a bucket."  The Modena soldier walks off with the bucket while the Bologna guard sleeps.
 
 // ---- cast ----
-const THIEF = { skin: 'light', hair: 'short', hairColor: 'brown', beard: 'stubble', hat: 'feathercap', hatColor: '#2f6b46', top: 'vest',
-  coat: '#3f6a45', under: '#e6dcbf', legs: 'breeches', pants: '#8a6a3f', foot: 'shoes', eyeColor: '#5a3d22', id: 'th' };
+const THIEF = { skin: 'light', hair: 'short', hairColor: 'brown', beard: 'stubble', hat: 'feathercap', hatColor: '#2a7a48', top: 'vest',
+  coat: '#2f7d49', under: '#f1e4c2', legs: 'breeches', pants: '#a1702f', stock: '#a8372f', foot: 'shoes', eyeColor: '#5a3d22', id: 'th' };
 const GUARD = { skin: 'light', hair: 'short', hairColor: 'brown', beard: 'mustache', hat: 'kettle', hatColor: '#8d98a5', top: 'jacket',
   coat: '#b3322f', under: '#efe8d8', legs: 'trousers', pants: '#3f4a63', foot: 'shoes', eyeColor: '#3d5a80', id: 'gd' };
 
@@ -47,7 +47,7 @@ const spear = (x, y, len) => `<rect x="${x - 6}" y="${y - len}" width="12" heigh
 
 function village(preset = 'day', blur = 'dof') {
   const h = 1180;
-  return background({ preset, horizon: h, blur, trees: true, grassOp: .22, overrides: { ground: ['#d8c28f', '#b99d66', '#8d7747'] },
+  return background({ preset, horizon: h, blur, trees: true, grassOp: .2, overrides: { sky: ['#3d8fe6', '#8fcdf6', '#eaf5f2'], far: '#5f9467', near: '#2f6e36', ground: ['#e6c98a', '#c4a064', '#94763f'] },
     props: `${houseRow(h + 6)}${cypress(70, h + 14, 330)}${cypress(1010, h + 14, 300)}
       <g transform="translate(905 ${h + 96})">${wellSVG(.66)}</g>
       <g>${spear(290, h + 130, 880)}<ellipse cx="190" cy="${h + 136}" rx="200" ry="24" fill="#000" opacity=".28" filter="url(#soft)"/>
@@ -61,10 +61,12 @@ function heroFrame() {
   // the left fist (screen-left) hangs near local (-344,-654) when raised 26–30°; the bucket handle runs through it
   const hx = HERO_X - HERO_S * 336, hy = HERO_Y - HERO_S * 668;
   return village(window.PRESET || 'day') + `
-    <g transform="translate(${hx} ${hy + 150 * .95}) scale(.95)">${bucket(1, -2)}</g>
-    ${placePerson(HERO_X, HERO_Y, HERO_S, THIEF, pose, 0.4)}`;
+    <g filter="url(#edgeSh)"><g transform="translate(${hx} ${hy + 150 * .95}) scale(.95)">${bucket(1, -2)}</g></g>
+    <ellipse cx="${HERO_X + 36}" cy="${HERO_Y + 4}" rx="${290 * HERO_S}" ry="${36 * HERO_S}" fill="#000" opacity=".42" filter="url(#soft)"/>
+    <g filter="url(#edgeSh)"><g transform="translate(${HERO_X} ${HERO_Y}) scale(${HERO_S})"><g transform="${breathe(0.4)}">${lit(person(THIEF, pose))}</g></g></g>`;
 }
 
 window.STILLS = {
-  hero: () => showStill(heroFrame(), `<div class="capWord key">bucket.</div><div class="label" style="left:60px;top:330px">Italy, 1325</div>`),
+  hero: () => { showStill(heroFrame(), `<div class="capWord key">bucket.</div><div class="label" style="left:60px;top:330px">Italy, 1325</div>`);
+    document.getElementById('L2').style.filter = 'saturate(1.14) contrast(1.08) brightness(1.02)'; },
 };

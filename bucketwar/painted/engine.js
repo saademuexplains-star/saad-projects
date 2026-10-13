@@ -89,10 +89,17 @@ let EXTRA_DEFS = '';
 const addDefs = s => { EXTRA_DEFS += s; };
 function sharedDefs() {
   const tones = Object.entries(SKIN_TONES).map(([k, s]) =>
-    pieceFilter(`pk_${k}`, { rim: 8, dark: s.rim, darkOp: .32, lightOp: .14 }) + pieceFilter(`pks_${k}`, { rim: 3.5, dark: s.rim, darkOp: .3, lightOp: .12 })).join('');
+    pieceFilter(`pk_${k}`, { rim: 8, dark: s.rim, darkOp: .5, lightOp: .2 }) + pieceFilter(`pks_${k}`, { rim: 4, dark: s.rim, darkOp: .5, lightOp: .2 })).join('');
   return `<defs>
-  ${pieceFilter('pc', { rim: 8 })}${pieceFilter('pcl', { rim: 8, lift: true })}${pieceFilter('pcs', { rim: 3.5 })}${pieceFilter('pcsl', { rim: 3.5, lift: true })}
-  ${pieceFilter('pclA', { rim: 8, lift: true, region: [-340, -1320, 680, 820] })}${pieceFilter('pcsA', { rim: 3.5, region: [-340, -1320, 680, 820] })}${tones}
+  ${pieceFilter('pc', { rim: 9, darkOp: .68, lightOp: .30 })}${pieceFilter('pcl', { rim: 9, lift: true, darkOp: .68, lightOp: .30 })}${pieceFilter('pcs', { rim: 4, darkOp: .66, lightOp: .28 })}${pieceFilter('pcsl', { rim: 4, lift: true, darkOp: .66, lightOp: .28 })}
+  ${pieceFilter('pclA', { rim: 9, lift: true, darkOp: .68, lightOp: .30, region: [-340, -1320, 680, 820] })}${pieceFilter('pcsA', { rim: 4, darkOp: .66, lightOp: .28, region: [-340, -1320, 680, 820] })}${tones}
+  <filter id="edgeSh" x="-20%" y="-12%" width="140%" height="140%" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="2.4" result="d"/><feGaussianBlur in="d" stdDeviation="1.7" result="db"/>
+    <feFlood flood-color="#140a18" flood-opacity=".7"/><feComposite in2="db" operator="in" result="edge"/>
+    <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="sb"/><feOffset in="sb" dx="10" dy="12" result="so"/>
+    <feFlood flood-color="#0a0510" flood-opacity=".42"/><feComposite in2="so" operator="in" result="drop"/>
+    <feMerge><feMergeNode in="drop"/><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
   <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
   <filter id="soft2"><feGaussianBlur stdDeviation="2"/></filter>
   <filter id="tex" x="-5%" y="-5%" width="110%" height="110%">
@@ -247,6 +254,7 @@ function person(o = {}, e = {}, v = (typeof window !== 'undefined' && window.VAR
     ${linG(g('pants'), [lighten(col.pants, .25), col.pants, darken(col.pants, .25)])}
     ${linG(g('robe'), [lighten(col.robe, .16), col.robe, darken(col.robe, .45)])}
     ${linG(g('trim'), [lighten(col.trim, .35), col.trim, darken(col.trim, .35)])}
+    ${o.stock ? linG(g('stock'), [lighten(o.stock, .22), o.stock, darken(o.stock, .34)]) : ''}
     <clipPath id="${g('face')}"><path d="${FACE}"/></clipPath>
   </defs>`;
 
@@ -267,7 +275,7 @@ function person(o = {}, e = {}, v = (typeof window !== 'undefined' && window.VAR
       <path d="${mx(k, 'M -100 -362 L -98 -335 C -106 -280 -104 -220 -92 -150 C -88 -120 -86 -100 -84 -86 C -100 -60 -132 -44 -140 -22 C -146 -6 -128 4 -100 2 L -28 2 C -20 -10 -26 -50 -34 -86 C -30 -130 -18 -200 -16 -260 C -14 -300 -16 -320 -18 -335 L -16 -362 Z')}" fill="url(#bootG)" filter="url(#pc)"/>
       <path d="${mx(k, 'M -84 -320 C -92 -250 -90 -180 -80 -112')}" stroke="#fff" stroke-width="8" fill="none" opacity="${k < 0 ? .2 : .1}" filter="url(#soft2)"/>
       <path d="${mx(k, 'M -106 -398 Q -60 -420 -10 -398 L -14 -334 Q -60 -350 -102 -334 Z')}" fill="url(#cuffG)" filter="url(#pcsl)"/>` : `
-      <path d="${mx(k, 'M -94 -372 C -104 -300 -102 -230 -88 -150 C -84 -110 -82 -90 -80 -70 L -36 -70 C -34 -100 -26 -160 -20 -240 C -18 -300 -20 -340 -22 -372 Z')}" fill="url(#stockG)" filter="url(#pc)"/>
+      <path d="${mx(k, 'M -94 -372 C -104 -300 -102 -230 -88 -150 C -84 -110 -82 -90 -80 -70 L -36 -70 C -34 -100 -26 -160 -20 -240 C -18 -300 -20 -340 -22 -372 Z')}" fill="${o.stock ? u('stock') : 'url(#stockG)'}" filter="url(#pc)"/>
       <path d="${mx(k, 'M -98 -392 L -18 -392 L -20 -366 L -96 -366 Z')}" fill="${darken(col.pants, .08)}" filter="url(#pcsl)"/>${shoe}`;
     return `${groundShadow}
       <path d="${mx(k, 'M -100 -608 C -110 -540 -104 -450 -92 -372 L -22 -372 C -16 -450 -10 -540 -6 -604 Z')}" fill="${u('pants')}" filter="url(#pc)"/>
