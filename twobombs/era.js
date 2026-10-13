@@ -95,7 +95,27 @@ function handRelax(k, x, y, s, rot, { S, sk }) {
     <g filter="url(#softW2)"><path d="M-10 4 C-11 14 -11 24 -9 32" stroke="${S.hi}" stroke-width="3.5" fill="none" opacity=".3"/><ellipse cx="2" cy="44" rx="7" ry="4" fill="${S.deep}" opacity=".3"/></g>
     <ellipse cx="14.4" cy="27.6" rx="2" ry="2.6" fill="${mix(S.mid, '#f0d8cc', .35)}" opacity=".35"/></g>`;
 }
-Object.assign(HANDS, { hold: handHold, pointF: handPoint, relax: handRelax });
+// an open hand, palm toward us, fingers apart (explaining, pleading, "this big"); the thumb out to the +x side.
+// spread fans the fingers; cup closes them a little toward the palm
+function handOpenJ(k, x, y, s, rot, { S, sk, spread = 1, curl: cup = 0 }) {
+  const id = 'hg' + (HGN++), sp = .6 + .6 * spread;
+  const F = [[11.2, 34, 31, 8.6, 9], [3.6, 36.5, 35.5, 9.2, 2.5], [-4.2, 36, 33.5, 8.8, -4], [-11.6, 33.5, 26.5, 7.8, -11]].map(([bx, by, L, w, a]) => [bx, by, L * (1 - .18 * cup), w, a * sp]);
+  const tip = ([bx, by, L, w, a]) => { const r = a * Math.PI / 180; return [bx - Math.sin(r) * L, by + Math.cos(r) * L]; };
+  const fingers = F.map(f => { const [tx, ty] = tip(f); return capsuleD(f[0], f[1] - 4, f[3] / 2 + .4, tx, ty, f[3] / 2 - .9); }).join(' ');
+  return `<g transform="translate(${F1(x)} ${F1(y)}) rotate(${F1(rot)}) scale(${F1(-k * s)} ${F1(s)})"><defs>${handG(id, S)}</defs>
+    <g filter="url(#pks_${sk})" fill="url(#${id})">
+      <path d="M-12 -3 C-12 -10 12 -10 12 -3 C15 6 16.5 18 15.6 32 L-15.4 33 C-16.4 22 -15.6 9 -12 -3 Z"/>
+      <path d="${fingers}"/><path d="${capsuleD(12.5, 8, 7, 27.5, 27, 5.1)}"/></g>
+    <g filter="url(#softW2)">
+      <ellipse cx="-1" cy="18" rx="10" ry="9" fill="${S.hi}" opacity=".3"/><path d="M8 4 C4 14 3 22 6 30" stroke="${S.deep}" stroke-width="4" fill="none" opacity=".22"/></g>
+    <g stroke="${S.line}" fill="none" stroke-linecap="round">
+      <path d="M-13 21 Q-2 27 12 19" stroke-width="1.3" opacity=".42"/><path d="M-13 29 Q-1 33 10 28" stroke-width="1.2" opacity=".36"/><path d="M10 6 C6 14 6 22 9 28" stroke-width="1.2" opacity=".4"/>
+      ${F.slice(0, 3).map((f, i) => { const g2 = F[i + 1], m0 = [(f[0] + g2[0]) / 2, (f[1] + g2[1]) / 2 + 3], t1 = tip(f), t2 = tip(g2), m1 = [(t1[0] + t2[0]) / 2, (t1[1] + t2[1]) / 2];
+        return `<path d="M${F1(m0[0])} ${F1(m0[1])} L${F1(lerp(m0[0], m1[0], .72))} ${F1(lerp(m0[1], m1[1], .72))}" stroke-width="1.5" opacity=".5"/>`; }).join('')}
+      ${F.map(f => { const t1 = tip(f), q = [lerp(f[0], t1[0], .55), lerp(f[1], t1[1], .55)]; return `<path d="M${F1(q[0] - f[3] * .36)} ${F1(q[1])} Q${F1(q[0])} ${F1(q[1] + 1.6)} ${F1(q[0] + f[3] * .36)} ${F1(q[1])}" stroke-width="1" opacity=".32"/>`; }).join('')}</g>
+    ${F.map(f => { const t1 = tip(f); return `<ellipse cx="${F1(t1[0])}" cy="${F1(t1[1] - 4)}" rx="${F1(f[3] * .3)}" ry="2.6" fill="${S.hi}" opacity=".32"/>`; }).join('')}</g>`;
+}
+Object.assign(HANDS, { hold: handHold, pointF: handPoint, relax: handRelax, openJ: handOpenJ });
 for (const n of Object.keys(HANDS)) { const f = HANDS[n]; if (f.__nf) continue;
   const w = (k, x, y, s, rot, o) => normFix(rot, k, f(k, x, y, s, rot, o)); w.__nf = 1; HANDS[n] = w; }
 // a soft drop shadow of a redrawn hand onto whatever is under it (flat pass only)
@@ -136,9 +156,10 @@ const faceBurn = (g, k = 1) => k < .01 ? '' : `<g clip-path="url(#${g('face')})"
       <path d="M36 -1120 C46 -1112 50 -1100 48 -1088" stroke="#5a1a14" stroke-width="2.4" fill="none" opacity=".4"/></g></g>`;
 // soot / dirt smudges and specks over the whole face
 const faceSoot = (g, k = 1, seed = 3) => { if (k < .01) return ''; const R = rng(seed); let d = '';
-  for (let i = 0; i < 60; i++) { const x = (R() * 2 - 1) * 66, y = -1170 + R() * 205; d += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(.8 + R() * 1.6)}"/>`; }
-  return `<g clip-path="url(#${g('face')})" opacity="${F1(k)}"><g filter="url(#softW)"><ellipse cx="-40" cy="-1030" rx="26" ry="16" fill="#3a2c22" opacity=".3"/><ellipse cx="10" cy="-1150" rx="40" ry="14" fill="#3a2c22" opacity=".25"/><ellipse cx="-20" cy="-985" rx="30" ry="12" fill="#3a2c22" opacity=".25"/></g>
-    <g fill="#2a1e16" opacity=".5">${d}</g></g>`; };
+  for (let i = 0; i < 18; i++) { const x = (R() * 2 - 1) * 60, y = -1165 + R() * 190; d += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(.5 + R() * .7)}"/>`; }
+  return `<g clip-path="url(#${g('face')})" opacity="${F1(k)}"><g filter="url(#softW)"><ellipse cx="-40" cy="-1030" rx="26" ry="16" fill="#3a2c22" opacity=".26"/><ellipse cx="10" cy="-1150" rx="40" ry="14" fill="#3a2c22" opacity=".22"/><ellipse cx="-20" cy="-985" rx="30" ry="12" fill="#3a2c22" opacity=".22"/>
+      <ellipse cx="-52" cy="-1080" rx="12" ry="22" fill="#3a2c22" opacity=".16"/></g>
+    <g fill="#2a1e16" opacity=".3">${d}</g></g>`; };
 const EYE_J = { iris: '#2a1a0e', lash: '#0e0806', size: 1, w: 15.5, h: 7.2, sep: 30, tilt: .07, crease: '#a8785a', lowLine: '#6e4430', iris_r: 6.6, catch: .55, catchR: .7, white: '#e2d8cc', lashW: .9 };
 const BROW_J = { col: '#140e0a', w: 7, len: 25, y: -1102, sep: 30, arch: 2.4, lineCol: '#7a4a32' };
 const MOUTH_J = { w: 19, y: -1009, lip: '#a86858', mouth: '#4a1c16', line: '#3a1a12', teeth: '#ece4d6', crease: '#7a4a32', lipK: .85 };
@@ -187,12 +208,15 @@ function sidePart({ col = '#17110d', hi = '#5a4c42', capped = false } = {}) {
     <path d="M-6 -1196 C16 -1206 40 -1204 60 -1192" stroke="#fff" stroke-width="5" fill="none" opacity=".16" filter="url(#softW2)"/>
     <g filter="url(#softW2)" opacity=".5"><path d="M-66 -1084 C-67 -1108 -65 -1126 -59 -1140 M66 -1084 C67 -1108 65 -1126 59 -1140" stroke="${col}" stroke-width="5" fill="none"/></g>`;
 }
-// thin white hair of an old man, combed back, receding; ears show
-function oldHair({ col = '#cfc8bc' } = {}) {
-  return `<g filter="url(#pcs)"><path d="M-70 -1072 C-74 -1100 -74 -1128 -68 -1150 C-64 -1136 -62 -1112 -62 -1090 L-63 -1074 Z M70 -1072 C74 -1100 74 -1128 68 -1150 C64 -1136 62 -1112 62 -1090 L63 -1074 Z" fill="${col}"/></g>
-    <path d="M-64 -1152 C-50 -1186 -18 -1198 6 -1196 C34 -1194 58 -1180 66 -1154" stroke="${col}" stroke-width="10" fill="none" opacity=".45" filter="url(#softW2)"/>
-    <g stroke="${lighten(col, .3)}" fill="none" opacity=".55" stroke-width="1.2"><path d="M-52 -1170 C-32 -1188 -2 -1194 26 -1188 M-58 -1160 C-40 -1180 -10 -1186 20 -1182 M-40 -1182 C-16 -1196 16 -1196 44 -1184"/></g>
-    <g stroke="${darken(col, .3)}" fill="none" opacity=".35" stroke-width="1.1"><path d="M-68 -1130 C-66 -1110 -66 -1094 -66 -1080 M68 -1130 C66 -1110 66 -1094 66 -1080"/></g>`;
+// thin white hair of an old man: soft tufts over the ears that follow the skull, a few fine strands combed back over the
+// crown — all of it on the head (the crown strands are clipped to the face outline, so nothing floats above the scalp)
+function oldHair({ g, col = '#cfc8bc' } = {}) {
+  const tuft = k => mx(k, 'M -63 -1136 C -71 -1124 -75 -1104 -74 -1086 C -73 -1076 -71 -1068 -67 -1062 L -64 -1068 C -66 -1086 -66 -1108 -61 -1128 Z');
+  return `<g filter="url(#pcs)" fill="${col}"><path d="${tuft(-1)}"/><path d="${tuft(1)}"/></g>
+    <g stroke="${darken(col, .28)}" fill="none" opacity=".4" stroke-width="1.1"><path d="M-70 -1120 C-72 -1104 -72 -1090 -70 -1074 M70 -1120 C72 -1104 72 -1090 70 -1074"/></g>
+    <g clip-path="url(#${g('face')})">
+      <path d="M-58 -1150 C-40 -1170 -16 -1178 4 -1178 C28 -1178 50 -1168 60 -1150 C40 -1160 20 -1164 2 -1164 C-20 -1164 -40 -1160 -58 -1150 Z" fill="${col}" opacity=".32" filter="url(#softW2)"/>
+      <g stroke="${lighten(col, .25)}" fill="none" opacity=".5" stroke-width="1.1"><path d="M-46 -1156 C-30 -1168 -8 -1174 14 -1172 M-36 -1162 C-18 -1172 6 -1176 30 -1170 M-20 -1166 C0 -1176 24 -1176 46 -1164"/></g></g>`;
 }
 // the wartime civilian field cap (senjibō): khaki crown, short dark visor, a band
 function fieldCap({ col = '#8a7c5a', hair = '#17110d' } = {}) {
@@ -236,6 +260,11 @@ function shirtBody({ shirt = '#e4ddcc', pants = '#7a6c4e', shoe = '#3a2618', bel
     // single filter group, so no seam shows between them. legTf lets a leg step (walk) about the hip line.
     const legP = k => mx(k, `M ${X(-146)} -620 C ${X(-152)} -470 ${X(-134)} -300 ${X(-118)} -104 L ${X(-40)} -104 C ${X(-36)} -300 ${X(-24)} -430 ${X(-4)} -526 L ${X(-4)} -620 Z`);
     const seatP = `M${X(-136)} -712 C${X(-142)} -676 ${X(-148)} -640 ${X(-147)} -600 L${X(147)} -600 C${X(148)} -640 ${X(142)} -676 ${X(136)} -712 Z`;
+    // seated (bust + e.lap): the thighs come toward us under the torso, knees side by side
+    const lapSVG = e.bust && e.lap ? `<g filter="url(#pc)" fill="url(#${id}p)"><path d="M${X(-150)} -704 C${X(-192)} -688 ${X(-212)} -656 ${X(-200)} -630 C${X(-178)} -606 ${X(-84)} -606 0 -622 C${X(84)} -606 ${X(178)} -606 ${X(200)} -630 C${X(212)} -656 ${X(192)} -688 ${X(150)} -704 Z"/></g>
+      <g filter="url(#softW2)" fill="none" opacity=".45"><path d="M0 -680 C${X(-4)} -660 ${X(-3)} -640 0 -624" stroke="${pd}" stroke-width="6"/>
+        <path d="M${X(-182)} -636 C${X(-140)} -620 ${X(-96)} -618 ${X(-50)} -628 M${X(182)} -636 C${X(140)} -620 ${X(96)} -618 ${X(50)} -628" stroke="${pd}" stroke-width="4"/>
+        <path d="M${X(-160)} -672 C${X(-124)} -662 ${X(-90)} -660 ${X(-60)} -664 M${X(160)} -672 C${X(124)} -662 ${X(90)} -660 ${X(60)} -664" stroke="${lighten(pants, .3)}" stroke-width="6" opacity=".6"/></g>` : '';
     const legs = e.bust ? '' : `<g filter="url(#pc)" fill="url(#${id}p)"><path d="${seatP}"/><g ${legTf(-1, e, -560, 0)}><path d="${legP(-1)}"/></g><g ${legTf(1, e, -560, 0)}><path d="${legP(1)}"/></g></g>
       ${[-1, 1].map(k => `<g ${legTf(k, e, -560, 0)}>
         <g filter="url(#softW2)" opacity=".5"><path d="${mx(k, `M ${X(-78)} -560 C ${X(-82)} -450 ${X(-82)} -320 ${X(-80)} -120`)}" stroke="${pd}" stroke-width="5" fill="none"/>
@@ -276,7 +305,7 @@ function shirtBody({ shirt = '#e4ddcc', pants = '#7a6c4e', shoe = '#3a2618', bel
       return ''; };
     return `<defs>${linG(id + 't', [lighten(sh, .12), sh, darken(sh, .2)], { user: [-170 * w, 0, 170 * w, 0] })}${linG(id + 'p', [lighten(pants, .14), pants, darken(pants, .3)], { user: [-150 * w, 0, 150 * w, 0] })}
         <clipPath id="${id}c"><path d="${body}"/></clipPath></defs>
-      ${legs}${softNeck(S, sk, 31, -960)}${chest}
+      ${legs}${lapSVG}${softNeck(S, sk, 31, -960)}${chest}
       <g filter="url(#pcl)" fill="${sc}">${L.front ? '' : `<path d="${up(L, -1)}"/>`}${R.front ? '' : `<path d="${up(R, 1)}"/>`}</g>
       <path d="${body}" fill="url(#${id}t)" filter="url(#pcl)"/>
       ${folds}${placket}${pocketSVG}${scorch}${dirt}${beltSVG}${tie ? tieSVG(tie, X) : ''}${over ? overSVG(over, X, id) : collar}
@@ -326,7 +355,7 @@ const TSU_BAND = { ...TSU_BASE, id: 'tw', hat: 'sidepart', customHat: () => side
 
 // old Tsutomu (2009): thin white hair, round spectacles, a cardigan over the shirt, a stoop
 const OLD_FACE = jpFace(EYE_O, BROW_O, MOUTH_O, { age: 1.6, old: 1 });
-const TSU_OLD = { ...TSU_BASE, skin: 'jpOld', id: 'to', hat: 'oldhair', customHat: () => oldHair() + glasses(), faceExtra: OLD_FACE, faceShade: faceShadeJ(),
+const TSU_OLD = { ...TSU_BASE, skin: 'jpOld', id: 'to', hat: 'oldhair', customHat: ({ g }) => oldHair({ g }) + glasses(), faceExtra: OLD_FACE, faceShade: faceShadeJ(),
   body: shirtBody({ shirt: '#e8e4da', pants: '#3e3c3a', shoe: '#2a2220', belt: '#2a2018', over: { col: '#7a6e60', kind: 'cardigan' } }) };
 // the boss (1945): grey temples, round glasses, a small moustache, the khaki national-civilian uniform (kokuminfuku)
 const bossHair = () => `<g filter="url(#pcsl)"><path d="M-70 -1084 C-74 -1120 -76 -1156 -64 -1178 C-50 -1202 -20 -1210 4 -1210 C34 -1208 62 -1196 72 -1172 C78 -1150 76 -1116 72 -1084 L66 -1088 C66 -1112 64 -1132 58 -1148 C40 -1160 20 -1166 0 -1166 C-22 -1166 -42 -1160 -56 -1150 C-64 -1134 -66 -1112 -66 -1088 Z" fill="#2a2420"/></g>

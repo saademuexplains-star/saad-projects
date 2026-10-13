@@ -170,19 +170,12 @@ function riverWater(yw, y1, t, refl = '', { col = '#5e7e8a', far = '#a8bcc2', se
     <g transform="translate(0 ${2 * yw}) scale(1 -1)" opacity=".42" filter="url(#b5)">${refl}</g>
     <rect x="-1400" y="${yw}" width="3880" height="${y1 - yw}" fill="url(#${id})" opacity=".35"/>${rip}`;
 }
-// the near bank: stone embankment, grass, a willow's hanging branches into the top right (foreground occluder)
+// the near bank: stone embankment and grass
 function nearBank(y, t, { seed = 6 } = {}) {
   const R = rng(seed); let stones = '';
   for (let i = 0; i < 30; i++) { const x = -300 + i * 60 + R() * 20, yy = y + 10 + R() * 30; stones += `<path d="M${F1(x)} ${F1(yy)} l${F1(26 + R() * 30)} ${F1(-4 - R() * 6)} l${F1(8 + R() * 10)} ${F1(16 + R() * 10)} l${F1(-30 - R() * 26)} ${F1(6)} Z" fill="${pick(R, ['#6a6458', '#5a564c', '#7a7266'])}"/>`; }
   let grass = ''; for (let i = 0; i < 160; i++) { const x = -300 + R() * 1700, yy = y + 30 + R() * 200, h = 20 + R() * 40; grass += `<path d="M${F1(x)} ${F1(yy)} q${F1(4 + Math.sin(t * 2 + i) * 4)} ${F1(-h * .6)} ${F1(8 + Math.sin(t * 2 + i) * 6)} ${F1(-h)}" stroke="${pick(R, ['#4e6a34', '#5e7a3e', '#3e5a2a'])}" stroke-width="${F1(2 + R() * 2)}" fill="none"/>`; }
   return `<path d="M-1400 ${y} L2500 ${y} L2500 ${y + 1200} L-1400 ${y + 1200} Z" fill="#4a5a34"/>${stones}${grass}`;
-}
-function willow(x, y, t, { s = 1, n = 16, seed = 8 } = {}) {
-  const R = rng(seed); let d = '';
-  for (let i = 0; i < n; i++) { const x0 = x + (R() - .3) * 420 * s, L = (260 + R() * 420) * s, sw = Math.sin(t * .9 + i) * 10 * s;
-    let leaves = ''; for (let j = 0; j < 14; j++) { const p = j / 13, lx = x0 + sw * p * p + (R() - .5) * 8, ly = y + L * p; leaves += `<ellipse cx="${F1(lx)}" cy="${F1(ly)}" rx="${F1(5 * s)}" ry="${F1(12 * s)}" transform="rotate(${F1((R() - .5) * 40)} ${F1(lx)} ${F1(ly)})"/>`; }
-    d += `<path d="M${F1(x0)} ${y} Q${F1(x0 + sw * .5)} ${F1(y + L * .5)} ${F1(x0 + sw)} ${F1(y + L)}" stroke="#2a3418" stroke-width="${F1(2 * s)}" fill="none"/><g fill="${pick(R, ['#3a5222', '#2e4418', '#46602a'])}">${leaves}</g>`; }
-  return d;
 }
 // the whole opening view. ruin: the same view today (end of the film). Parallax refs: sky at the opening frame, the rest
 // at the settled frame.
@@ -197,7 +190,6 @@ function riverView(t, C, { ruin = 0, tram = null, haze = 1, driftT = null } = {}
     ${par(C, .8, `${hall}${bridge}<path d="M-1400 900 L2500 900 L2500 930 L-1400 930 Z" fill="#7a7468"/>`, TOWN_REF)}
     ${par(C, .86, riverWater(928, 1500, t, `${hall}${bridge}`), TOWN_REF)}
     ${par(C, 1, `${nearBank(1500, t)}`, TOWN_REF)}
-    ${par(C, 1.15, `<g filter="url(#b10)" opacity=".95">${willow(1040, -460, t, { s: 1.7, n: 22 })}</g>`, TOWN_REF)}
     <rect x="-1400" y="400" width="3880" height="600" fill="#cfdcde" opacity="${F1(.16 * haze)}" filter="url(#b40)"/>`;
 }
 
@@ -423,8 +415,9 @@ function shelterSet(t, { glow = 1, blur = null } = {}) {
   return `<g ${blur ? `filter="url(#${blur})"` : ''}>
     <rect x="-400" y="-400" width="1880" height="2800" fill="#24180f"/>${soil}
     <path d="M300 1150 L300 640 Q540 520 780 640 L780 1150 Z" fill="#2a1408"/>
-    <g filter="url(#pe8)"><path d="M330 1150 L330 660 Q540 560 750 660 L750 1150 Z" fill="#c8501c" opacity="${F1(.75 * glow)}"/></g>
-    <g filter="url(#pe16)"><ellipse cx="540" cy="1000" rx="200" ry="160" fill="#ff8a30" opacity="${F1(.55 * glow * flick(t, 3))}"/></g>
+    <g filter="url(#pe8)"><path d="M330 1150 L330 660 Q540 560 750 660 L750 1150 Z" fill="#8e2a22" opacity="${F1(.8 * glow)}"/></g>
+    <g filter="url(#pe16)"><ellipse cx="540" cy="1020" rx="200" ry="150" fill="#d0503c" opacity="${F1(.5 * glow * flick(t, 3))}"/></g>
+    <g filter="url(#b16)" opacity=".55">${smoke(480, 1060, t, { seed: 21, n: 8, H: 500, drift: 120, r0: 60, r1: 180, col: '#1a0e0a', op: .8, speed: .05, blur: 'b10' })}</g>
     ${skylineBand(330, 750, 1060, { seed: 33, h: 50, col: '#1a0c06', haze: '#3a1a0a', rows: 2 })}
     ${embers(540, 1060, 300, 500, t, { seed: 4, n: 16, speed: .3, size: 4 })}
     <path d="M260 1150 L260 600 L820 600 L820 1150" fill="none" stroke="#3a2818" stroke-width="40"/>
@@ -489,10 +482,20 @@ function carriage(x, y, s = 1, { roll = 0, col = '#4a3426' } = {}) {
 }
 // the platform + the station: concrete edge, broken canopy, people with bundles (silhouettes); x0 = scroll
 function stationSet(t, { scroll = 0, smokeK = 1 } = {}) {
+  // refugees shuffling along the platform: stooped, padded air-raid hoods or headscarves, baggy work trousers, bundles on
+  // their backs, now and then a child by the hand
   const R = rng(41); let folk = '';
-  for (let i = 0; i < 9; i++) { const x = -200 + i * 190 + R() * 60 - scroll * .9, y = 1640 + R() * 40, s = .9 + R() * .3, c = pick(R, ['#2a2622', '#3a322c', '#2e2a28']);
-    folk += `<g transform="translate(${F1(x)} ${F1(y)}) scale(${s})"><path d="M-40 0 L-34 -200 Q-50 -230 -40 -260 Q0 -290 40 -260 Q50 -230 34 -200 L40 0 Z" fill="${c}"/><circle cx="0" cy="-290" r="32" fill="${c}"/>
-      ${R() < .6 ? `<path d="M30 -200 Q90 -210 90 -150 Q90 -110 40 -110 Z" fill="${darken(c, -.1)}"/>` : ''}</g>`; }
+  for (let i = 0; i < 9; i++) { const sp = 26 + R() * 26, x = -200 + i * 190 + R() * 60 - scroll * .9 - (t - 23.3) * sp, y = 1640 + R() * 40, s = .95 + R() * .3;
+    const c = pick(R, ['#4e4640', '#5a5048', '#463e38', '#544a40']), cl = pick(R, ['#7e6e5a', '#6e6254', '#8a7c66']), ph = t * (2.6 + R()) + i * 1.7, st = Math.sin(ph) * 12, bob = Math.abs(Math.cos(ph)) * 4;
+    const kind = R(), lean = 6 + R() * 8;
+    const head = kind < .45 ? `<path d="M-36 -250 C-40 -300 -28 -330 0 -332 C28 -330 40 -300 36 -250 C30 -236 -30 -236 -36 -250 Z" fill="${mix(cl, c, .4)}"/><ellipse cx="4" cy="-288" rx="15" ry="19" fill="${mix(c, '#8a7058', .35)}"/>`
+      : kind < .7 ? `<circle cx="0" cy="-290" r="25" fill="${c}"/><path d="M-27 -292 Q0 -326 27 -292 L30 -270 Q0 -282 -30 -270 Z" fill="${cl}"/>` : `<circle cx="0" cy="-290" r="25" fill="${c}"/>`;
+    const body = `<path d="M-34 -254 Q0 -266 34 -254 L38 -150 Q42 -80 ${F1(30 + st)} -4 L${F1(8 + st)} -4 L4 -84 L-4 -84 L${F1(-8 - st)} -4 L${F1(-30 - st)} -4 Q-42 -80 -38 -150 Z" fill="${c}"/>
+      <path d="M-34 -248 C-44 -210 -46 -180 ${F1(-40 - st * .3)} -150 M34 -248 C44 -210 46 -180 ${F1(40 + st * .3)} -150" stroke="${c}" stroke-width="16" stroke-linecap="round" fill="none"/>`;
+    const bundle = R() < .75 ? `<path d="M26 -262 C70 -270 86 -240 84 -200 C82 -164 60 -150 30 -156 Z" fill="${cl}"/><path d="M30 -258 C46 -236 50 -206 36 -170" stroke="${darken(cl, .3)}" stroke-width="4" fill="none"/>` : '';
+    folk += `<g transform="translate(${F1(x)} ${F1(y)}) scale(${F1(s)})"><ellipse cx="0" cy="0" rx="60" ry="10" fill="#3a3632" opacity=".4"/>
+      <g transform="translate(0 ${F1(-bob)}) rotate(${F1(-lean)} 0 -120)">${body}${bundle}${head}</g>
+      ${kind > .86 ? `<g transform="translate(-80 0) scale(.56)"><g transform="translate(0 ${F1(-bob)})"><path d="M-30 -250 Q0 -262 30 -250 L34 -150 Q36 -80 ${F1(26 - st)} -4 L${F1(6 - st)} -4 L0 -84 L${F1(-6 + st)} -4 L${F1(-26 + st)} -4 Q-36 -80 -34 -150 Z" fill="${c}"/><circle cx="0" cy="-286" r="30" fill="${c}"/><path d="M30 -236 L80 -190" stroke="${c}" stroke-width="14" stroke-linecap="round"/></g></g>` : ''}</g>`; }
   return `${sky1945({ y0: -400, y1: 1300, top: '#8a8a90', haze: '#c8b8a4' })}
     ${hills(1180, ['#8a8a84', '#7a7a72'], { seed: 12, amp: 120 })}
     <rect x="-400" y="700" width="1880" height="600" fill="#b8a898" opacity=".35" filter="url(#b40)"/>
@@ -530,25 +533,64 @@ function photoHisako(x, y, s = 1, { rot = -4, t = 0 } = {}) {
 }
 
 // ======================= Nagasaki harbour =======================
+// the long harbour between steep hills: houses packed up the slopes (white walls, grey tile), the shipyard on the right
+// (a hammerhead crane, a hull on the slip, sheds), sampans and their wakes on the water, gulls
 function nagasakiView(t, C, { haze = 1 } = {}) {
+  const shore = 1080, hy = x => shore - 20 - 400 * Math.exp(-Math.pow((x - 200) / 520, 2)) - 250 * Math.exp(-Math.pow((x - 1350) / 480, 2)) - 120 * Math.exp(-Math.pow((x + 700) / 400, 2)) - 18 * Math.sin(x * .02);
+  let hillD = `M-1400 ${shore + 40}`; for (let x = -1400; x <= 2500; x += 40) hillD += ` L${x} ${F1(hy(x))}`; hillD += ` L2500 ${shore + 40} Z`;
+  // houses: rows up the slope, back (high, small, hazy) to front (low, larger)
   const R = rng(61); let houses = '';
-  for (let i = 0; i < 260; i++) { const x = -600 + R() * 2400, base = 1060 - Math.max(0, 420 - Math.abs(x - 300) * .35) * (.4 + R() * .6), y = base + R() * 30;
-    if (y > 1080) continue; const w = 26 + R() * 30, h = 14 + R() * 12, c = pick(R, ['#c8c0b0', '#a89e8e', '#8a8478', '#d8d0c0']);
-    houses += `<rect x="${F1(x)}" y="${F1(y - h)}" width="${F1(w)}" height="${F1(h)}" fill="${c}"/><path d="M${F1(x - 3)} ${F1(y - h)} L${F1(x + w / 2)} ${F1(y - h - 9)} L${F1(x + w + 3)} ${F1(y - h)} Z" fill="${pick(R, ['#5a5c60', '#4a4c52', '#6a5a50'])}"/>`; }
-  const crane = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})" stroke="#3a3c40" fill="none"><path d="M0 0 L0 -420 M-30 0 L-30 -420 M-30 -420 L0 -420" stroke-width="10"/>
-    ${Array.from({ length: 8 }, (_, i) => `<path d="M-30 ${-i * 52} L0 ${-(i + 1) * 52}" stroke-width="4"/>`).join('')}<path d="M-260 -430 L240 -430 M-260 -460 L120 -460 L240 -430" stroke-width="12"/><path d="M180 -430 L180 -300" stroke-width="3"/></g>`;
+  for (let r = 0; r < 16; r++) { const p = r / 15; let x = -900 + R() * 40;
+    while (x < 1900) { const top = hy(x), y = lerp(top + 30, shore - 6, p), sc = .55 + .55 * p, w = (34 + R() * 34) * sc, h = (16 + R() * 12) * sc, rf = (12 + R() * 6) * sc;
+      if (y > top + 18 && !(x > 900 && x < 1600 && p > .55) && R() < .86) {
+        const hz = (1 - p) * .55, wall = mix(pick(R, ['#e6e0d2', '#d8d0c0', '#c8bea8', '#8a7a64']), '#c8d2d4', hz), roof = mix(pick(R, ['#4e545c', '#5a5e64', '#444a52', '#5e5048']), '#a8b4b8', hz);
+        houses += `<rect x="${F1(x)}" y="${F1(y - h)}" width="${F1(w)}" height="${F1(h)}" fill="${wall}"/><path d="M${F1(x - 4 * sc)} ${F1(y - h)} L${F1(x + w * .2)} ${F1(y - h - rf)} L${F1(x + w * .8)} ${F1(y - h - rf)} L${F1(x + w + 4 * sc)} ${F1(y - h)} Z" fill="${roof}"/>`;
+        if (R() < .3) houses += `<rect x="${F1(x + w * .3)}" y="${F1(y - h * .7)}" width="${F1(w * .16)}" height="${F1(h * .4)}" fill="${mix('#3a3a3a', '#c8d2d4', hz)}"/>`;
+        if (R() < .12) houses += `<circle cx="${F1(x + w + 10 * sc)}" cy="${F1(y - h)}" r="${F1(14 * sc)}" fill="${mix('#4a6a42', '#a8b8b0', hz)}"/>`; }
+      x += w + (6 + R() * 26) * sc; } }
+  // a small church with a spire on the left slope
+  const church = `<g transform="translate(-160 ${F1(lerp(hy(-160) + 30, shore, .35))}) scale(.9)"><rect x="-40" y="-60" width="80" height="60" fill="#ece6da"/><path d="M-46 -60 L0 -92 L46 -60 Z" fill="#4e545c"/>
+    <rect x="-16" y="-130" width="32" height="70" fill="#ece6da"/><path d="M-20 -130 L0 -190 L20 -130 Z" fill="#4e545c"/><path d="M0 -190 L0 -214 M-8 -204 L8 -204" stroke="#3a3a3a" stroke-width="3"/></g>`;
+  // the shipyard: sheds with sawtooth roofs, a hull on the slip in scaffolding, a hammerhead crane
+  const sheds = Array.from({ length: 4 }, (_, i) => { const x = 930 + i * 150; return `<rect x="${x}" y="${shore - 90}" width="140" height="90" fill="#7e8288"/>${[0, 1, 2, 3].map(j => `<path d="M${x + j * 35} ${shore - 90} L${x + j * 35 + 35} ${shore - 120} L${x + j * 35 + 35} ${shore - 90} Z" fill="#5a5e64"/>`).join('')}<rect x="${x + 10}" y="${shore - 60}" width="120" height="16" fill="#3e4248" opacity=".6"/>`; }).join('');
+  // a cargo ship moored at the yard's quay: dark hull, red boot-topping, the bridge amidships, a funnel, masts and booms
+  const hull = `<g transform="translate(1180 ${shore + 34})">
+      <path d="M-380 0 L-400 -96 L-360 -100 L330 -100 L400 -120 L380 -40 L340 0 Z" fill="#2e3236"/><path d="M-384 -16 L360 -16 L340 0 L-380 0 Z" fill="#7a3a30"/>
+      <path d="M-400 -96 L-360 -100 L330 -100 L400 -120" stroke="#8a9096" stroke-width="4" fill="none"/>
+      <path d="M-90 -100 L-90 -170 L70 -170 L70 -100 Z" fill="#e2dccc"/><path d="M-70 -170 L-70 -206 L50 -206 L50 -170 Z" fill="#d8d2c2"/>
+      ${[0, 1, 2, 3, 4].map(i => `<rect x="${-80 + i * 30}" y="-160" width="18" height="14" fill="#3a4048"/>`).join('')}${[0, 1, 2].map(i => `<rect x="${-60 + i * 36}" y="-198" width="22" height="14" fill="#3a4048"/>`).join('')}
+      <path d="M100 -100 L104 -200 L148 -200 L152 -100 Z" fill="#1e2024"/><rect x="100" y="-190" width="50" height="14" fill="#b8a070"/>
+      <path d="M-260 -100 L-260 -300 M240 -100 L240 -280 M-260 -260 L-170 -110 M240 -250 L320 -104" stroke="#2a2c30" stroke-width="5" fill="none"/>
+      <path d="M-260 -300 L-90 -206 M240 -280 L50 -206" stroke="#2a2c30" stroke-width="1.5" opacity=".7"/></g>`;
+  const crane = (x, y, s, jib) => `<g transform="translate(${x} ${y}) scale(${s})" stroke="#2e3034" fill="none">
+      <path d="M-30 0 L-14 -520 M30 0 L14 -520 M-14 -520 L14 -520" stroke-width="10"/>${Array.from({ length: 10 }, (_, i) => `<path d="M${F1(-30 + i * 1.6)} ${-i * 52} L${F1(30 - (i + 1) * 1.6)} ${-(i + 1) * 52}" stroke-width="4"/>`).join('')}
+      <g transform="rotate(${F1(jib)} 0 -540)"><path d="M-380 -540 L300 -540 M-380 -572 L180 -572 L300 -540 M-380 -540 L-380 -572" stroke-width="12"/>${Array.from({ length: 12 }, (_, i) => `<path d="M${-370 + i * 50} -542 L${-350 + i * 50} -570" stroke-width="3"/>`).join('')}
+        <rect x="-420" y="-590" width="70" height="60" fill="#3a3c40" stroke="none"/><path d="M220 -540 L220 -380" stroke-width="2.5"/><path d="M206 -380 L234 -380 L230 -360 L210 -360 Z" fill="#2e3034" stroke="none"/></g></g>`;
+  const town = `<path d="${hillD}" fill="#6e8a72"/><g filter="url(#b2)" fill="#5a7a5e" opacity=".5">${Array.from({ length: 160 }, (_, i) => { const R2 = rng(i + 600), x = -900 + R2() * 2800; return `<circle cx="${F1(x)}" cy="${F1(hy(x) + 10 + R2() * 90)}" r="${F1(6 + R2() * 12)}"/>`; }).join('')}</g>
+    ${houses}${church}${sheds}`;
+  // the water: hills mirrored, ripples, boats with wakes
+  const boats = [[(t * 18) % 2400 - 700, 1300, .9], [1500 - (t * 12) % 2400, 1420, 1.1], [(t * 9 + 900) % 2400 - 600, 1220, .7]].map(([x, y, s]) => `<g transform="translate(${F1(x)} ${y}) scale(${s})">
+      <path d="M-60 0 L60 0 L46 14 L-50 14 Z" fill="#3a2e26"/><path d="M-10 0 L-10 -30 L10 -30 L10 0 Z" fill="#5a4a3a"/><circle cx="24" cy="-16" r="8" fill="#2a2420"/><path d="M24 -8 L22 0" stroke="#2a2420" stroke-width="8"/>
+      <path d="M-62 16 L-160 40 M-62 16 L-150 6" stroke="#e8f0f0" stroke-width="3" opacity=".45"/></g>`).join('');
+  // a fishing boat nearer us, puttering left with a wake and a little smoke from its stack
+  const bx = 980 - (t - 28.98) * 46, near = `<g transform="translate(${F1(bx)} ${F1(1520 + Math.sin(t * 1.7) * 3)}) rotate(${F1(Math.sin(t * 1.3) * 1.2)})">
+      <path d="M-240 6 L-120 30 L170 30 L230 -6 L200 -16 L-220 -10 Z" fill="#4a3a30"/><path d="M-226 -8 L200 -14 L224 -8" stroke="#c8b8a0" stroke-width="5" fill="none"/>
+      <path d="M-110 -14 L-110 -78 L40 -78 L40 -14 Z" fill="#d8d0c0"/><path d="M-120 -78 L50 -78 L40 -94 L-110 -94 Z" fill="#5a4a40"/>
+      ${[0, 1, 2].map(i => `<rect x="${-96 + i * 44}" y="-66" width="26" height="22" fill="#3a4048"/>`).join('')}
+      <rect x="70" y="-120" width="18" height="106" fill="#3a3230"/><path d="M110 -14 L110 -150 M110 -150 L160 -20" stroke="#3a3230" stroke-width="5"/>
+      <path d="M230 -6 L330 40 M230 -6 L320 -30" stroke="#e8f0f0" stroke-width="5" opacity=".5"/></g>
+    ${smoke(bx + 79, 1400, t, { seed: 5, n: 8, H: 260, drift: 120, r0: 14, r1: 60, col: '#8a8a8a', op: .35, speed: .25, blur: 'b10' })}`;
+  const water = `${riverWater(shore, 1700, t, `<g opacity=".8">${town}</g>`, { col: '#4e6e7a', far: '#9ab0b6', seed: 8 })}${hull}${boats}${near}`;
+  const gulls = [0, 1, 2].map(i => { const x = (t * (40 + i * 12) + i * 300) % 1600 - 200, y = 420 + i * 70 + Math.sin(t * 1.3 + i) * 20, f = Math.sin(t * 9 + i * 2) * 10;
+    return `<path d="M${F1(x - 18)} ${F1(y - f * .4)} Q${F1(x - 8)} ${F1(y - 8 - f)} ${F1(x)} ${F1(y)} Q${F1(x + 8)} ${F1(y - 8 - f)} ${F1(x + 18)} ${F1(y - f * .4)}" stroke="#2a2a2c" stroke-width="3" fill="none"/>`; }).join('');
   return `${par(C, .2, `${sky1945({ y0: -1400, y1: 1000, top: '#5a7a9e', haze: '#d4d8d4' })}${cumulus(250, 520, 560, 220, { seed: 41 })}${cumulus(860, 380, 420, 170, { seed: 43, op: .9 })}${cumulus(-120, 300, 380, 160, { seed: 47, op: .8 })}`, [540, 960])}
-    ${par(C, .45, hills(820, ['#8aa09a', '#7a948a'], { seed: 23, amp: 260, step: 110 }), [540, 960])}
-    ${par(C, .6, `${hills(980, ['#6a8a70'], { seed: 29, amp: 300, step: 100 })}${houses}`, [540, 960])}
-    ${par(C, .75, `<path d="M-1400 1080 L2500 1080 L2500 1700 L-1400 1700 Z" fill="#5a7a88"/>
-      <g fill="#e8f0f0" opacity=".35">${Array.from({ length: 40 }, (_, i) => { const R2 = rng(i + 90); return `<rect x="${F1(-400 + R2() * 1900 + Math.sin(t + i) * 6)}" y="${F1(1090 + R2() * 600)}" width="${F1(20 + R2() * 60)}" height="2"/>`; }).join('')}</g>
-      ${crane(820, 1080, 1)}${crane(1180, 1080, .8)}
-      <path d="M560 1080 L1040 1080 L1010 1020 L590 1020 Z" fill="#4a4c50"/><path d="M640 1020 L640 960 L760 960 L760 1020 Z" fill="#5a5c60"/>
-      <path d="M-300 1110 L120 1110 L100 1080 L-260 1080 Z" fill="#3a3c40"/><path d="M-160 1080 L-160 1040 L-60 1040 L-60 1080 Z" fill="#4a4c50"/><path d="M-120 1040 L-120 1010" stroke="#2a2a2c" stroke-width="10"/>`, [540, 960])}
-    ${par(C, 1, `<path d="M-1400 1700 L2500 1700 L2500 2600 L-1400 2600 Z" fill="#4a4a46"/><path d="M-1400 1700 L2500 1700 L2500 1730 L-1400 1730 Z" fill="#7a786e"/>`, [540, 960])}
-    <rect x="-1400" y="700" width="3880" height="500" fill="#d0d8d8" opacity="${F1(.2 * haze)}" filter="url(#b40)"/>`;
+    ${par(C, .4, hills(780, ['#9aaca8', '#8a9e98'], { seed: 23, amp: 220, step: 120 }), [540, 960])}
+    ${par(C, .6, `${town}${crane(1010, shore, 1.0, Math.sin(t * .3) * 2)}`, [540, 960])}
+    ${par(C, .6, `<rect x="-1400" y="${shore}" width="3880" height="700" fill="#4e6e7a"/>${water}`, [540, 960])}
+    ${par(C, 1, `<path d="M-1400 1700 L2500 1700 L2500 2600 L-1400 2600 Z" fill="#4a4a46"/><path d="M-1400 1700 L2500 1700 L2500 1730 L-1400 1730 Z" fill="#7a786e"/>
+      ${Array.from({ length: 8 }, (_, i) => `<rect x="${-300 + i * 220}" y="1676" width="18" height="40" fill="#3a3832"/>`).join('')}`, [540, 960])}
+    ${gulls}<rect x="-1400" y="700" width="3880" height="500" fill="#d0d8d8" opacity="${F1(.2 * haze)}" filter="url(#b40)"/>`;
 }
-
 // ======================= the Nagasaki office, 9 August 1945 =======================
 // window with wartime anti-blast tape (an X of paper strips), seen from inside; white = 0..1 the flash outside
 function tapedWindow(x, y, w, h, { white = 0, sky = '#a8bcc8', broken = 0, t = 0 } = {}) {
@@ -595,48 +637,165 @@ function officeSet(t, { white = 0, clockT = 10.97, fan = 1, blur = null, colleag
     <path d="M-600 1500 L1800 1500 L1800 2600 L-600 2600 Z" fill="#7a5a3c"/>
     ${Array.from({ length: 14 }, (_, i) => `<path d="M${-600 + i * 180} 1500 L${-1200 + i * 260} 2600" stroke="#5a4028" stroke-width="4" opacity=".5"/>`).join('')}</g>`;
 }
-// the same office after the blast: window frame blown in, desks overturned, papers in the air, dust in the light
+// the same office after the blast: the window blown in — outside, the second cloud climbs over the valley — the ceiling
+// broken open at one end with a rafter hanging down, the lamp swinging on its cord, cracked plaster, desks overturned,
+// papers drifting through the light. Returns { back, front }: the rubble he rises out of goes in front of him.
 function officeWreck(t, { dust = 1 } = {}) {
-  const R = rng(71); let papers = '';
-  for (let i = 0; i < 28; i++) { const x0 = -100 + R() * 1300, p = (t * (.05 + R() * .05) + R()) % 1, y = -200 + p * 2000, sw = Math.sin(t * 2 + i) * 60;
+  const X0 = 240, Y0 = 380, W = 620, H = 600, R = rng(71);
+  const outside = `<clipPath id="owc"><rect x="${X0}" y="${Y0}" width="${W}" height="${H}"/></clipPath>
+    <g clip-path="url(#owc)">${sky1945({ y0: Y0, y1: Y0 + H, top: '#8e887a', mid: ['#aca392', '#cbbfa4'], haze: '#ddd0b0' })}
+      ${mushroomCloud(600, 930, t - 37, { s: .3, age: .2 + .08 * seg(t, 40.4, 41.86), glow: .25, seed: 5, dark: .2 })}
+      ${hills(900, ['#8c846e', '#7a7262'], { seed: 51, amp: 70, step: 70, smooth: false })}
+      <rect x="${X0}" y="${Y0}" width="${W}" height="${H}" fill="#f0e6cc" opacity=".2"/></g>`;
+  // plaster: cracked, a damp shadow, a patch fallen away to the laths (upper right)
+  let cracks = ''; for (let i = 0; i < 9; i++) { const R2 = rng(i + 140), c = [[X0, Y0], [X0 + W, Y0], [X0, Y0 + H], [X0 + W, Y0 + H]][i % 4]; let x = c[0], y = c[1], d = `M${x} ${y}`;
+    const ax = (c[0] > 500 ? 1 : -1), ay = (c[1] > 600 ? 1 : -1); for (let j = 0; j < 6; j++) { x += ax * (20 + R2() * 50); y += ay * (10 + R2() * 46) * (R2() < .3 ? -.4 : 1); d += ` L${F1(x)} ${F1(y)}`; }
+    cracks += `<path d="${d}" stroke="#3a2e22" stroke-width="${F1(1.6 + R2() * 1.6)}" fill="none" opacity=".55"/>`; }
+  const laths = `<path d="M900 -80 L1240 -120 L1300 300 L1180 360 L1060 300 L960 330 L910 200 Z" fill="#4a3a2c"/>
+    ${Array.from({ length: 14 }, (_, i) => `<path d="M${900 + (i % 2) * 10} ${-60 + i * 28} L1290 ${-90 + i * 28}" stroke="#7a6248" stroke-width="12" opacity=".9"/>`).join('')}
+    <path d="M900 -80 L1240 -120 L1300 300 L1180 360 L1060 300 L960 330 L910 200 Z" fill="none" stroke="#c8bca4" stroke-width="6" opacity=".6"/>`;
+  const wall = `<rect x="-600" y="-600" width="2400" height="3200" fill="#9a8f7a"/>
+    <g filter="url(#b60)" opacity=".5"><ellipse cx="-80" cy="700" rx="300" ry="500" fill="#6a5e4c"/><ellipse cx="1150" cy="900" rx="260" ry="420" fill="#6e624e"/></g>
+    ${laths}${cracks}
+    <rect x="-600" y="1080" width="2400" height="420" fill="#4e3a28"/><path d="M-600 1080 L1800 1080" stroke="#2e2218" stroke-width="16"/>
+    ${Array.from({ length: 12 }, (_, i) => `<path d="M${-560 + i * 200} 1090 L${-560 + i * 200} 1500" stroke="#3a2a1c" stroke-width="5" opacity=".6"/>`).join('')}
+    <path d="M140 1080 l40 60 l-20 50 l36 70 M720 1090 l-30 80 l24 60" stroke="#1e160e" stroke-width="3" fill="none" opacity=".6"/>`;
+  // the window frame: jambs and lintel still there, splintered; a mullion stub, the transom bar hanging from one end
+  // (swaying), shards of glass and the paper tape left in the corners
+  const sway = Math.sin(t * 2.6) * 2.5;
+  const frame = `<g filter="url(#pcl)" fill="#4a3424">
+      <path d="M${X0 - 26} ${Y0 - 26} L${X0 + W + 26} ${Y0 - 26} L${X0 + W + 26} ${Y0 + H + 26} L${X0 - 26} ${Y0 + H + 26} Z M${X0} ${Y0} L${X0} ${Y0 + 120} L${X0 + 10} ${Y0 + 150} L${X0} ${Y0 + 180} L${X0} ${Y0 + H} L${X0 + W} ${Y0 + H} L${X0 + W} ${Y0 + 330} L${X0 + W - 12} ${Y0 + 300} L${X0 + W} ${Y0 + 270} L${X0 + W} ${Y0} Z" fill-rule="evenodd"/>
+      <path d="M${X0 + 200} ${Y0} L${X0 + 218} ${Y0} L${X0 + 222} ${Y0 + 150} L${X0 + 212} ${Y0 + 196} L${X0 + 204} ${Y0 + 168} L${X0 + 196} ${Y0 + 190} Z"/>
+      <path d="M${X0 + 410} ${Y0 + H} L${X0 + 428} ${Y0 + H} L${X0 + 426} ${Y0 + H - 120} L${X0 + 418} ${Y0 + H - 96} L${X0 + 410} ${Y0 + H - 130} Z"/></g>
+    <g transform="rotate(${F1(34 + sway)} ${X0 + W - 6} ${Y0 + 296})"><g filter="url(#pcl)"><rect x="${X0 + W - 320}" y="${Y0 + 288}" width="320" height="16" fill="#4a3424"/></g>
+      <path d="M${X0 + W - 300} ${Y0 + 290} L${X0 + W - 220} ${Y0 + 290}" stroke="#e8e0cc" stroke-width="8" opacity=".8"/></g>
+    <g fill="#c4d0d4" opacity=".45" stroke="#f4f8f8" stroke-width="2" stroke-opacity=".6">
+      <path d="M${X0} ${Y0} L${X0 + 90} ${Y0} L${X0 + 30} ${Y0 + 70} L${X0} ${Y0 + 130} Z"/><path d="M${X0 + W} ${Y0 + H} L${X0 + W - 110} ${Y0 + H} L${X0 + W - 40} ${Y0 + H - 60} L${X0 + W} ${Y0 + H - 150} Z"/>
+      <path d="M${X0 + 218} ${Y0} L${X0 + 300} ${Y0} L${X0 + 250} ${Y0 + 40} Z"/></g>
+    <g stroke="#e4dcc6" stroke-width="9" opacity=".85" stroke-linecap="square"><path d="M${X0 + 10} ${Y0 + 10} L${X0 + 60} ${Y0 + 62}"/><path d="M${X0 + W - 12} ${Y0 + H - 10} L${X0 + W - 70} ${Y0 + H - 64}"/>
+      <path d="M${X0 + 226} ${Y0 + 8} L${X0 + 232} ${Y0 + 90 + Math.sin(t * 3) * 4}" opacity=".7"/></g>`;
+  // the ceiling has come down at the left: broken boards and a rafter hanging diagonally to the floor
+  const ceiling = `<g filter="url(#pcl)"><path d="M-600 -600 L1800 -600 L1800 150 L700 150 L560 200 L380 140 L200 260 L60 160 L-600 200 Z" fill="#3a2c20"/></g>
+    ${Array.from({ length: 7 }, (_, i) => `<path d="M${-60 + i * 50} ${170 + (i % 3) * 30} l${F1(30 + i * 8)} ${F1(140 + i * 20)} l18 -6 l${F1(-26 - i * 6)} ${F1(-150 - i * 18)} Z" fill="${i % 2 ? '#5a4430' : '#4a3828'}"/>`).join('')}
+    <g filter="url(#pcl)"><path d="M120 120 L190 100 L470 1540 L390 1560 Z" fill="#5e4430"/><path d="M190 100 L214 108 L494 1534 L470 1540 Z" fill="#3a2a1c"/></g>
+    <path d="M140 140 L414 1540 M158 130 L436 1540" stroke="#7a5a3e" stroke-width="3" opacity=".5"/>
+    <path d="M110 126 l20 -40 l14 30 l18 -46 l12 50" stroke="#c8a87a" stroke-width="3" fill="none" opacity=".6"/>`;
+  // the lamp on its cord, swinging
+  const la = Math.sin(t * 2.3 + .6) * 6;
+  const lamp = `<g transform="rotate(${F1(la)} 960 -300)"><path d="M960 -300 L960 560" stroke="#1e1a16" stroke-width="3"/>
+      <g filter="url(#pcl)"><path d="M916 600 L1004 600 L984 562 L936 562 Z" fill="#e8e4da"/></g><ellipse cx="960" cy="600" rx="44" ry="8" fill="#3a3630"/><circle cx="960" cy="606" r="9" fill="#d8d0c0"/></g>`;
+  const desks = `${desk(130, 1560, 520, 1, { seed: 3, tilt: -24 })}${desk(1000, 1630, 460, .9, { seed: 4, tilt: 30, papers: 0 })}
+    <g filter="url(#pcl)" fill="#4a3424"><path d="M760 1520 L860 1480 L870 1500 L780 1540 Z M820 1500 L800 1600 L816 1604 L836 1504 Z"/></g>`;
+  // the light: shafts from the window through the dust, motes drifting in them
+  const shafts = `<g opacity="${F1(.7 * dust)}">${[0, 1, 2, 3].map(i => `<path d="M${300 + i * 150} ${Y0 + 20} L${-60 + i * 280} 2200 L${120 + i * 280} 2200 L${380 + i * 150} ${Y0 + 20} Z" fill="#fff2dc" opacity=".12" filter="url(#b16)"/>`).join('')}</g>`;
+  let motes = ''; for (let i = 0; i < 70; i++) { const R2 = rng(i + 700), p = (t * (.015 + R2() * .02) + R2()) % 1, x = 160 + R2() * 860 + Math.sin(t * .8 + i) * 20, y = 300 + R2() * 1300 - p * 200;
+    motes += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(1.4 + R2() * 2.4)}" opacity="${F1(.25 + .5 * Math.sin(p * Math.PI))}"/>`; }
+  let papers = ''; for (let i = 0; i < 24; i++) { const x0 = -100 + R() * 1300, p = (t * (.05 + R() * .05) + R()) % 1, y = -200 + p * 2000, sw = Math.sin(t * 2 + i) * 60;
     papers += `<path d="M${F1(x0 + sw)} ${F1(y)} l60 -4 l6 40 l-60 4 Z" fill="${pick(R, ['#ece6d6', '#e4dcc8', '#d8d0bc'])}" transform="rotate(${F1(Math.sin(t * 3 + i) * 50)} ${F1(x0 + sw)} ${F1(y)})" opacity=".95"/>`; }
-  return `<rect x="-600" y="-600" width="2400" height="3200" fill="#8a7e6a"/>
-    <rect x="-600" y="1080" width="2400" height="420" fill="#4a3624"/>
-    <path d="M240 380 L860 380 L860 980 L240 980 Z" fill="#d8d0c0"/>
-    <g filter="url(#pe16)"><path d="M240 380 L860 380 L860 980 L240 980 Z" fill="#e8dcc8" opacity=".6"/></g>
-    <g filter="url(#pcl)"><path d="M214 354 L300 360 L280 420 L230 980 L214 1006 Z M886 354 L800 380 L860 520 L840 700 L886 1006 Z" fill="#4a3424"/>
-      <path d="M300 640 L600 700 L580 730 L290 670 Z" fill="#4a3424"/></g>
-    <g fill="#3a2a1c">${Array.from({ length: 20 }, (_, i) => { const R2 = rng(i + 30); return `<path d="M${F1(-200 + R2() * 1500)} ${F1(1450 + R2() * 300)} l${F1(30 + R2() * 90)} ${F1(-20 - R2() * 40)} l${F1(20 + R2() * 30)} ${F1(30)} Z"/>`; }).join('')}</g>
-    ${desk(180, 1560, 560, 1, { seed: 3, tilt: -24 })}${desk(980, 1640, 480, .9, { seed: 4, tilt: 30, papers: 0 })}
-    <path d="M-600 1500 L1800 1500 L1800 2600 L-600 2600 Z" fill="#5a4630" opacity=".5"/>
-    <g opacity="${F1(.6 * dust)}">${[0, 1, 2, 3].map(i => `<path d="M${300 + i * 140} 400 L${-100 + i * 260} 2200 L${60 + i * 260} 2200 L${360 + i * 140} 400 Z" fill="#fff4e0" opacity=".14" filter="url(#b16)"/>`).join('')}</g>
-    ${smoke(540, 1600, t, { seed: 77, n: 12, H: 1200, drift: 100, r0: 80, r1: 300, col: '#b8aa94', op: .5 * dust, speed: .05 })}
-    ${papers}`;
+  const back = `${wall}${outside}${frame}${ceiling}${lamp}${desks}
+    <path d="M-600 1500 L1800 1500 L1800 2600 L-600 2600 Z" fill="#5a4630"/>${shafts}
+    ${smoke(560, 1500, t, { seed: 77, n: 10, H: 1100, drift: 120, r0: 80, r1: 300, col: '#b0a28c', op: .4 * dust, speed: .05 })}`;
+  // the rubble he rises out of: a broken desk top, planks, plaster lumps and paper, its crest just under his chest
+  let lumps = ''; for (let i = 0; i < 26; i++) { const R2 = rng(i + 820), x = -200 + R2() * 1500, y = 1500 + R2() * 520 + Math.abs(x - 560) * .12;
+    lumps += `<path d="M${F1(x)} ${F1(y)} l${F1(30 + R2() * 70)} ${F1(-14 - R2() * 30)} l${F1(30 + R2() * 50)} ${F1(20 + R2() * 20)} l${F1(-20 - R2() * 60)} ${F1(24 + R2() * 16)} Z" fill="${pick(R2, ['#8e8474', '#a89e8a', '#6e6252', '#bab09c'])}"/>`; }
+  const front = `<g filter="url(#pcl)"><path d="M-400 1600 C-100 1540 200 1480 380 1468 C480 1462 640 1460 760 1470 C960 1490 1200 1540 1500 1620 L1500 2600 L-400 2600 Z" fill="#4e3c2a"/></g>
+    <g filter="url(#pcl)"><path d="M-160 1640 L700 1470 L716 1506 L-140 1690 Z" fill="#6a4c32"/><path d="M640 1530 L1300 1600 L1290 1650 L630 1572 Z" fill="#5a3e28"/>
+      <path d="M260 1560 L620 1500 L640 1600 L280 1680 Z" fill="#7a5638"/></g>
+    <path d="M-150 1655 L705 1484 M300 1600 L620 1540" stroke="#9a7a58" stroke-width="3" opacity=".5"/>
+    ${lumps}
+    <g fill="#e4dcc8" opacity=".9"><path d="M420 1520 l80 -10 l8 50 l-80 12 Z"/><path d="M820 1560 l70 14 l-10 46 l-70 -12 Z"/><path d="M80 1650 l60 -20 l14 40 l-60 18 Z"/></g>
+    <g fill="#fff4e0">${motes}</g>${papers}`;
+  return { back, front };
 }
-
 // ======================= later years =======================
-// the veranda (engawa) of an old house: shoji, wooden boards, a garden with a cherry tree and a stone lantern; petals drift
+// the veranda (engawa) of his house in spring, seen from the garden: paper shoji behind him with the shadows of the
+// cherry on them, dark posts and the eaves, the boards he sits on, a cup of tea at his side. In front (after him): the
+// edge of the veranda, the stepping stone, and a branch of blossom close to the lens; petals drift across.
+// Returns { back, front }.
 function verandaSet(t, { petals = 1 } = {}) {
-  const R = rng(81); let blossoms = '';
-  for (let i = 0; i < 160; i++) { const a = R() * 6.28, rr = Math.sqrt(R()) * 300; blossoms += `<circle cx="${F1(820 + Math.cos(a) * rr * 1.3)}" cy="${F1(420 + Math.sin(a) * rr * .7)}" r="${F1(10 + R() * 22)}" fill="${pick(R, ['#f4d4dc', '#eec4ce', '#f8e2e6', '#e8b8c4'])}"/>`; }
-  let pet = ''; for (let i = 0; i < 40 * petals; i++) { const R2 = rng(i + 400), p = (t * (.06 + R2() * .05) + R2()) % 1, x = 400 + R2() * 900 - p * 500 + Math.sin(t * 2 + i) * 40, y = 200 + p * 1700;
-    pet += `<ellipse cx="${F1(x)}" cy="${F1(y)}" rx="7" ry="4" fill="#f6d4dc" transform="rotate(${F1(t * 120 + i * 37)} ${F1(x)} ${F1(y)})" opacity=".9"/>`; }
-  return `${sky1945({ y0: -400, y1: 1100, top: '#8ab0d4', haze: '#eef0ea' })}
-    <rect x="-400" y="700" width="1880" height="600" fill="#7a9a62"/>
-    <g filter="url(#dofLight)"><path d="M760 1100 C770 900 800 700 820 500 M820 560 C900 480 960 420 1020 380 M800 640 C700 560 640 520 560 500" stroke="#4a3626" stroke-width="40" fill="none" stroke-linecap="round"/>
-      ${blossoms}<g filter="url(#pcl)"><path d="M120 1100 Q120 1040 200 1036 Q280 1040 280 1100 Z" fill="#8a867a"/></g><ellipse cx="200" cy="1044" rx="56" ry="10" fill="#5a6a72"/><g fill="#3a5a32"><circle cx="40" cy="1040" r="60"/><circle cx="-10" cy="1070" r="50"/><circle cx="80" cy="1080" r="44"/></g></g>
-    <g filter="url(#pcl)"><rect x="-400" y="-400" width="260" height="2000" fill="#4a3424"/><rect x="-400" y="-400" width="1880" height="200" fill="#3a2a1c"/></g>
-    <g filter="url(#pcl)"><path d="M-400 1240 L1480 1240 L1480 2400 L-400 2400 Z" fill="#8a6a48"/></g>
-    ${Array.from({ length: 9 }, (_, i) => `<path d="M-400 ${1270 + i * 120} L1480 ${1270 + i * 120}" stroke="#6a4e34" stroke-width="5" opacity=".6"/>`).join('')}
-    <path d="M-400 1240 L1480 1240" stroke="#b8946a" stroke-width="6" opacity=".6"/>${pet}`;
+  const PW = 270, top = 230, bot = 1400;
+  let shoji = '';
+  for (let i = 0; i < 8; i++) { const x = -420 + i * PW, cols = 4, rows = 9, gw = (PW - 28) / cols, gh = (bot - top - 28) / rows;
+    shoji += `<rect x="${x}" y="${top}" width="${PW}" height="${bot - top}" fill="#efe7d4"/>`;
+    let bars = ''; for (let c = 1; c < cols; c++) bars += `<rect x="${F1(x + 14 + c * gw - 2.5)}" y="${top}" width="5" height="${bot - top}"/>`;
+    for (let r = 1; r < rows; r++) bars += `<rect x="${x}" y="${F1(top + 14 + r * gh - 2.5)}" width="${PW}" height="5"/>`;
+    shoji += `<g fill="#8a6a4c">${bars}</g><path d="M${x + 7} ${top} L${x + 7} ${bot} M${x + PW - 7} ${top} L${x + PW - 7} ${bot}" stroke="#5e4430" stroke-width="14"/>`; }
+  // the light on the paper: brighter toward the sun (upper right), the cherry's shadow dappled across it
+  const R = rng(83); let dapple = '';
+  for (let i = 0; i < 60; i++) { const a = R() * 6.28, rr = Math.sqrt(R()), x = 820 + Math.cos(a) * rr * 520 + Math.sin(t * .6 + i) * 6, y = 520 + Math.sin(a) * rr * 300;
+    dapple += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(20 + R() * 40)}"/>`; }
+  const light = `<defs>${radG('vsl', ['#fff8e8', '#efe7d4', '#d8ccb4'], { cx: .72, cy: .25, r: .8 })}</defs>
+    <rect x="-420" y="${top}" width="2160" height="${bot - top}" fill="url(#vsl)" opacity=".55"/>
+    <g filter="url(#b16)" fill="#7a6a5a" opacity=".16">${dapple}<path d="M1500 300 C1200 360 1000 420 760 560" stroke="#7a6a5a" stroke-width="40" fill="none"/></g>`;
+  const frame = `<g filter="url(#pcl)"><rect x="-600" y="-600" width="2400" height="${top + 600}" fill="#4a3424"/>
+      <rect x="-600" y="${top - 70}" width="2400" height="70" fill="#5e432e"/></g>
+    ${Array.from({ length: 16 }, (_, i) => `<rect x="${-560 + i * 160}" y="${top - 170}" width="60" height="96" fill="#3a2a1c"/>`).join('')}
+    <g filter="url(#pcl)"><rect x="-600" y="${bot}" width="2400" height="150" fill="#6a4c34"/></g><path d="M-600 ${bot + 4} L1800 ${bot + 4}" stroke="#3a2a1c" stroke-width="8"/>
+    ${[-60, 1050].map(x => `<g filter="url(#pcl)"><rect x="${x}" y="${top - 70}" width="64" height="${bot - top + 300}" fill="#5a3e2a"/></g><path d="M${x + 12} ${top} L${x + 12} ${bot + 200}" stroke="#8a6a4c" stroke-width="5" opacity=".5"/>`).join('')}`;
+  // the boards of the veranda floor (running left-right), a soft sheen of the paper's light on them
+  const floor = `<g filter="url(#pcl)"><path d="M-600 ${bot + 150} L1800 ${bot + 150} L1800 1720 L-600 1720 Z" fill="#8a6848"/></g>
+    ${[1572, 1596, 1624, 1656, 1692].map(y => `<path d="M-600 ${y} L1800 ${y}" stroke="#5e4630" stroke-width="3" opacity=".6"/>`).join('')}
+    <rect x="-600" y="${bot + 150}" width="2400" height="60" fill="#efe2c8" opacity=".14" filter="url(#b10)"/>`;
+  // tea at his side: a small tray, a cup, steam
+  const st = [0, 1].map(i => { const ph = t * 1.4 + i * 2; return `<path d="M${716 + i * 12} 1600 C${706 + i * 12 + Math.sin(ph) * 10} 1560 ${730 + i * 12 + Math.sin(ph + 1) * 12} 1530 ${714 + i * 12 + Math.sin(ph + 2) * 10} 1490" stroke="#ffffff" stroke-width="7" fill="none" opacity=".18"/>`; }).join('');
+  const tea = `<g filter="url(#pcl)"><ellipse cx="730" cy="1652" rx="96" ry="20" fill="#4e3624"/></g><ellipse cx="730" cy="1646" rx="90" ry="15" fill="#6a4a30"/>
+    <g filter="url(#pcl)"><path d="M700 1604 L760 1604 L756 1640 Q730 1652 704 1640 Z" fill="#a8b8a0"/></g><ellipse cx="730" cy="1604" rx="30" ry="7" fill="#6e5a3a"/>
+    <path d="M704 1618 Q730 1626 756 1618" stroke="#5a7058" stroke-width="3" fill="none" opacity=".6"/><g filter="url(#b5)">${st}</g>`;
+  const back = `${shoji}${light}${frame}${floor}${tea}`;
+  // in front: the veranda's edge beam, the stepping stone and raked gravel, a branch of blossom near the lens, petals
+  const edge = `<g filter="url(#pcl)"><path d="M-600 1720 L1800 1720 L1800 1800 L-600 1800 Z" fill="#4e3624"/></g><path d="M-600 1722 L1800 1722" stroke="#b8946a" stroke-width="5" opacity=".6"/>
+    <path d="M-600 1800 L1800 1800 L1800 2600 L-600 2600 Z" fill="#a49e92"/>
+    ${Array.from({ length: 10 }, (_, i) => `<path d="M-600 ${1830 + i * 30} Q600 ${1820 + i * 30} 1800 ${1830 + i * 30}" stroke="#8a8478" stroke-width="3" fill="none" opacity=".5"/>`).join('')}
+    <g filter="url(#pcl)"><path d="M300 1850 C330 1820 620 1814 700 1846 C730 1880 690 1920 600 1928 C460 1936 320 1920 296 1890 Z" fill="#8e8a80"/></g>`;
+  const R3 = rng(91); let bl = '', blL = '', blD = '';
+  const twigs = [[1300, 260, 980, 420, 760, 470], [1050, 380, 900, 300, 820, 250], [930, 440, 860, 560, 780, 610], [1200, 330, 1120, 520, 1010, 600]];
+  for (const [ax, ay, bx, by, cx, cy] of twigs) for (let i = 0; i < 9; i++) { const p = i / 8, x = (1 - p) * (1 - p) * ax + 2 * p * (1 - p) * bx + p * p * cx, y = (1 - p) * (1 - p) * ay + 2 * p * (1 - p) * by + p * p * cy;
+    for (let j = 0; j < 4; j++) { const xx = x + (R3() - .5) * 70, yy = y + (R3() - .5) * 50, r = 13 + R3() * 13;
+      bl += `<circle cx="${F1(xx)}" cy="${F1(yy)}" r="${F1(r)}" fill="${pick(R3, ['#f2d0d8', '#ecc2cc', '#f6dee2', '#e4b4c0'])}"/>`;
+      blL += `<circle cx="${F1(xx - r * .25)}" cy="${F1(yy - r * .3)}" r="${F1(r * .55)}"/>`; blD += `<circle cx="${F1(xx + r * .3)}" cy="${F1(yy + r * .35)}" r="${F1(r * .6)}"/>`; } }
+  const sway = Math.sin(t * .9) * 6;
+  const branch = `<g transform="translate(${F1(sway)} ${F1(sway * .3)})" filter="url(#dofLight)">
+      <path d="${twigs.map(([ax, ay, bx, by, cx, cy]) => `M${ax} ${ay} Q${bx} ${by} ${cx} ${cy}`).join(' ')}" stroke="#3e2a20" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <path d="M1500 180 C1400 220 1340 250 1300 262" stroke="#3a261c" stroke-width="34" fill="none" stroke-linecap="round"/>
+      <g filter="url(#cloudF2)">${bl}</g><g fill="#a86878" opacity=".3">${blD}</g><g fill="#ffffff" opacity=".45">${blL}</g></g>`;
+  let pet = ''; for (let i = 0; i < 46 * petals; i++) { const R2 = rng(i + 400), p = (t * (.06 + R2() * .05) + R2()) % 1, x = 300 + R2() * 1100 - p * 600 + Math.sin(t * 2 + i) * 40, y = 260 + p * 1700;
+    pet += `<ellipse cx="${F1(x)}" cy="${F1(y)}" rx="${F1(6 + R2() * 4)}" ry="4" fill="${pick(R2, ['#f6d4dc', '#f2c8d2', '#fae6ea'])}" transform="rotate(${F1(t * 120 + i * 37)} ${F1(x)} ${F1(y)})" opacity=".92"/>`; }
+  return { back, front: `${edge}${branch}${pet}` };
 }
-// a ceremony room (2009): pale panelled wall, a long table with a cloth, a vase; press cameras in the foreground
-function ceremonySet(t, { flashes = [] } = {}) {
-  return `<rect x="-600" y="-600" width="2400" height="3200" fill="#d8ceb8"/>
-    ${Array.from({ length: 9 }, (_, i) => `<rect x="${-560 + i * 300}" y="200" width="260" height="900" fill="#cbbfa4" opacity=".7"/><rect x="${-560 + i * 300}" y="200" width="260" height="900" fill="none" stroke="#b4a688" stroke-width="5"/>`).join('')}
-    <rect x="-600" y="1100" width="2400" height="60" fill="#8a6a48"/>
-    <g filter="url(#pcl)"><rect x="-600" y="1160" width="2400" height="1440" fill="#6a5a4a"/></g>
-    <g filter="url(#pcl)"><path d="M820 1060 L820 900 Q860 860 900 900 L900 1060 Z" fill="#3a5a6a"/></g><circle cx="830" cy="860" r="40" fill="#e8dcc8"/><circle cx="890" cy="850" r="34" fill="#f0d0c8"/>`;
+// a ceremony room (2009): a gold folding screen with a painted pine, the national flag on its stand, a dark carpet.
+// front: press photographers' heads and raised cameras close to the lens (soft), flashes from them. Returns { back, front }.
+function ceremonySet(t, { fl = 0 } = {}) {
+  const X0 = -40, PWb = 190, Yt = 300, Yb = 1420;
+  let screen = '';
+  for (let i = 0; i < 7; i++) { const x = X0 + i * PWb, sh = i % 2 ? .1 : 0;
+    screen += `<rect x="${x}" y="${Yt}" width="${PWb}" height="${Yb - Yt}" fill="${mix('#d4b46a', '#8a6a34', sh)}"/>`;
+    let leaf = ''; for (let r = 0; r < 14; r++) for (let c = 0; c < 3; c++) leaf += `<rect x="${x + 6 + c * 62}" y="${Yt + 6 + r * 80}" width="60" height="78" fill="none" stroke="#fff0c0" stroke-width="1.2" opacity="${F1(.12 + ((r * 3 + c + i) % 4) * .03)}"/>`;
+    screen += leaf + `<path d="M${x} ${Yt} L${x} ${Yb}" stroke="#2e1e12" stroke-width="7"/>`; }
+  screen = `<defs>${linG('csG', ['#f2dc9a', '#d8b86c', '#b8944e'], { user: [0, Yt, 0, Yb] })}</defs>${screen}
+    <rect x="${X0}" y="${Yt}" width="${PWb * 7}" height="${Yb - Yt}" fill="url(#csG)" opacity=".55"/>
+    <g opacity=".5" fill="#f8ecc4" filter="url(#b10)"><ellipse cx="300" cy="520" rx="260" ry="50"/><ellipse cx="860" cy="1160" rx="300" ry="56"/></g>
+    <g opacity=".55"><path d="M120 1300 C180 1100 260 980 420 900 C560 830 700 820 860 760" stroke="#3a2c1e" stroke-width="26" fill="none" stroke-linecap="round"/>
+      <path d="M420 900 C440 820 500 760 580 720 M640 812 C700 760 760 740 840 730" stroke="#3a2c1e" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <g fill="#2e4232">${[[560, 700, 90], [700, 760, 80], [850, 720, 100], [430, 860, 70], [300, 980, 80]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${F1(r * .42)}"/><ellipse cx="${x + r * .4}" cy="${y - r * .25}" rx="${F1(r * .7)}" ry="${F1(r * .3)}"/>`).join('')}</g></g>
+    <g filter="url(#pcl)"><rect x="${X0 - 14}" y="${Yt - 14}" width="${PWb * 7 + 28}" height="18" fill="#2a1a10"/><rect x="${X0 - 14}" y="${Yb}" width="${PWb * 7 + 28}" height="20" fill="#2a1a10"/></g>`;
+  const wave = Math.sin(t * 1.6) * 4;
+  const fx = 250, fy = 470;
+  const flag = `<g transform="translate(${fx - 102} ${fy - 268})"><g filter="url(#pcl)"><rect x="96" y="250" width="12" height="1300" fill="#4a3220"/></g><circle cx="102" cy="244" r="13" fill="url(#brassG)"/>
+    <g filter="url(#pcl)"><path d="M108 268 C150 ${F1(262 + wave)} 210 ${F1(276 - wave)} 300 ${F1(268 + wave * .6)} L300 ${F1(452 + wave * .6)} C210 ${F1(460 - wave)} 150 ${F1(446 + wave)} 108 452 Z" fill="#f4f0e6"/></g>
+    <ellipse cx="${F1(204 + wave * .3)}" cy="${F1(360 + wave * .2)}" rx="50" ry="52" fill="#b8202a"/>
+    <path d="M150 ${F1(270 + wave)} C160 340 160 400 150 ${F1(450 + wave)} M240 ${F1(272 - wave)} C250 340 248 400 240 ${F1(456 - wave)}" stroke="#c8beb0" stroke-width="10" fill="none" opacity=".35" filter="url(#softW)"/></g>`;
+  const back = `<rect x="-600" y="-600" width="2400" height="3200" fill="#cdbfa2"/>
+    ${Array.from({ length: 10 }, (_, i) => `<rect x="${-560 + i * 260}" y="-400" width="240" height="690" fill="#c2b392" opacity=".7"/>`).join('')}
+    ${screen}<path d="M-600 ${Yb + 20} L1800 ${Yb + 20} L1800 2600 L-600 2600 Z" fill="#5a2c2a"/>${flag}`;
+  // the press, close to the lens: heads and shoulders, two cameras raised
+  const R = rng(17); let press = '';
+  [[-40, 1790, 1.15, 1], [360, 1850, 1.05, 0], [760, 1860, 1.1, 0], [1110, 1790, 1.2, 1]].forEach(([x, y, s, cam], i) => {
+    press += `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-190 120 C-186 0 -140 -70 -70 -86 L70 -86 C140 -70 186 0 190 120 Z" fill="${pick(R, ['#22242a', '#2a2622', '#1e2228'])}"/>
+      <ellipse cx="0" cy="-160" rx="74" ry="86" fill="#16120e"/>
+      ${cam ? `<g transform="translate(${-20 + i * 6} -250)"><rect x="-70" y="-46" width="140" height="84" rx="10" fill="#1a1a1c"/><circle cx="0" cy="-4" r="30" fill="#2e3034"/><circle cx="0" cy="-4" r="16" fill="#0e0e10"/>
+        <rect x="30" y="-70" width="36" height="26" fill="#2a2a2c"/><path d="M-70 10 L-110 60 M70 10 L110 60" stroke="#c8a080" stroke-width="22" stroke-linecap="round"/></g>` : ''}</g>`; });
+  const front = `<g filter="url(#dof)">${press}</g>`;
+  return { back, front };
 }
 // a press photographer's flash: a burst of white light in the foreground (emissive) — k 0..1
 const pressFlash = (x, y, k) => k < .01 ? '' : `<g filter="url(#pe16)"><circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(120 + 200 * k)}" fill="#ffffff" opacity="${F1(.9 * k)}"/></g>`;
@@ -668,12 +827,25 @@ function carriageInterior(t, scroll, { blurOut = 1 } = {}) {
     <g filter="url(#pcl)"><path d="M-600 1180 L1800 1180 L1800 1500 L-600 1500 Z" fill="#4a5a3e"/><path d="M-600 1180 L1800 1180 L1800 1220 L-600 1220 Z" fill="#3a2a1c"/></g>
     <path d="M-600 1500 L1800 1500 L1800 2600 L-600 2600 Z" fill="#3a2c20"/>`;
 }
-// dusk hill with the two clouds as ghosts on the horizon (Hiroshima left, Nagasaki right)
+// dusk on a hill with the two clouds as ghosts on the horizon (Hiroshima left, Nagasaki right), and under each the lights
+// of the city as it is now. The near slope is lit by the last of the sky: grass along the crest, wild flowers.
 function hillGhosts(t, C, { ghost = 1 } = {}) {
+  const lights = (cx, n, seed) => { const R = rng(seed); let s = ''; for (let i = 0; i < n; i++) { const x = cx + (R() - .5) * 420 * (.4 + R()), y = 1262 + R() * 30 + Math.abs(x - cx) * .02, tw = .7 + .3 * Math.sin(t * (2 + R() * 3) + i);
+    s += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(1.6 + R() * 2.2)}" opacity="${F1(tw)}"/>`; } return s; };
+  const crest = x => 1362 + Math.pow(Math.abs(x - 540) / 900, 1.6) * 180 * (x < 540 ? 1 : 1.1);
+  let grass = '', flowers = ''; const R = rng(33);
+  for (let i = 0; i < 220; i++) { const x = -500 + R() * 2100, y = crest(x) + R() * 14, h = 14 + R() * 30, sw = Math.sin(t * 1.4 + x * .01) * 5;
+    grass += `<path d="M${F1(x)} ${F1(y)} q${F1(2 + sw * .5)} ${F1(-h * .5)} ${F1(3 + sw)} ${F1(-h)}" stroke="${pick(R, ['#3a2e3e', '#463848', '#2e2634'])}" stroke-width="${F1(1.6 + R() * 1.6)}" fill="none"/>`; }
+  for (let i = 0; i < 90; i++) { const x = -400 + R() * 1900, y = crest(x) + 30 + R() * 700;
+    flowers += `<circle cx="${F1(x)}" cy="${F1(y)}" r="${F1(2 + R() * 3.4 * (y - 1300) / 700)}" fill="${pick(R, ['#d8c8e0', '#e8dcc8', '#c8b8d8'])}" opacity="${F1(.35 + R() * .3)}"/>`; }
+  let d = 'M-1400 2800 L-1400 1700'; for (let x = -1400; x <= 2500; x += 50) d += ` L${x} ${F1(crest(x))}`; d += ' L2500 2800 Z';
   return `${par(C, .3, sky1945({ y0: -1400, y1: 1500, top: '#1e2240', mid: ['#4a4a72', '#b47a7a'], haze: '#eaa070' }), [540, 960])}
     ${par(C, .45, `<g filter="url(#b2)">${mushroomCloud(170, 1250, t, { s: .56, age: .95, glow: 0, seed: 3, op: .62 * ghost, ghost: 1, tint: '#f0c8c8', tintK: .45 })}${mushroomCloud(920, 1270, t * .8, { s: .52, age: .9, glow: 0, seed: 7, op: .58 * ghost, ghost: 1, tint: '#e8c4d0', tintK: .45 })}</g>`, [540, 960])}
-    ${par(C, .6, hills(1250, ['#5a4a5a', '#4a3e4c'], { seed: 31, amp: 90, step: 140 }), [540, 960])}
-    ${par(C, 1, `<path d="M-1400 1500 C-200 1380 400 1360 540 1362 C700 1364 1300 1400 2500 1520 L2500 2800 L-1400 2800 Z" fill="#2a2430"/>`, [540, 960])}`;
+    ${par(C, .5, `${hills(1250, ['#5a4a5a', '#4a3e4c'], { seed: 31, amp: 90, step: 140 })}<g filter="url(#pe8)" fill="#ffd8a0">${lights(170, 70, 5)}${lights(920, 60, 9)}</g>`, [540, 960])}
+    ${par(C, 1, `<defs>${linG('hgG', ['#6a5468', '#4a3a4c', '#2e2632'], { user: [0, 1350, 0, 2100] })}</defs><path d="${d}" fill="url(#hgG)"/>
+      <path d="M-500 ${F1(crest(-500))} ${Array.from({ length: 43 }, (_, i) => { const x = -500 + i * 50; return `L${x} ${F1(crest(x))}`; }).join(' ')}" stroke="#c89aa0" stroke-width="5" fill="none" opacity=".35" filter="url(#softW2)"/>
+      <path d="M560 1372 C600 1500 520 1640 620 1800 C680 1900 660 2000 700 2100" stroke="#7a6474" stroke-width="40" fill="none" opacity=".35" filter="url(#b10)"/>
+      ${flowers}${grass}`, [540, 960])}`;
 }
 // a lecture room: blackboard, windows with daylight, rows of students (backs of heads, dark uniforms) in the foreground
 function lectureSet(t) {

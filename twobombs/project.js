@@ -15,6 +15,10 @@ const SHK = (t, hits) => { const [x, y] = shakeXY(t, hits); return { sx: x, sy: 
 const flashK = (op, col = '#fff8ec') => { if (!window.__FLASH || window.__FLASH.op < op) window.__FLASH = { op, col }; };
 const ab = v => { window.__CA = Math.max(window.__CA || 0, v); };
 const ease = easeInOut;
+// a camera move that is under way almost at once: a short speed ramp, then a long settle (u, result 0..1)
+const GLIDE = (() => { const N = 400, a = .12, pw = 1.5, c = [0]; for (let i = 1; i <= N; i++) { const x = (i - .5) / N, r = Math.min(1, x / a);
+  c.push(c[i - 1] + r * r * (3 - 2 * r) * Math.pow(1 - x, pw)); } return c.map(v => v / c[N]); })();
+const glide = u => { const f = clamp(u) * 400, i = Math.floor(f); return i >= 400 ? 1 : lerp(GLIDE[i], GLIDE[i + 1], f - i); };
 
 // a figure at P = [x, y, s] (world), leaning `lean` deg about its waist; `top` = extra drawing in its local coordinates
 function who(ch, t, P, pose = {}, { top = '', lean = 0, ph = 0, rate = 1, still = 0, tex = 1 } = {}) {
@@ -46,7 +50,7 @@ const RIG_CLOUD = (t, g = .6) => ({ lights: [ { pos: [-600, -300, 800], col: '#f
   vignette: .55, grain: .018, shadowTint: '#2a2030', highTint: '#ffe0c0', shadowAmt: .22, highAmt: .1, sat: .86, contrast: 1.1,
   rays: { center: [540, 600], thresh: .55, srcRad: 500, samples: 40, step: .016, decay: .965, col: '#ffb070', int: .35 * g } });
 const RIG_NIGHT = (t, { cx = 250, cy = 1560 } = {}) => ({ lights: [ { pos: [cx, cy, 200], col: '#ffc890', int: 2.2 * (.93 + .07 * flkSeam(t, 2)), rad: 900, shin: 24 },
-    { pos: [540, 900, -260], col: '#ff8a40', int: 1.6, rad: 1100, shin: 22 }, { pos: [540, 1600, 1600], col: '#4a5a90', int: .22, rad: 5000, shin: 12 } ],
+    { pos: [540, 900, -260], col: '#f0705a', int: 1.5, rad: 1100, shin: 22 }, { pos: [540, 1600, 1600], col: '#4a5a90', int: .22, rad: 5000, shin: 12 } ],
   amb: '#20283c', ambGround: '#181210', ambInt: .22, bgLight: .5, exposure: 1.2, bloom: .5, bloomThresh: .7, white: 2.2, tonemap: 'soft', emisGain: 1.8, normalStrength: 1.3, specScale: .3,
   vignette: .66, grain: .024, shadowTint: '#0e1626', highTint: '#ffd8a8', shadowAmt: .3, highAmt: .1, sat: .9, contrast: 1.12 });
 const RIG_GREY = (t, o = {}) => ({ lights: [ { pos: [-400, 200, 800], col: '#e8e4dc', int: 1.4, rad: 5000, shin: 20 }, { pos: [1400, 800, -300], col: '#d8d0c4', int: .9, rad: 2200, shin: 22 },
@@ -82,11 +86,23 @@ const blinkL = (t, list) => blinkAt(t, list);
 // the briefcase in the screen-left hand (k = -1), swinging a little with the walk
 const caseArm = (sw = 0) => tArm(-1, [-168 + sw * 10, -640], 'hold', { hs: HS, bend: 1 });
 const withCase = (A, t, sw = 0) => { const F = fistAt(A, HS); return briefcase(F[0], F[1] - 4, .62, 4 * sw) + gripHandOn(A, -1, SKJ, 'jp', HS); };
-// a sling for the burned arm (k = +1): the forearm across the stomach, a cloth sling from the neck
-const slingArm = () => ({ ...tArm(1, [-26, -770], 'relax', { hs: HS, bend: 1 }), front: true });
-const slingCloth = () => `<g filter="url(#pcl)"><path d="M-40 -990 C-30 -900 -40 -820 -70 -760 L60 -730 C110 -760 150 -800 170 -830 C140 -880 90 -950 40 -996 Z" fill="#e6e0d2"/></g>
-  <path d="M-60 -770 C0 -754 80 -760 160 -826" stroke="#b8b0a2" stroke-width="2" fill="none" opacity=".7"/>`;
-
+// a sling for the burned arm (k = +1): the upper arm hangs at his side, the forearm rests across his stomach, hand a
+// little raised, cradled in a triangular cloth whose two straps go up to his neck
+const slingArm = () => ({ ...tArm(1, [-20, -820], 'relax', { hs: HS, bend: -1 }), front: true });
+const slingCloth = (A = slingArm()) => {
+  const { el: E, wr: W } = A, d = unit(E, W), nd = [d[1], -d[0]][1] > 0 ? [d[1], -d[0]] : [-d[1], d[0]];
+  const P = (p, a, b) => [p[0] + d[0] * a + nd[0] * b, p[1] + d[1] * a + nd[1] * b], f = p => `${F1(p[0])} ${F1(p[1])}`;
+  const a = P(E, -16, -10), b = P(W, 14, -12), c = P(W, 8, 26), m = P(lerp2(E, W, .45), 0, 70), e = P(E, -12, 34);
+  const strap = (p0, p1, w0, w1) => { const u = unit(p0, p1), n = [-u[1], u[0]]; return `M${F1(p0[0] + n[0] * w0)} ${F1(p0[1] + n[1] * w0)} L${F1(p1[0] + n[0] * w1)} ${F1(p1[1] + n[1] * w1)} L${F1(p1[0] - n[0] * w1)} ${F1(p1[1] - n[1] * w1)} L${F1(p0[0] - n[0] * w0)} ${F1(p0[1] - n[1] * w0)} Z`; };
+  const s1 = strap(P(W, 6, -4), [-46, -986], 16, 12), s2 = strap(P(E, -6, -6), [44, -992], 15, 12);
+  const pouch = `M${f(a)} L${f(b)} Q${f(P(W, 22, 6))} ${f(c)} Q${f(m)} ${f(e)} Q${f(P(E, -26, 12))} ${f(a)} Z`;
+  return `<g opacity=".32" transform="translate(-5 9)"><g filter="url(#castSh)"><path d="${pouch}"/><path d="${s1}"/><path d="${s2}"/></g></g>
+    <g filter="url(#pcl)" fill="#e9e5db"><path d="${s1}"/><path d="${s2}"/></g>
+    <g filter="url(#pcl)" fill="#efebe2"><path d="${pouch}"/></g>
+    <g stroke="#a8a090" fill="none" stroke-linecap="round" opacity=".6">
+      <path d="M${f(P(E, -4, 26))} Q${f(P(lerp2(E, W, .45), 0, 48))} ${f(P(W, 0, 18))}" stroke-width="2"/><path d="M${f(P(E, 10, 40))} Q${f(P(lerp2(E, W, .5), 0, 58))} ${f(P(W, -16, 26))}" stroke-width="1.6" opacity=".7"/>
+      <path d="M${f(a)} L${f(b)}" stroke-width="2.2" opacity=".55"/></g>`;
+};
 // ---------- the cast placements reused across shots ----------
 const LOOP_SKY_FY = -1500;   // the opening / closing frame: only sky
 
@@ -95,7 +111,7 @@ const SHOTS = [
   // 1 "It's August sixth, 1945." — the summer sky; the camera cranes down to the domed hall across the river; a tram
   //   crosses the bridge. Frame 0 is pure sky (= the last frame).
   { at: 0, draw(v, t) {
-      const C = camF(t, t => { const p = ease(seg(t, 0, 2.62)); return [540, lerp(LOOP_SKY_FY, 820, p), lerp(1.0, 1.12, p), { hh: .6 }]; });
+      const C = camF(t, t => { const p = glide(seg(t, 0, 2.62)); return [540, lerp(LOOP_SKY_FY, 820, p), lerp(1.0, 1.12, p), { hh: .6 }]; }, .45);
       return `<g transform="${C.tf}">${lights(C.v, RIG_DAY(t))}${riverView(t, C, { tram: .1 + .2 * seg(t, 0, 2.6) })}</g>`;
     } },
   // 2 "The last day of your business trip to Hiroshima." — he walks toward us down a street of wooden houses, briefcase
@@ -190,7 +206,7 @@ const SHOTS = [
   { at: 13.98, draw(v, t) {
       const up = ease(seg(t, 14.0, 14.7)), tr = Math.sin(t * 26) * 4 * up;
       const C = camF(t, t => { const p = ease(seg(t, 13.98, 16.38)); return [lerp(500, 580, p), lerp(1180, 1150, p), lerp(1.5, 1.62, p), { hh: .7, r: lerp(2, -2, p) }]; });
-      const LA = tArm(-1, [-200, -640], 'back', { hs: HS, bend: 1 }), RA = { ...tArm(1, [40 + tr, -860 + tr], 'palm', { hs: HS, bend: 1 }), front: true };
+      const LA = tArm(-1, [-200, -640], 'back', { hs: HS, bend: 1 }), RA = { ...tArm(1, [40 + tr, -860 + tr], 'openJ', { hs: HS, bend: 1, spread: .5, curl: .35 }), front: true };
       return `<g transform="${C.tf}">${lights(C.v, RIG_ASH(t))}
         ${sky1945({ y0: -400, y1: 1100, top: '#4a3c3c', mid: ['#7a5a50', '#a87a60'], haze: '#c08a64' })}${smoke(700, 1040, t, { seed: 13, n: 12, H: 1100, drift: 200, r0: 140, r1: 460, col: '#6a5248', op: .32, speed: .05, blur: 'b40' })}
         ${potatoField(t, { hy: 1040, rows: 8, near: 2000, sky: '#a07a5a', wind: .2, dust: .6 })}
@@ -280,7 +296,7 @@ const SHOTS = [
   // 19 "to report what you saw." — at the boss's desk he describes it with his good hand: a flash, this big
   { at: 33.42, draw(v, t) {
       const sweep = ease(seg(t, 33.6, 34.3)), C = camF(t, t => [560, 860, lerp(1.9, 2.05, seg(t, 33.42, 34.82)), { hh: .7 }]);
-      const A0 = tArm(-1, [-110, -900], 'palm', { hs: HS, bend: 1 }), A1 = tArm(-1, [-250, -1180], 'palm', { hs: HS, bend: 1 });
+      const A0 = tArm(-1, [-110, -900], 'openJ', { hs: HS, bend: 1, spread: .5 }), A1 = tArm(-1, [-250, -1180], 'openJ', { hs: HS, bend: 1, spread: 1.2 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_OFFICE(t))}<g filter="url(#dofHeavy)">${officeSet(t, { clockT: 11.0 })}</g>
         ${who(TSU_BAND, t, [600, 1760, .8], { armL: armMix(A0, A1, sweep), armR: slingArm(), burn: .5, soot: .3, talk: talkW(t, 33.48, 34.71, .5), look: 6, lid: 0, shock: .3 + .3 * sweep, bIn: 6, turn: .25, tilt: -2 }, { top: slingCloth() })}</g>`;
     } },
@@ -288,7 +304,7 @@ const SHOTS = [
   { at: 34.82, draw(v, t) {
       const shake = Math.sin((t - 34.9) * 11) * bell(t, 34.9, 35.9), wave = bell(t, 35.2, 36.2);
       const C = camF(t, t => [560, 880, lerp(1.95, 2.1, seg(t, 34.82, 36.32)), { hh: .6 }]);
-      const A = tArm(1, [lerp(170, 120, wave), lerp(-640, -960, wave) + 30 * Math.sin(t * 14) * wave], wave > .3 ? 'palm' : 'relax', { hs: HS, bend: -1 });
+      const A = tArm(1, [lerp(170, 120, wave), lerp(-640, -960, wave) + 30 * Math.sin(t * 14) * wave], wave > .3 ? 'openJ' : 'relax', { hs: HS, bend: -1 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_OFFICE(t))}<g filter="url(#dofHeavy)">${officeSet(t, { clockT: 11.01 })}</g>
         ${who(BOSS, t, [540, 1760, .82], { armR: A, armL: tHang(-1), smirk: lerp(0, .5, seg(t, 35.4, 35.9)), side: -.5, lid: .3, turn: -.25 + .15 * shake, tilt: 4 * shake + 3, look: -6, bIn: -2, bOut: 6, talk: talkW(t, 35.4, 36.2, .25) }, { lean: -3 })}</g>`;
     } },
@@ -304,33 +320,44 @@ const SHOTS = [
         ${desk(470, 1550, 760, .85, { seed: 2, lamp: 1 })}
         ${who(TSU_BAND, t, [900, 3150, 1.95], { armL: PA, armR: slingArm(), bust: 1, burn: .5, soot: .3, turn: -.35, look: -8, talk: talkW(t, 36.39, 38.14, .5), bIn: 8, tilt: 4, shock: .5 * w }, { top: slingCloth(), lean: -4 })}</g>`;
     } },
-  // 22 "You survived that one too." — the wreck: dust and light, papers still falling; he rises out of the rubble, coughing
+  // 22 "You survived that one too." — the wreck: the window blown in and, outside, the second cloud climbing; dust in the
+  //   light, papers still falling; he pushes himself up out of the rubble, coughing
   { at: 40.40, draw(v, t) {
       const up = ease(seg(t, 40.6, 41.4)), C = camF(t, t => [560, 1150, lerp(1.25, 1.38, seg(t, 40.4, 41.86)), { hh: .7 }]);
-      return `<g transform="${C.tf}">${lights(C.v, RIG_WRECK(t))}${officeWreck(t)}
-        ${who(TSU_BAND, t, [560, lerp(2400, 2140, up), .95], { bust: 1, armL: tHang(-1), armR: slingArm(), burn: .5, soot: 1, lid: lerp(1.6, .3, up), squint: .6, grit: .3 * (1 - up), talk: .3 * Math.abs(Math.sin(t * 9)) * bell(t, 40.9, 41.5), tilt: lerp(-10, 2, up), look: -3 }, { top: slingCloth() })}
-        <g filter="url(#dof)"><g fill="#3a2a1c">${Array.from({ length: 10 }, (_, i) => { const R = rng(i + 300); return `<path d="M${F1(-300 + R() * 1700)} ${F1(2050 + R() * 200)} l${F1(80 + R() * 120)} ${F1(-30 - R() * 50)} l${F1(30 + R() * 40)} 60 Z"/>`; }).join('')}</g></g></g>`;
+      const Wk = officeWreck(t), P0 = [560, lerp(2400, 2140, up), .95], b = brS(t, 0, 1) * .8;
+      const PA = tArm(-1, toLocal([372, 1482], P0[0], P0[1], P0[2], b), 'back', { hs: HS, bend: 1, curl: .2 });
+      return `<g transform="${C.tf}">${lights(C.v, RIG_WRECK(t))}${Wk.back}
+        ${who(TSU_BAND, t, P0, { bust: 1, armL: PA, armR: slingArm(), burn: .5, soot: 1, lid: lerp(1.6, .3, up), squint: .6, grit: .3 * (1 - up), talk: .3 * Math.abs(Math.sin(t * 9)) * bell(t, 40.9, 41.5), tilt: lerp(-10, 2, up), look: -3 }, { top: slingCloth() })}
+        ${Wk.front}${atb(P0[0], P0[1], P0[2], redraw(-1, PA, SKJ, 'jp', HS), b)}</g>`;
     } },
-  // 23 "You live another sixty-five years." — spring, decades on: the old man on his veranda, petals drifting
+  // 23 "You live another sixty-five years." — spring, decades on: the old man sits on his veranda, hands on his knees, tea
+  //   at his side; blossom near the lens, petals drifting
   { at: 41.86, draw(v, t) {
       const C = camF(t, t => [600, lerp(1200, 1150, seg(t, 41.86, 44.3)), lerp(1.12, 1.3, ease(seg(t, 41.86, 44.3))), { hh: .4 }]);
-      return `<g transform="${C.tf}">${lights(C.v, RIG_SPRING(t))}${verandaSet(t)}
-        ${who(TSU_OLD, t, [400, 2980, 1.8], { bust: 1, armL: tHang(-1), armR: tHang(1), look: 8, lookY: -3, lid: .45 + blinkL(t, [43.2]), smirk: .35, tilt: -3, turn: .2 }, { rate: .7, lean: 4 })}</g>`;
+      const V = verandaSet(t), LA = tArm(-1, [-104, -660], 'back', { hs: HS, bend: 1, curl: .35 }), RA = tArm(1, [104, -656], 'back', { hs: HS, bend: -1, curl: .35 });
+      return `<g transform="${C.tf}">${lights(C.v, RIG_SPRING(t))}${V.back}
+        ${who(TSU_OLD, t, [400, 2800, 1.8], { bust: 1, lap: 1, armL: LA, armR: RA, look: 8, lookY: -3, lid: .45 + blinkL(t, [43.2]), smirk: .35, tilt: -3, turn: .2 }, { rate: .7, lean: 3 })}
+        ${V.front}</g>`;
     } },
-  // 24 "In 2009, Japan officially recognizes you" — a ceremony: the certificate passes into his hands; he bows; press
-  //   flashes pop
+  // 24 "In 2009, Japan officially recognizes you" — before a gold screen and the flag he holds the certificate in both
+  //   hands and bows; the official beside him applauds, then bows too; press cameras flash in the foreground
   { at: 44.30, draw(v, t) {
-      const bow = bell(t, 45.6, 47.2), C = camF(t, t => [lerp(520, 600, ease(seg(t, 44.3, 47.4))), 1080, lerp(1.25, 1.35, seg(t, 44.3, 47.4)), { hh: .5 }]);
-      const fl = [44.55, 45.25, 46.3, 46.9].reduce((m, t0) => Math.max(m, t >= t0 ? Math.exp(-(t - t0) / .07) : 0), 0);
+      const bow = bell(t, 45.6, 47.2), obow = bell(t, 46.1, 47.4), C = camF(t, t => [lerp(520, 600, ease(seg(t, 44.3, 47.4))), 1080, lerp(1.25, 1.35, seg(t, 44.3, 47.4)), { hh: .5 }]);
+      const flA = [44.55, 46.3].reduce((m, t0) => Math.max(m, t >= t0 ? Math.exp(-(t - t0) / .07) : 0), 0), flB = [45.25, 46.9].reduce((m, t0) => Math.max(m, t >= t0 ? Math.exp(-(t - t0) / .07) : 0), 0), fl = Math.max(flA, flB);
       flashK(.25 * fl);
-      const cert = `<g filter="url(#pcl)"><rect x="470" y="1150" width="160" height="210" fill="#f4efe2"/></g><circle cx="590" cy="1320" r="14" fill="#b8242a" opacity=".8"/>
-        <path d="M490 1180 L610 1180 M490 1196 L600 1196" stroke="#c8beaa" stroke-width="3"/>`;
-      const P1 = [270, 2050, .78], P2 = [800, 2060, .8];
-      const OA = tArm(1, toLocal([470, 1260], ...P1), 'back', { hs: HS, bend: -1 }), TA = tArm(-1, toLocal([630, 1250], ...P2), 'back', { hs: HS, bend: 1 });
-      return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t, { extra: [{ pos: [100, 1800, 900], col: '#ffffff', int: 6 * fl, rad: 2000, shin: 20 }] }))}${ceremonySet(t)}
-        ${who(OFFICIAL, t, P1, { armR: { ...OA, front: true }, armL: tHang(-1), turn: .3, look: 8, smirk: .4, lid: .2, bust: 1 })}
-        ${who(TSU_OLD, t, P2, { armL: { ...TA, front: true }, armR: tHang(1), turn: -.3, look: -6, lookY: 2 + 4 * bow, smirk: .3, lid: .3 + .3 * bow, tilt: -6 * bow, bust: 1 }, { lean: -5 * bow })}
-        ${cert}${pressFlash(-80, 1900, fl)}</g>`;
+      const CS = ceremonySet(t);
+      const cl = Math.abs(Math.sin((t - 44.3) * 8)), clap = 1 - ease(seg(t, 45.9, 46.3));
+      const OL = armMix(tHang(-1), { ...tArm(-1, [-24 - 34 * cl, -836], 'relax', { hs: HS, bend: 1 }), front: true }, clap), OR = armMix(tHang(1), { ...tArm(1, [24 + 34 * cl, -836], 'relax', { hs: HS, bend: -1 }), front: true }, clap);
+      const TL = { ...tArm(-1, [-86, -792], 'relax', { hs: HS, bend: 1 }), front: true }, TR = { ...tArm(1, [86, -792], 'relax', { hs: HS, bend: -1 }), front: true };
+      const thumb = (A, k) => { const w = A.wr; return `<g filter="url(#pks_jpOld)"><path d="${capsuleD(w[0] + k * 2, w[1] - 18, 7.5, w[0] - k * 20, w[1] + 4, 6)}" fill="${SKJO.mid}"/></g><ellipse cx="${F1(w[0] - k * 18)}" cy="${F1(w[1] + 2)}" rx="3.4" ry="4" fill="${SKJO.hi}" opacity=".5"/>`; };
+      const cert = `<g filter="url(#pcl)"><rect x="-96" y="-916" width="192" height="236" rx="4" fill="#5a1e1e"/></g><rect x="-84" y="-904" width="168" height="212" fill="#f4eee0"/>
+        <rect x="-74" y="-894" width="148" height="192" fill="none" stroke="#b89a5a" stroke-width="3"/>
+        <path d="M-50 -866 L50 -866 M-56 -846 L56 -846 M-56 -830 L40 -830 M-56 -814 L52 -814 M-56 -798 L30 -798" stroke="#8a8270" stroke-width="3" opacity=".45"/>
+        <circle cx="44" cy="-736" r="17" fill="#b8242a" opacity=".85"/>${thumb(TL, -1)}${thumb(TR, 1)}`;
+      return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t, { extra: [{ pos: [100, 1800, 900], col: '#ffffff', int: 6 * fl, rad: 2000, shin: 20 }] }))}${CS.back}
+        ${who(OFFICIAL, t, [300, 2250, 1.0], { bust: 1, armL: OL, armR: OR, turn: .3, look: 8, smirk: .4, lid: .2 + .4 * obow, lookY: 4 * obow }, { lean: -5 * obow })}
+        ${who(TSU_OLD, t, [720, 2330, 1.1], { bust: 1, armL: TL, armR: TR, turn: -.2, look: -4, lookY: 2 + 5 * bow, smirk: .3, lid: .3 + .35 * bow, tilt: -5 * bow }, { top: cert, lean: -6 * bow })}
+        ${CS.front}${pressFlash(-63, 1502, flA)}${pressFlash(1108, 1490, flB)}</g>`;
     } },
   // 25 "as the only man to survive both bombs," — dusk on a hill: the old man alone; on the horizon, the two clouds rise
   //   again like ghosts, one on either side. We pull back.
@@ -339,20 +366,20 @@ const SHOTS = [
       return `<g transform="${C.tf}">${lights(C.v, RIG_DUSK(t))}${hillGhosts(t, C, { ghost: ease(seg(t, 47.5, 48.6)) })}
         ${who(TSU_OLD, t, [540, 1372, .2], { armL: tHang(-1), armR: tHang(1), lookY: -3 }, { tex: 0 })}</g>`;
     } },
-  // 26 "and you spend your last years begging the world" — he speaks to students, his hand raised, pleading
+  // 26 "and you spend your last years begging the world" — he speaks to students, both hands open toward them, pleading
   { at: 49.88, draw(v, t) {
-      const raise = ease(seg(t, 50.1, 50.7)) * (1 - ease(seg(t, 51.8, 52.3)) * .4);
-      const C = camF(t, t => [540, lerp(1000, 960, seg(t, 49.88, 52.3)), lerp(1.3, 1.45, ease(seg(t, 49.88, 52.3))), { hh: .5 }]);
-      const A = armMix(tHang(-1), tArm(-1, [-170, -1120], 'palm', { hs: HS, bend: 1 }), raise);
+      const open = ease(seg(t, 50.0, 50.6)) * (1 - .35 * ease(seg(t, 51.8, 52.3))), beat = Math.sin((t - 50) * 6.5) * bell(t, 50.5, 52.1);
+      const C = camF(t, t => [540, lerp(990, 950, seg(t, 49.88, 52.3)), lerp(1.1, 1.18, ease(seg(t, 49.88, 52.3))), { hh: .5 }]);
+      const AL = armMix(tHang(-1), tArm(-1, [-240, -862 + 12 * beat], 'openJ', { hs: HS, bend: -1, spread: 1 }), open), AR = armMix(tHang(1), tArm(1, [240, -862 + 12 * beat], 'openJ', { hs: HS, bend: 1, spread: 1 }), open);
       return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t))}${lectureSet(t)}
-        ${who(TSU_OLD, t, [540, 2500, 1.6], { armL: A, armR: tHang(1), bust: 1, talk: talkW(t, 49.92, 52.15, .45), lid: .3, bIn: 8, bOut: 2, look: lerp(-4, 4, seg(t, 50.5, 51.5)), tilt: 3 }, { rate: .8 })}
+        ${who(TSU_OLD, t, [540, 2500, 1.6], { armL: AL, armR: AR, bust: 1, talk: talkW(t, 49.92, 52.15, .45), lid: .3, bIn: 9, bOut: 2, look: lerp(-4, 4, seg(t, 50.5, 51.5)), tilt: 3 + 2 * beat, lookY: 1 }, { rate: .8 })}
         <g filter="url(#pcl)"><path d="M300 1420 L780 1420 L740 2400 L340 2400 Z" fill="#6a4a30"/></g><path d="M300 1420 L780 1420" stroke="#8a6a48" stroke-width="10"/>
         <g filter="url(#dof)">${studentBacks(1720, t, { n: 6, s: 1.3 })}</g></g>`;
     } },
   // 27 "never to use them again." — the Dome as it stands today; paper cranes rise from the river into the sky; we tilt up
   //   with them into the same summer sky the film began with
   { at: 52.30, draw(v, t) {
-      const C = camF(t, t => { const p = ease(seg(t, 52.4, DUR - 1 / 30)); return [540, lerp(820, LOOP_SKY_FY, p), lerp(1.12, 1.0, p), { hh: .6 }]; });
+      const C = camF(t, t => { const p = ease(seg(t, 52.4, DUR - 1 / 30)); return [540, lerp(820, LOOP_SKY_FY, p), lerp(1.12, 1.0, p), { hh: .6 }]; }, .45);
       const q = seg(t, 52.3, 53.6);
       return `<g transform="${C.tf}">${lights(C.v, RIG_DAY(t))}${riverView(t, C, { ruin: 1, sky: 1, driftT: t - DUR })}
         ${q < 1 ? craneFlock(t, q, { y: 1500 + 600 * q }) : ''}</g>`;
