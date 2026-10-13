@@ -99,20 +99,24 @@ function cotteBody({ tunic = '#2f7d4a', sleeve = '#e0a834', trim = '#e8c050', ho
     const mailCol = mail ? `<g filter="url(#pcl)"><path d="M${X(-76)} -1006 C${X(-130)} -996 ${X(-170)} -978 ${X(-176)} -948 C${X(-150)} -930 ${X(-100)} -940 ${X(-64)} -958 C${X(-30)} -942 ${X(30)} -942 ${X(64)} -958 C${X(100)} -940 ${X(150)} -930 ${X(176)} -948 C${X(170)} -978 ${X(130)} -996 ${X(76)} -1006 C${X(40)} -976 ${X(-40)} -976 ${X(-76)} -1006 Z" fill="url(#steelH)"/></g>
       <g opacity=".5" stroke="#2a2e36" stroke-width="1.6" fill="none">${Array.from({ length: 9 }, (_, i) => `<path d="M${X(-160 + i * 8)} ${-966 + (i % 2) * 6} q${X(14)} 8 ${X(26)} 0"/>`).join('')}</g>` : '';
     // shoulder capelet: covers the yoke and the tops of the sleeves, scalloped along the bottom, edged in gold, clasped at the throat
-    const capeSVG = cape ? (() => { const cd = darken(cape, .5), cl = lighten(cape, .28), yb = -850, xl = X(-182), xr = X(182);
-      const bottom = dagEdge(xl, xr, yb, 40, 5, 0, yb);
-      const sh = `M${X(-60)} -1004 C${X(-128)} -996 ${X(-180)} -970 ${X(-200)} -920 C${X(-206)} -892 ${X(-198)} -868 ${xl} ${yb}${bottom} C${X(198)} -868 ${X(206)} -892 ${X(200)} -920 C${X(180)} -970 ${X(128)} -996 ${X(60)} -1004 C${X(34)} -950 ${X(-34)} -950 ${X(-60)} -1004 Z`;
+    const capeSVG = cape ? (() => { const cd = darken(cape, .5), cl = lighten(cape, .28), yb = -900, xl = X(-188), xr = X(188);
+      const bottom = dagEdge(xl, xr, yb, 30, 5, 0, yb);
+      const sh = `M${X(-60)} -1004 C${X(-128)} -996 ${X(-178)} -972 ${X(-196)} -934 C${X(-202)} -920 ${X(-198)} -908 ${xl} ${yb}${bottom} C${X(198)} -908 ${X(202)} -920 ${X(196)} -934 C${X(180)} -970 ${X(128)} -996 ${X(60)} -1004 C${X(34)} -950 ${X(-34)} -950 ${X(-60)} -1004 Z`;
       return `<defs>${linG(id + 'c', [cl, cape, cd], { user: [-210 * w, 0, 210 * w, 0] })}</defs><path d="${sh}" fill="url(#${id}c)" filter="url(#pcl)"/>
         <path d="M${xl} ${yb}${bottom}" stroke="${trim}" stroke-width="7" fill="none" stroke-linejoin="round" filter="url(#pcs)"/>
         <path d="M${X(-60)} -1004 C${X(-34)} -950 ${X(34)} -950 ${X(60)} -1004" stroke="${trim}" stroke-width="8" fill="none" filter="url(#pcs)"/>
-        <g filter="url(#softW)" opacity=".55"><path d="M${X(-146)} -950 C${X(-156)} -910 ${X(-164)} -884 ${X(-170)} -860 M${X(-88)} -940 C${X(-94)} -906 ${X(-96)} -884 ${X(-92)} -864 M${X(146)} -950 C${X(156)} -910 ${X(164)} -884 ${X(170)} -860 M${X(88)} -940 C${X(94)} -906 ${X(96)} -884 ${X(92)} -864" stroke="${cd}" stroke-width="13" fill="none"/>
-          <path d="M${X(-118)} -990 C${X(-146)} -962 ${X(-170)} -936 ${X(-188)} -906" stroke="${cl}" stroke-width="11" fill="none" opacity=".6"/></g>
+        <g filter="url(#softW)" opacity=".55"><path d="M${X(-146)} -956 C${X(-154)} -930 ${X(-160)} -910 ${X(-166)} -892 M${X(-88)} -948 C${X(-92)} -926 ${X(-94)} -908 ${X(-92)} -892 M${X(146)} -956 C${X(154)} -930 ${X(160)} -910 ${X(166)} -892 M${X(88)} -948 C${X(92)} -926 ${X(94)} -908 ${X(92)} -892" stroke="${cd}" stroke-width="13" fill="none"/>
+          <path d="M${X(-118)} -990 C${X(-146)} -966 ${X(-166)} -946 ${X(-182)} -922" stroke="${cl}" stroke-width="11" fill="none" opacity=".6"/></g>
         <g filter="url(#pcsl)"><circle cx="0" cy="-946" r="17" fill="url(#goldG)"/></g><circle cx="0" cy="-946" r="9" fill="url(#gemG)"/><circle cx="-3" cy="-950" r="2.6" fill="#fff" opacity=".8"/>`; })() : '';
     return `<defs>${linG(id + 't', [lighten(tunic, .16), tunic, darken(tunic, .3)], { user: [-170 * w, 0, 170 * w, 0] })}${linG(id + 'm', [lighten(sleeve, .2), sleeve, darken(sleeve, .28)], { user: [-190, 0, 190, 0] })}</defs>
       ${legs}${softNeck(S, sk, 38, -960)}
-      <g filter="url(#pcl)" fill="url(#${id}m)"><path d="${up(L, -1)}"/><path d="${up(R, 1)}"/></g>
+      <g filter="url(#pcl)" fill="url(#${id}m)">${L.front ? '' : `<path d="${up(L, -1)}"/>`}${R.front ? '' : `<path d="${up(R, 1)}"/>`}</g>
       <path d="${body}" fill="url(#${id}t)" filter="url(#pcl)"/>
-      ${foldSVG}${trimSVG}${emb}${neckSVG}${beltSVG}${mailCol}${buttons}${capeSVG}
+      ${foldSVG}${trimSVG}${emb}${neckSVG}${beltSVG}${mailCol}${buttons}
+      ${[[-1, L], [1, R]].filter(([k, A]) => A.front).map(([k, A]) => { const d = unit([k * SX, -930], A.el);
+        return `<g filter="url(#pcl)" fill="url(#${id}m)"><path d="${up(A, k)}"/></g>
+        <g filter="url(#softW2)" opacity=".5"><path d="M${F1(A.el[0] - d[1] * 18)} ${F1(A.el[1] - 40)} q${F1(k * 10)} 14 ${F1(k * 4)} 30 M${F1(A.el[0] + d[1] * 14)} ${F1(A.el[1] - 64)} q${F1(k * 8)} 12 ${F1(k * 2)} 26" stroke="${sd}" stroke-width="4" fill="none"/></g>`; }).join('')}
+      ${capeSVG}
       <g filter="url(#softW)" opacity=".42"><path d="M${F1(L.el[0])} ${F1(L.el[1])} l-16 -26 M${F1(R.el[0])} ${F1(R.el[1])} l16 -26" stroke="${sd}" stroke-width="12" fill="none"/></g>
       ${fa(-1, L)}${fa(1, R)}`;
   };

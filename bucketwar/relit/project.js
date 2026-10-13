@@ -8,7 +8,7 @@ function heroFrame(t = 0) {
   const F = fistAt(GA, HS);
   // left arm: elbow in, finger to the lips (the hand is redrawn on top of the face)
   const LA0 = tArm(-1, [-20, -902], 'none', { hs: HS });
-  const LA = { ...aim(LA0, -90), gh: 'point' };
+  const LA = { ...aim(LA0, -90), gh: 'point', front: true };   // the arm crosses the body: its upper arm is drawn in front of the surcoat
   const thief = manb(THIEF_X, THIEF_Y, THIEF_S, THIEF, { smirk: 1.0, side: .6, bIn: -6, bOut: 8, lid: .3, look: 0, lookY: 0, turn: .0, tilt: -4,
     armR: GA, armL: LA, breath: 0 });
   const held = atb(THIEF_X, THIEF_Y, THIEF_S, bucketProp(F[0], F[1] - 2, .94, { rot: -2 }) + gripHandOn(GA, 1, SB, SKB, HS) + gripHandOn(LA, -1, SB, SKB, HS), 0);
@@ -19,9 +19,8 @@ const SHOTS = [{ at: 0, draw(v, t) {
   const C = camT(0, 540, 1010, 1.1, { hh: 0 });
   const H = heroFrame(t);
   return `<g transform="${C.tf}">
-    ${lights(C.v, RIG.village(0, { k: 1.15 }))}
-    ${villageDusk({ t: 0, blur: 'dofHeavy', well: false })}
-    <g filter="url(#dof)">${wellBg(990, 1440, .92)}</g>
+    ${lights(C.v, RIG.cine(0))}
+    ${villageSunset({ t: 0, blur: 'dofHeavy' })}
     <g filter="url(#dofLight)">${outlined(H.guard)}</g>
     ${outlined(H.thief + H.held)}
   </g>`; } }];

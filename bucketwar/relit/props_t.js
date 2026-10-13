@@ -110,3 +110,50 @@ RIG.village = (t, { sun = [200, 1000], k = 1 } = {}) => ({
   amb: '#9a88b0', ambGround: '#7a5a48', ambInt: .5, bgLight: .3, exposure: 1.1, bloom: .3, bloomThresh: .82, normalStrength: 1.5, specScale: .6, contrast: 1.06,
   rays: { center: sun, thresh: .5, srcRad: 420, samples: 40, step: .015, decay: .962, col: '#ffc890', int: .8 * k },
 });
+
+// ---------- cinematic version: the low sun sits in a gap in the street, just past the thief's shoulder (backlight) ----------
+addDefs(`
+  <radialGradient id="sunHalo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff4d8" stop-opacity="1"/><stop offset=".18" stop-color="#ffe0a8" stop-opacity=".85"/><stop offset=".5" stop-color="#ffb07a" stop-opacity=".32"/><stop offset="1" stop-color="#ff9a6a" stop-opacity="0"/></radialGradient>
+  <linearGradient id="hazeBand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc8a0" stop-opacity="0"/><stop offset=".55" stop-color="#ffc49a" stop-opacity=".55"/><stop offset="1" stop-color="#e09080" stop-opacity="0"/></linearGradient>
+  <linearGradient id="streetGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd6a0" stop-opacity=".85"/><stop offset="1" stop-color="#ffb070" stop-opacity="0"/></linearGradient>
+`);
+function villageSunset({ t = 0, blur = 'dofHeavy', sun = [868, 1046], well = true } = {}) {
+  const hz = 1180;
+  const house = (x, w, h, wall, roof, lit = 1) => `<rect x="${x}" y="${hz - h}" width="${w}" height="${h + 30}" fill="${wall}"/><rect x="${x + w * .62}" y="${hz - h}" width="${w * .38}" height="${h + 30}" fill="#1a1230" opacity=".32"/>
+    <path d="M${x - 16} ${hz - h} L${x + w / 2} ${hz - h - w * .36} L${x + w + 16} ${hz - h} Z" fill="${roof}"/>
+    ${[0, 1, 2].map(r => [0, 1].map(c => (r + c) % 3 === 1 && !lit ? '' : `<path d="M${x + 36 + c * (w - 108)} ${hz - h + 64 + r * 118 + 60} v-50 a19 19 0 0 1 38 0 v50Z" fill="#ffc06a" filter="url(#pe)"/>`).join('')).join('')}`;
+  const left = [[-140, 230, 470, '#8a5a5a', '#5a2a2a'], [96, 250, 560, '#9a6658', '#5e2e26'], [352, 220, 420, '#86604e', '#552a22'], [578, 230, 500, '#8e6a5a', '#5a2c24']]
+    .map(a => house(...a)).join('');
+  const right = [[1000, 240, 520, '#8a5e56', '#5a2a26'], [1250, 260, 460, '#946658', '#5e2c26']].map(a => house(...a, 0)).join('');
+  const tower = `<g transform="translate(250 ${hz - 60})"><rect x="-64" y="-700" width="128" height="700" fill="#7a5050"/><rect x="34" y="-700" width="30" height="700" fill="#1a1230" opacity=".3"/>
+    <rect x="-76" y="-756" width="152" height="58" fill="#9a7a70"/><path d="M-76 -756 L0 -900 L76 -756 Z" fill="#4a6a72"/>${[-34, 0, 34].map(x => `<path d="M${x - 12} -700 v-62 a12 12 0 0 1 24 0 v62Z" fill="#20141e"/>`).join('')}</g>`;
+  let cob = ''; for (let r = 0, y = hz + 120; y < 2300; r++) { const h = 34 + r * 9; cob += `<path d="M-320 ${y} L1400 ${y}" stroke="#2a1a1c" stroke-width="4" opacity=".45"/>`;
+    for (let x = -300 + (r % 2) * 60; x < 1400; x += 120 + r * 5) cob += `<path d="M${x} ${y} l${F1(Math.sin(x + r) * 5)} ${h}" stroke="#2a1a1c" stroke-width="3.5" opacity=".4"/>`; y += h; }
+  return `<g filter="url(#${blur})">
+    ${sky(['#0f1a36', '#24345c', '#5e5274', '#d08a6a', '#ffd29a'], { y0: -300, y1: hz + 40 })}
+    <circle cx="${sun[0]}" cy="${sun[1]}" r="520" fill="url(#sunHalo)"/>
+    ${mountains(hz - 70, ['#7a5276', '#5e4066'], { seed: 6, amp: 110 })}
+    <circle cx="${sun[0]}" cy="${sun[1]}" r="128" fill="#ffd9a0" opacity=".5" filter="url(#pe)"/><circle cx="${sun[0]}" cy="${sun[1]}" r="70" fill="#fffaf0" filter="url(#pe)"/>
+    <rect x="-320" y="${hz - 420}" width="1720" height="560" fill="url(#hazeBand)"/>
+    ${tower}${left}${right}
+    <rect x="-320" y="${hz + 20}" width="1720" height="1300" fill="#5e3c3a"/>
+    <path d="M${sun[0] - 70} ${hz + 24} L${sun[0] + 70} ${hz + 24} L${sun[0] + 520} 2300 L${sun[0] - 700} 2300 Z" fill="url(#streetGlow)" opacity=".7"/>
+    ${cob}
+    <rect x="-320" y="${hz - 60}" width="1720" height="180" fill="url(#hazeBand)" opacity=".8"/>
+  </g>
+  ${well ? `<g filter="url(#dof)">${wellBg(1130, 1440, .86)}</g>` : ''}`;
+}
+// warm low sun behind (rim + god rays), soft front key, cool sky fill; deep teal shadows, warm highlights
+RIG.cine = (t, { sun = [868, 1046], k = 1 } = {}) => ({
+  lights: [
+    { pos: [1560, 760, -230], col: '#ffcf9a', int: 5.2 * k, rad: 1250, shin: 22 },   // low sun off frame-right, behind: golden rim down his right edges
+    { pos: [1250, 180, -260], col: '#ffd7a8', int: 2.6 * k, rad: 1250, shin: 22 },   // sky glow above it: rim on hat, feather, shoulders
+    { pos: [-480, 980, -200], col: '#86a4ff', int: 2.2, rad: 1100, shin: 24 },       // cool dusk sky behind-left: blue edge on the shadow side
+    { pos: [980, 420, 760], col: '#ffe6cc', int: .56 * k, rad: 2600, shin: 30 },     // soft warm key from the sun side, high
+    { pos: [-200, 1300, 1100], col: '#8a9ad0', int: .26, rad: 3600, shin: 10 },      // faint cool fill from camera-left
+    { pos: [820, 2000, 240], col: '#ffb47e', int: .45, rad: 1200, shin: 16 },        // warm bounce off the sunlit street
+  ],
+  amb: '#46508a', ambGround: '#3a2830', ambInt: .2, bgLight: .32, exposure: 1.12, bloom: .5, bloomThresh: .78, white: 2.2, tonemap: 'soft',
+  normalStrength: 1.75, specScale: .55, vignette: .7, grain: .016, shadowTint: '#0f2238', highTint: '#ffd8a8', shadowAmt: .28, highAmt: .1, sat: .98, contrast: 1.16,
+  rays: { center: sun, thresh: .32, srcRad: 300, samples: 64, step: .02, decay: .975, col: '#ffcf9a', int: 2.0 * k },
+});
