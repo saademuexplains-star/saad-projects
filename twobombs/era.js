@@ -124,10 +124,23 @@ const handShadow = (A, k, S, sk, hs, dx = -5, dy = 7, op = .45) => PASS() === 'n
   `<g opacity="${op}" transform="translate(${dx} ${dy})"><g filter="url(#castSh)">${gripHandOn(A, k, S, sk, hs)}</g></g>`;
 
 // ---------- arms: shoulders ±140, bones 165 / 155 ----------
-const tArm = (k, T, hand = 'back', o = {}) => ({ ...autoIK(k, [k * 140, -930], T, 165, 155, o.bend), hand, ...o });
-const tHang = (k, dx = 0, dy = 0, o = {}) => tArm(k, [k * (160 + dx), -628 + dy], 'relax', { bend: -k, ...o });
-// blend two arm poses (same IK side) — for gestures that travel
-const armMix = (A0, A1, p) => p <= 0 ? A0 : p >= 1 ? A1 : { ...A1, el: lerp2(A0.el, A1.el, p), wr: lerp2(A0.wr, A1.wr, p), hrot: lerp(A0.hrot || 0, A1.hrot || 0, p) };
+const tArm = (k, T, hand = 'back', o = {}) => ({ ...autoIK(k, [k * 140, -930], T, 165, 155, o.bend), hand, side: k, ...o });
+// an arm placed by its elbow and wrist directly (body-local). For poses the two-bone solve gets wrong: hands held in
+// front of the body (the forearm toward us reads shorter), gestures where the elbow must stay down at the side
+const jArm = (k, E, W, hand = 'relax', o = {}) => ({ el: E, wr: W, hand, side: k, ...o });
+// arms hanging at rest: nearly straight, the elbow by the waist, the hand beside the thigh (no elbows jutting out)
+const tHang = (k, dx = 0, dy = 0, o = {}) => jArm(k, [k * (149 + dx * .4), -768 + dy * .5], [k * (163 + dx), -612 + dy], 'relax', o);
+// blend two arm poses (same side) — for gestures that travel. The joints turn (upper arm about the shoulder, forearm
+// about the elbow) the short way round and the bones keep their length, so an arm swings in arcs instead of shrinking
+// through a straight-line blend
+const armMix = (A0, A1, p) => { if (p <= 0) return A0; if (p >= 1) return A1;
+  const k = A1.side ?? A0.side ?? (A1.el[0] < 0 ? -1 : 1), sh = [k * 140, -930];
+  const pol = (a, b) => [Math.hypot(b[0] - a[0], b[1] - a[1]), Math.atan2(b[1] - a[1], b[0] - a[0])];
+  const turn = (a, b) => { let d = b - a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return a + d * p; };
+  const [u0, a0] = pol(sh, A0.el), [u1, a1] = pol(sh, A1.el), [f0, b0] = pol(A0.el, A0.wr), [f1, b1] = pol(A1.el, A1.wr);
+  const u = lerp(u0, u1, p), a = turn(a0, a1), f = lerp(f0, f1, p), b = turn(b0, b1);
+  const el = [sh[0] + u * Math.cos(a), sh[1] + u * Math.sin(a)];
+  return { ...A1, el, wr: [el[0] + f * Math.cos(b), el[1] + f * Math.sin(b)], hrot: lerp(A0.hrot || 0, A1.hrot || 0, p) }; };
 
 // ---------- faces ----------
 const FACE_J = 'M-66 -1114 C-70 -1074 -66 -1038 -55 -1008 C-45 -983 -23 -964 0 -961 C23 -964 45 -983 55 -1008 C66 -1038 70 -1074 66 -1114 C60 -1154 32 -1176 0 -1176 C-32 -1176 -60 -1154 -66 -1114Z';
@@ -256,12 +269,19 @@ function shirtBody({ shirt = '#e4ddcc', pants = '#7a6c4e', shoe = '#3a2618', bel
     if (over) longSleeve = true;
     const up = (A, k) => capsuleD(k * SX, -930, r1, lerp(k * SX, A.el[0], .97), lerp(-930, A.el[1], .97), r2 + 3);
     const fa = (k, A) => forearm(k, A, { r2, r3, S, sk, sleeve: sc, long: longSleeve, rolled: !longSleeve, hs });
+    // the fold of the sleeve on the inside of a bent elbow (between upper arm and forearm); nothing on a straight arm
+    const crease = (A, k) => { const u = unit(A.el, [k * SX, -930]), f = unit(A.el, A.wr); if (u[0] * f[0] + u[1] * f[1] < -.9) return '';
+      const b = unit([0, 0], [u[0] + f[0], u[1] + f[1]]); return `M${F1(A.el[0] + b[0] * 6)} ${F1(A.el[1] + b[1] * 6)} l${F1(b[0] * 20)} ${F1(b[1] * 20)}`; };
     // trousers: high-waisted 1940s cut — the seat (waistband to crotch, full at the hips) and both legs are ONE union in a
     // single filter group, so no seam shows between them. legTf lets a leg step (walk) about the hip line.
     const legP = k => mx(k, `M ${X(-146)} -620 C ${X(-152)} -470 ${X(-134)} -300 ${X(-118)} -104 L ${X(-40)} -104 C ${X(-36)} -300 ${X(-24)} -430 ${X(-4)} -526 L ${X(-4)} -620 Z`);
     const seatP = `M${X(-136)} -712 C${X(-142)} -676 ${X(-148)} -640 ${X(-147)} -600 L${X(147)} -600 C${X(148)} -640 ${X(142)} -676 ${X(136)} -712 Z`;
     // seated (bust + e.lap): the thighs come toward us under the torso, knees side by side
-    const lapSVG = e.bust && e.lap ? `<g filter="url(#pc)" fill="url(#${id}p)"><path d="M${X(-150)} -704 C${X(-192)} -688 ${X(-212)} -656 ${X(-200)} -630 C${X(-178)} -606 ${X(-84)} -606 0 -622 C${X(84)} -606 ${X(178)} -606 ${X(200)} -630 C${X(212)} -656 ${X(192)} -688 ${X(150)} -704 Z"/></g>
+    const shinsSVG = e.bust && e.sit ? [-1, 1].map(k => `<g filter="url(#pc)" fill="url(#${id}p)"><path d="${mx(k, `M ${X(-142)} -632 C ${X(-146)} -560 ${X(-138)} -470 ${X(-136)} -392 L ${X(-74)} -392 C ${X(-70)} -470 ${X(-62)} -560 ${X(-56)} -628 Z`)}"/></g>
+        <path d="${mx(k, `M ${X(-104)} -600 C ${X(-108)} -540 ${X(-104)} -470 ${X(-102)} -400`)}" stroke="${pd}" stroke-width="4" fill="none" opacity=".45" filter="url(#softW2)"/>
+        <path d="${mx(k, `M ${X(-146)} -398 C ${X(-150)} -376 ${X(-142)} -358 ${X(-118)} -354 L ${X(-80)} -354 C ${X(-62)} -358 ${X(-56)} -376 ${X(-62)} -398 Z`)}" fill="${shoe}" filter="url(#pcl)"/>
+        <path d="${mx(k, `M ${X(-134)} -388 Q ${X(-112)} -394 ${X(-90)} -388`)}" stroke="#fff" stroke-width="4" fill="none" opacity=".16"/>`).join('') : '';
+    const lapSVG = e.bust && (e.lap || e.sit) ? `<g filter="url(#pc)" fill="url(#${id}p)"><path d="M${X(-150)} -704 C${X(-192)} -688 ${X(-212)} -656 ${X(-200)} -630 C${X(-178)} -606 ${X(-84)} -606 0 -622 C${X(84)} -606 ${X(178)} -606 ${X(200)} -630 C${X(212)} -656 ${X(192)} -688 ${X(150)} -704 Z"/></g>
       <g filter="url(#softW2)" fill="none" opacity=".45"><path d="M0 -680 C${X(-4)} -660 ${X(-3)} -640 0 -624" stroke="${pd}" stroke-width="6"/>
         <path d="M${X(-182)} -636 C${X(-140)} -620 ${X(-96)} -618 ${X(-50)} -628 M${X(182)} -636 C${X(140)} -620 ${X(96)} -618 ${X(50)} -628" stroke="${pd}" stroke-width="4"/>
         <path d="M${X(-160)} -672 C${X(-124)} -662 ${X(-90)} -660 ${X(-60)} -664 M${X(160)} -672 C${X(124)} -662 ${X(90)} -660 ${X(60)} -664" stroke="${lighten(pants, .3)}" stroke-width="6" opacity=".6"/></g>` : '';
@@ -305,12 +325,12 @@ function shirtBody({ shirt = '#e4ddcc', pants = '#7a6c4e', shoe = '#3a2618', bel
       return ''; };
     return `<defs>${linG(id + 't', [lighten(sh, .12), sh, darken(sh, .2)], { user: [-170 * w, 0, 170 * w, 0] })}${linG(id + 'p', [lighten(pants, .14), pants, darken(pants, .3)], { user: [-150 * w, 0, 150 * w, 0] })}
         <clipPath id="${id}c"><path d="${body}"/></clipPath></defs>
-      ${legs}${lapSVG}${softNeck(S, sk, 31, -960)}${chest}
+      ${legs}${shinsSVG}${lapSVG}${softNeck(S, sk, 31, -960)}${chest}
       <g filter="url(#pcl)" fill="${sc}">${L.front ? '' : `<path d="${up(L, -1)}"/>`}${R.front ? '' : `<path d="${up(R, 1)}"/>`}</g>
       <path d="${body}" fill="url(#${id}t)" filter="url(#pcl)"/>
       ${folds}${placket}${pocketSVG}${scorch}${dirt}${beltSVG}${tie ? tieSVG(tie, X) : ''}${over ? overSVG(over, X, id) : collar}
       ${[[-1, L], [1, R]].filter(([k, A]) => A.front).map(([k, A]) => `<g filter="url(#pcl)" fill="${sc}"><path d="${up(A, k)}"/></g>`).join('')}
-      <g filter="url(#softW)" opacity=".38"><path d="M${F1(L.el[0])} ${F1(L.el[1])} l-16 -26 M${F1(R.el[0])} ${F1(R.el[1])} l16 -26" stroke="${sd}" stroke-width="12" fill="none"/></g>
+      <g filter="url(#softW)" opacity=".38"><path d="${crease(L, -1)} ${crease(R, 1)}" stroke="${sd}" stroke-width="10" fill="none"/></g>
       ${fa(-1, L)}${armMark(-1, L)}${fa(1, R)}${armMark(1, R)}`;
   };
 }

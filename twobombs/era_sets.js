@@ -387,6 +387,16 @@ function potatoField(t, { hy = 980, rows = 14, seed = 5, wind = 0, dust = 0, nea
   return s;
 }
 // the city on the horizon (low dark skyline), optionally burning: glows and fire columns
+// a clump of potato plants close to the lens (same leaf as the field rows), base at (x, y)
+function leafClump(x, y, s, t, { seed = 1, wind = .2, sky = '#a07a5a', haze = 0 } = {}) {
+  const R = rng(seed * 13 + 5); let lv = '';
+  for (let j = 0; j < 11; j++) { const a = -172 + j * 16.4 + (R() - .5) * 14 + wind * 12 * Math.sin(t * 3 + j + seed), L = (70 + R() * 50) * s;
+    const lx = x + Math.cos(a * Math.PI / 180) * L * .62, ly = y + Math.sin(a * Math.PI / 180) * L * .95;
+    lv += `<ellipse cx="${F1(lx)}" cy="${F1(ly)}" rx="${F1(L * .55)}" ry="${F1(L * .33)}" transform="rotate(${F1(a + 90)} ${F1(lx)} ${F1(ly)})"/>`; }
+  const lc = mix(pick(R, ['#4e6a30', '#5a7a36', '#44602a']), sky, haze), dc = darken(lc, .38);
+  return `<g fill="${dc}" transform="translate(${F1(4 * s)} ${F1(6 * s)})">${lv}</g><g fill="${lc}">${lv}</g>
+    <path d="M${F1(x - 6 * s)} ${F1(y + 30 * s)} L${F1(x)} ${F1(y - 40 * s)} L${F1(x + 6 * s)} ${F1(y + 30 * s)} Z" fill="${dc}"/>`;
+}
 function cityHorizon(y, t, { burn = 0, seed = 8, col = '#3a3430', x0 = -600, x1 = 1700 } = {}) {
   let fires = '', smokeC = ''; const R = rng(seed + 50);
   if (burn > .01) for (let i = 0; i < 9; i++) { const fx = x0 + R() * (x1 - x0), fw = 30 + R() * 60; fires += `<ellipse cx="${F1(fx)}" cy="${F1(y - 10)}" rx="${F1(fw)}" ry="${F1(18)}" fill="#ff8a3a" opacity="${F1(.8 * burn * flick(t, i))}"/>`;
@@ -789,12 +799,12 @@ function ceremonySet(t, { fl = 0 } = {}) {
     ${screen}<path d="M-600 ${Yb + 20} L1800 ${Yb + 20} L1800 2600 L-600 2600 Z" fill="#5a2c2a"/>${flag}`;
   // the press, close to the lens: heads and shoulders, two cameras raised
   const R = rng(17); let press = '';
-  [[-40, 1790, 1.15, 1], [360, 1850, 1.05, 0], [760, 1860, 1.1, 0], [1110, 1790, 1.2, 1]].forEach(([x, y, s, cam], i) => {
+  [[-180, 1700, 1.2, 0], [-20, 1730, 1.15, 1], [150, 1760, 1.08, 0], [320, 1790, 1.04, 0], [500, 1800, 1.0, 0], [680, 1795, 1.02, 0], [860, 1785, 1.06, 0], [1030, 1750, 1.12, 0], [1180, 1720, 1.2, 1]].forEach(([x, y, s, cam], i) => {
     press += `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-190 120 C-186 0 -140 -70 -70 -86 L70 -86 C140 -70 186 0 190 120 Z" fill="${pick(R, ['#22242a', '#2a2622', '#1e2228'])}"/>
       <ellipse cx="0" cy="-160" rx="74" ry="86" fill="#16120e"/>
-      ${cam ? `<g transform="translate(${-20 + i * 6} -250)"><rect x="-70" y="-46" width="140" height="84" rx="10" fill="#1a1a1c"/><circle cx="0" cy="-4" r="30" fill="#2e3034"/><circle cx="0" cy="-4" r="16" fill="#0e0e10"/>
+      ${cam ? `<g transform="translate(${i ? 4 : -20} -250)"><rect x="-70" y="-46" width="140" height="84" rx="10" fill="#1a1a1c"/><circle cx="0" cy="-4" r="30" fill="#2e3034"/><circle cx="0" cy="-4" r="16" fill="#0e0e10"/>
         <rect x="30" y="-70" width="36" height="26" fill="#2a2a2c"/><path d="M-70 10 L-110 60 M70 10 L110 60" stroke="#c8a080" stroke-width="22" stroke-linecap="round"/></g>` : ''}</g>`; });
-  const front = `<g filter="url(#dof)">${press}</g>`;
+  const front = `<g filter="url(#dof)"><g filter="url(#pcl)">${press}</g></g>`;
   return { back, front };
 }
 // a press photographer's flash: a burst of white light in the foreground (emissive) — k 0..1

@@ -217,6 +217,16 @@ whip(41.86, -16)
 # 44.3 the ceremony: flash bulbs (soft low pops), a ripple of applause
 for ts in (44.55, 45.25, 46.3, 46.9): place(FX, thump(140, 70, .14, .03), ts, -19); place(FX, whoomph(.12, 300, 900), ts - .02, -30)
 place(FX, fade(load('crowd_1', ss=1.0, dur=1.4, pitch=.86, lo=100, hi=1500), .2, .5), 46.1, -27)
+# the official's hand-claps (on screen 44.3-45.9): warm, low-passed, a little room
+def clap():
+    n = int(.09 * SR); t = np.arange(n) / SR; x = rng.standard_normal(n); y = np.zeros(n); a = np.exp(-2 * np.pi * 1300 / SR)
+    for i in range(1, n): y[i] = a * y[i - 1] + (1 - a) * x[i]
+    y = y / (np.abs(y).max() + 1e-9) * np.exp(-t / .022) * np.minimum(1, t / .0015)
+    y = y + .6 * thump(220, 120, .09, .03)
+    out = np.zeros(n + int(.08 * SR))
+    for d, gn in ((0, 1), (.023, .35), (.041, .22), (.067, .12)): k = int(d * SR); out[k:k + n] += y * gn
+    return out
+for i in range(5): place(FX, clap(), 44.30 + i * .3927 + .01, -27 - (i == 4) * 4)
 # 47.4 the hill: the ghosts rise — a far, slow rumble
 zoomin(47.40, -17)
 place(FX, rumble(2.5, 22, 80, 1.2, 3.0), 47.5, -15)

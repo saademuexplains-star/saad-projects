@@ -84,7 +84,7 @@ const RIG_DUSK = t => ({ lights: [ { pos: [540, 1300, -300], col: '#ffb080', int
 const HS = 1.5;
 const blinkL = (t, list) => blinkAt(t, list);
 // the briefcase in the screen-left hand (k = -1), swinging a little with the walk
-const caseArm = (sw = 0) => tArm(-1, [-168 + sw * 10, -640], 'hold', { hs: HS, bend: 1 });
+const caseArm = (sw = 0) => jArm(-1, [-150 - 3 * sw, -768], [-166 - 12 * sw, -614 + 4 * Math.abs(sw)], 'hold', { hs: HS });
 const withCase = (A, t, sw = 0) => { const F = fistAt(A, HS); return briefcase(F[0], F[1] - 4, .62, 4 * sw) + gripHandOn(A, -1, SKJ, 'jp', HS); };
 // a sling for the burned arm (k = +1): the upper arm hangs at his side, the forearm rests across his stomach, hand a
 // little raised, cradled in a triangular cloth whose two straps go up to his neck
@@ -119,7 +119,7 @@ const SHOTS = [
   { at: 2.62, draw(v, t) {
       const st = stride(t, .62, 22), sw = Math.sin(t / .62 * Math.PI);
       const C = camF(t, t => [540, 1040 - 10 * seg(t, 2.62, 4.98), lerp(1.06, 1.12, seg(t, 2.62, 4.98)), { hh: .8 }]);
-      const A = caseArm(sw), RA = tArm(1, [160 - 22 * sw, -640 + 4 * Math.abs(sw)], 'relax', { hs: HS, bend: -1 });
+      const A = caseArm(sw), RA = jArm(1, [150 + 3 * sw, -768], [166 - 14 * sw, -614 + 5 * Math.abs(sw)], 'relax', { hs: HS });
       const look = kf(t, [[2.62, -6], [3.3, -6], [3.6, 6], [4.3, 6], [4.6, 0]]);
       return `<g transform="${C.tf}">${lights(C.v, RIG_DAY(t))}${street1945(t, { cz: -(t - 2.62) * 300 })}
         ${who(TSU, t, [540, 2290 + st.bob * 2.4, 1.12], { armL: A, armR: RA, ...st, smirk: .35, look, lookY: -1, lid: blinkL(t, [3.9]), turn: look * .012 }, { top: withCase(A, t, sw) })}</g>`;
@@ -128,7 +128,7 @@ const SHOTS = [
   //   with a small smile. Slow push-in on his face, the street soft behind him.
   { at: 4.98, draw(v, t) {
       const up = ease(seg(t, 5.25, 5.8)), C = camF(t, t => [560, lerp(905, 880, ease(seg(t, 4.98, 6.6))), lerp(2.75, 3.05, ease(seg(t, 4.98, 6.6))), { hh: .7 }]);
-      const R0 = tArm(1, [160, -640], 'relax', { hs: HS, bend: -1 }), R1 = { ...aim(tArm(1, [40, -1112], 'none', { hs: HS, bend: 1 }), 186), gh: 'back', front: true };
+      const R0 = tHang(1, 0, 0, { hs: HS }), R1 = { ...aim(tArm(1, [40, -1112], 'none', { hs: HS, bend: 1 }), 186), gh: 'back', front: true };
       const RA = up < 1 ? armMix(R0, { ...R1, hand: 'relax' }, up) : R1, A = caseArm(0);
       const top = withCase(A, t) + (up > .99 ? gripHandOn(R1, 1, SKJ, 'jp', HS) : '');
       return `<g transform="${C.tf}">${lights(C.v, RIG_DAY(t))}<g filter="url(#dofHeavy)">${street1945(t, { cz: -700 })}</g>
@@ -165,7 +165,7 @@ const SHOTS = [
       const q = t - 9.62, front = lerp(-700, 1700, ease(seg(t, 9.75, 10.95))), hit = 10.33, fly = clamp((t - hit) / .7);
       const C = camF(t, t => [560, 1180, 1.0, { hh: .6, ...SHK(t, [[10.33, 34, .9]]) }]);
       const x = 600 + 760 * easeIn(fly), y = 1560 - 300 * Math.sin(fly * Math.PI) + 60 * fly, rot = 95 * ease(fly);
-      const fl = t * 13, arms = fly > 0 ? { armL: tArm(-1, [-210 + 50 * Math.sin(fl), -1080 + 90 * Math.cos(fl * .8)], 'palm', { hs: HS, bend: 1 }), armR: tArm(1, [220 + 60 * Math.cos(fl * 1.1), -980 + 100 * Math.sin(fl * .9)], 'palm', { hs: HS, bend: -1 }) } : { armL: tHang(-1), armR: tHang(1) };
+      const fl = t * 13, arms = fly > 0 ? { armL: tArm(-1, [-230 + 50 * Math.sin(fl), -1090 + 90 * Math.cos(fl * .8)], 'openJ', { hs: HS, spread: 1 }), armR: tArm(1, [240 + 60 * Math.cos(fl * 1.1), -1000 + 100 * Math.sin(fl * .9)], 'openJ', { hs: HS, spread: 1 }) } : { armL: tHang(-1), armR: tHang(1) };
       const man = rotFig(who(TSU, t, [x, y, .42], { ...arms, turn: -.3, look: -8, shock: fly > 0 ? .8 : .3, grit: fly > 0 ? .5 : 0, lid: 0, legL: { lift: 120 * Math.sin(Math.min(1, fly * 2) * Math.PI / 2) }, legR: { lift: 40 * fly + 30 * Math.sin(fl) * fly } }), rot, x, y - 260);
       return `<g transform="${C.tf}">${lights(C.v, RIG_BLAST(t, 1 - .5 * seg(t, 9.62, 11.1)))}
         ${sky1945({ y0: -400, y1: 1200, top: '#8a7a70', mid: ['#c8a888', '#e8c8a0'], haze: '#f0d8b0' })}
@@ -180,12 +180,12 @@ const SHOTS = [
       const C = camF(t, t => [540, 1260, 1.0, { hh: .6, r: lerp(-3, 0, seg(t, 11.3, 12.4)), ...SHK(t, [[11.32, 40, .7]]) }]);
       const x = lerp(80, 540, ease(f)), y = lerp(700, 1560, easeIn(f)), rot = lerp(50, 84, f);
       const curl = ease(seg(t, land, land + .5));
-      const man = rotFig(who(TSU_BURNT, t, [x, y + 640 * .6, .6], { armL: tArm(-1, [-120, -1230], 'relax', { hs: HS, bend: 1 }), armR: tArm(1, [180, -760], 'relax', { hs: HS, bend: -1 }), legL: { lift: 160 * curl + 40 }, legR: { lift: 90 * curl + 20 }, lid: 2, squeeze: 1, grit: .6, soot: .5, burn: .4, tilt: 12 }, { still: 1 }), rot, x, y);
+      const man = rotFig(who(TSU_BURNT, t, [x, y + 640 * .6, .6], { armL: tArm(-1, [-150, -1230], 'relax', { hs: HS }), armR: tHang(1, 0, 0, { hs: HS }), legL: { lift: 160 * curl + 40 }, legR: { lift: 90 * curl + 20 }, lid: 2, squeeze: 1, grit: .6, soot: .5, burn: .4, tilt: 12 }, { still: 1 }), rot, x, y);
       const burst = after ? `<g filter="url(#b16)" opacity="${F1(.85 * (1 - seg(t, land, land + 1)))}">${Array.from({ length: 10 }, (_, i) => `<circle cx="${F1(540 + Math.cos(i * .63) * 320 * seg(t, land, land + .6))}" cy="${F1(1560 - Math.abs(Math.sin(i * .63)) * 260 * seg(t, land, land + .6))}" r="${F1(90 + 60 * seg(t, land, land + .6))}" fill="#9a8468"/>`).join('')}</g>` : '';
       return `<g transform="${C.tf}">${lights(C.v, RIG_ASH(t))}
         ${sky1945({ y0: -400, y1: 1000, top: '#5a4a48', mid: ['#8a6a5a', '#b88a68'], haze: '#c8a07a' })}${smoke(300, 980, t, { seed: 9, n: 10, H: 900, drift: 300, r0: 120, r1: 420, col: '#7a6050', op: .35, speed: .05, blur: 'b40' })}
         ${potatoField(t, { hy: 960, rows: 9, near: 1560, sky: '#a08060', wind: .4, dust: .6 })}${man}${burst}
-        ${potatoField(t + 3, { hy: 1600, rows: 4, near: 2300, seed: 9, sky: '#a08060', wind: .6, dust: .4 }).replace(/^<path[^>]*>/, '')}
+        <g filter="url(#pcl)">${potatoField(t + 3, { hy: 1600, rows: 4, near: 2300, seed: 9, sky: '#a08060', wind: .6, dust: .4 }).replace(/^<path[^>]*>/, '')}</g>
         ${ashFall(t, { n: 70, col: '#3a3028', size: 5, speed: .35, dark: 1 })}</g>`;
     } },
   // 8 "Your eardrums burst." — ECU: his face on its side in the dirt, eyes squeezed shut, a hand clamped over his ear;
@@ -206,13 +206,14 @@ const SHOTS = [
   { at: 13.98, draw(v, t) {
       const up = ease(seg(t, 14.0, 14.7)), tr = Math.sin(t * 26) * 4 * up;
       const C = camF(t, t => { const p = ease(seg(t, 13.98, 16.38)); return [lerp(500, 580, p), lerp(1180, 1150, p), lerp(1.5, 1.62, p), { hh: .7, r: lerp(2, -2, p) }]; });
-      const LA = tArm(-1, [-200, -640], 'back', { hs: HS, bend: 1 }), RA = { ...tArm(1, [40 + tr, -860 + tr], 'openJ', { hs: HS, bend: 1, spread: .5, curl: .35 }), front: true };
+      const LA = tArm(-1, [-200, -640], 'back', { hs: HS, bend: 1 }), RA = jArm(1, [156, -790], [44 + tr, -886 + tr], 'openJ', { hs: HS, spread: .5, curl: .35 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_ASH(t))}
         ${sky1945({ y0: -400, y1: 1100, top: '#4a3c3c', mid: ['#7a5a50', '#a87a60'], haze: '#c08a64' })}${smoke(700, 1040, t, { seed: 13, n: 12, H: 1100, drift: 200, r0: 140, r1: 460, col: '#6a5248', op: .32, speed: .05, blur: 'b40' })}
         ${potatoField(t, { hy: 1040, rows: 8, near: 2000, sky: '#a07a5a', wind: .2, dust: .6 })}
         ${who(TSU_BURNT, t, [560, lerp(2860, 2720, up), 1.6], { armL: LA, armR: RA, bust: 1, burn: 1, soot: .8, look: 6, lookY: 6, lid: .2 + blinkL(t, [15.6]), tilt: lerp(4, 10, up), turn: .1, shock: .4, smirk: -.6, open: .1, bIn: 9, bOut: 2 }, { lean: -6 })}
         ${ashFall(t, { n: 60, col: '#c8bcb0', size: 4, speed: .12 })}
-        <g filter="url(#dof)">${potatoField(t + 5, { hy: 1560, rows: 4, near: 2300, seed: 11, sky: '#a07a5a', wind: .3 }).replace(/^<path[^>]*>/, '')}</g></g>`;
+        <g filter="url(#dof)"><g filter="url(#pcl)">${potatoField(t + 5, { hy: 1560, rows: 4, near: 2300, seed: 11, sky: '#a07a5a', wind: .3 }).replace(/^<path[^>]*>/, '')}
+          ${[[180, 1700, 1.9], [420, 1690, 2.2], [650, 1700, 2.1], [880, 1710, 2.0], [300, 1840, 2.4], [760, 1850, 2.5], [1100, 1760, 2.2], [-60, 1760, 2.2]].map(([x, y, sc], i) => leafClump(x, y, sc, t, { seed: i + 3, wind: .3 })).join('')}</g></g></g>`;
     } },
   // 10 "And above the city," — over his shoulder: the city on the horizon is burning; a dark column climbs out of it.
   //   The camera rises with the column.
@@ -233,8 +234,9 @@ const SHOTS = [
         ${sky1945({ y0: -1400, y1: 1500, top: '#3e5a80', mid: ['#7a8aa0', '#b8a090'], haze: '#c89a74' })}
         ${mushroomCloud(560, 1480, t - 14, { s: .82, age, glow: .7 - .5 * p })}
         ${cityHorizon(1490, t, { burn: 1, col: '#2a2420' })}
-        <path d="M-1400 1500 L2500 1500 L2500 2800 L-1400 2800 Z" fill="#3a2e26"/>
-        ${backBust(240, 1620, .26, { turn: .1 })}</g>`;
+        ${potatoField(t, { hy: 1500, rows: 7, near: 2500, seed: 21, sky: '#4a3830', dust: .3 })}
+        ${backBust(240, 1620, .26, { turn: .1 })}
+        <g filter="url(#pcl)">${[[150, 1648, .38], [215, 1655, .42], [285, 1650, .38], [345, 1645, .34], [110, 1690, .5], [250, 1700, .55], [390, 1692, .5]].map(([x, y, sc], i) => leafClump(x, y, sc, t, { seed: i + 40, wind: .2, sky: '#4a3830', haze: .25 })).join('')}</g></g>`;
     } },
   // 12 "You spend the night in an air raid shelter." — candlelight in an earthen shelter; others huddled in the dark; the
   //   city glows red through the entrance; he stares, bandaged, the flame in his eyes
@@ -242,7 +244,7 @@ const SHOTS = [
       const C = camF(t, t => [640, lerp(1300, 1240, seg(t, 21.12, 23.3)), lerp(1.2, 1.42, ease(seg(t, 21.12, 23.3))), { hh: .4 }]);
       return `<g transform="${C.tf}">${lights(C.v, RIG_NIGHT(t))}${shelterSet(t)}
         ${huddled(560, 1580, .7, { seed: 2 })}${huddled(380, 1600, .6, { seed: 5 })}
-        ${who(TSU_BAND, t, [790, 3560, 2.25], { bust: 1, burn: .6, soot: .6, look: -9, lookY: 3, lid: .35 + blinkL(t, [22.4]), smirk: -.3, tilt: 6, turn: -.2, bIn: 5 })}
+        ${who(TSU_BAND, t, [790, 3700, 2.25], { bust: 1, burn: .6, soot: .6, look: -9, lookY: 3, lid: .35 + blinkL(t, [22.4]), smirk: -.3, tilt: 6, turn: -.2, bIn: 5 })}
         ${candle(250, 1620, t, 1)}</g>`;
     } },
   // 13 "The next day," — a ruined station in grey haze; a locomotive breathes steam; people with bundles shuffle past
@@ -250,16 +252,18 @@ const SHOTS = [
       const C = camF(t, t => [lerp(480, 620, seg(t, 23.3, 24.24)), 1100, 1.08, { hh: .5 }]);
       return `<g transform="${C.tf}">${lights(C.v, RIG_GREY(t))}${stationSet(t, { scroll: (t - 23.3) * 120 })}${locomotive(1250, 1500, .95, { t, roll: 0 })}</g>`;
     } },
-  // 14 "you drag yourself onto a train" — from inside the carriage door: he hauls himself up the steps by the rail
+  // 14 "you drag yourself onto a train" — from inside the carriage door: he grips the door rail with his good hand and
+  //   hauls himself up the steps; the burned arm rides in its sling
   { at: 24.24, draw(v, t) {
       const rise = ease(seg(t, 24.3, 25.7)), y = lerp(3560, 3330, rise);
-      const C = camF(t, t => [560, lerp(1150, 1080, seg(t, 24.24, 25.92)), 1.25, { hh: .8, r: -3 }]);
-      const railW = [770, 1360], P0 = [470, y, 2.15], RL = toLocal(railW, P0[0], P0[1], P0[2]);
-      const RA = { ...aim(tArm(-1, RL, 'none', { hs: HS, bend: 1 }), 0), gh: 'hold', front: true };
+      const C = camF(t, t => [500, lerp(1150, 1080, seg(t, 24.24, 25.92)), 1.25, { hh: .8, r: 3 }]);
+      const railW = [300, 1120], P0 = [610, y, 2.15], RL = toLocal(railW, P0[0], P0[1], P0[2]);
+      const RA = { ...aim(tArm(-1, RL, 'none', { hs: HS }), 0), gh: 'hold' };
       return `<g transform="${C.tf}">${lights(C.v, RIG_GREY(t))}<g filter="url(#dofHeavy)">${stationSet(t, { scroll: 300, smokeK: .6 })}</g>
-        ${who(TSU_BAND, t, P0, { armL: RA, armR: slingArm(), bust: 1, burn: .6, soot: .5, grit: .5 * (1 - rise * .5), lid: .4, squint: .5, look: 3, lookY: -4, tilt: 4, bIn: 8 }, { top: slingCloth() + gripHandOn(RA, -1, SKJ, 'jp', HS) })}
-        <g filter="url(#pcl)"><rect x="740" y="-400" width="60" height="2900" fill="#c8a050"/></g><path d="M752 -400 L752 2500" stroke="#fff4c8" stroke-width="6" opacity=".4"/>
-        <g filter="url(#pcl)"><path d="M-400 -400 L120 -400 L120 2500 L-400 2500 Z M880 -400 L1480 -400 L1480 2500 L880 2500 Z" fill="#3a2a1e"/></g></g>`;
+        <g filter="url(#pcl)"><rect x="270" y="-400" width="60" height="2900" fill="#c8a050"/></g><path d="M282 -400 L282 2500" stroke="#fff4c8" stroke-width="6" opacity=".4"/>
+        ${who(TSU_BAND, t, P0, { armL: RA, armR: slingArm(), bust: 1, burn: .6, soot: .5, grit: .5 * (1 - rise * .5), lid: .4, squint: .5, look: -3, lookY: -4, tilt: -4, bIn: 8 }, { top: slingCloth() + gripHandOn(RA, -1, SKJ, 'jp', HS) })}
+        <g filter="url(#pcl)"><path d="M-400 -400 L180 -400 L180 2500 L-400 2500 Z M1000 -400 L1480 -400 L1480 2500 L1000 2500 Z" fill="#3a2a1e"/></g>
+        <g filter="url(#dof)"><g filter="url(#pcl)"><path d="M-400 1830 L1480 1800 L1480 2600 L-400 2600 Z" fill="#4a3a2c"/></g><path d="M-400 1830 L1480 1800" stroke="#8a7a62" stroke-width="10"/></g></g>`;
     } },
   // 15 "and go home" — the train steams across the countryside toward the sea, the camera tracking alongside
   { at: 25.92, draw(v, t) {
@@ -269,14 +273,18 @@ const SHOTS = [
         ${carriage(80, 1300, .72, { roll: sc })}${carriage(700, 1300, .72, { roll: sc })}${locomotive(1330, 1300, .72, { t, roll: sc })}
         <path d="M-400 1420 L1480 1420 L1480 2400 L-400 2400 Z" fill="#6a8a48"/><g filter="url(#dof)">${potatoField(t, { hy: 1700, rows: 3, near: 2500, seed: 3, sky: '#b8c8a8' })}</g></g>`;
     } },
-  // 16 "to your wife and baby son in Nagasaki." — in the carriage he looks at a photograph: Hisako and the baby; we push in
-  //   until the photo fills the frame
+  // 16 "to your wife and baby son in Nagasaki." — in the carriage he sits on the bench and looks at a photograph: Hisako
+  //   and the baby, held in his good hand; we push in until the photo fills the frame
   { at: 27.20, draw(v, t) {
-      const p = ease(seg(t, 27.4, 28.9)), C = camF(t, t => { const p = ease(seg(t, 27.4, 28.9)); return [lerp(560, 560, p), lerp(1180, 1500, p), lerp(1.15, 2.6, p), { hh: .4 }]; });
-      const RA = { ...tArm(-1, [-30, -800], 'back', { hs: HS, bend: 1 }), front: true };
-      return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t))}${carriageInterior(t, (t - 27.2) * 900)}
-        ${who(TSU_BAND, t, [420, 2280, .95], { armL: RA, armR: slingArm(), bust: 1, burn: .4, soot: .3, look: 6, lookY: 5, lid: .62 + blinkL(t, [27.6]), smirk: lerp(0, .5, seg(t, 27.8, 28.6)), tilt: 10, turn: .2 }, { top: slingCloth() })}
-        ${photoHisako(560, 1500, .78, { rot: -6 })}</g>`;
+      const P0 = [420, 2233, .95], RA = jArm(-1, [-160, -786], [-24, -772], 'back', { hs: HS, curl: .4 }), W = toWorld(RA.wr, P0[0], P0[1], P0[2]);
+      const C = camF(t, t => { const p = ease(seg(t, 27.4, 28.9)); return [lerp(560, W[0] + 118, p), lerp(1180, W[1] - 24, p), lerp(1.15, 2.6, p), { hh: .4 }]; });
+      const bench = `<rect x="-600" y="1490" width="2400" height="100" fill="#4a5a3e"/><g filter="url(#pcl)"><path d="M-600 1588 L1800 1588 L1800 1652 L-600 1652 Z" fill="#5a6c4c"/></g>
+        <path d="M-600 1591 L1800 1591" stroke="#7a8c68" stroke-width="5" opacity=".6"/><g filter="url(#pcl)"><path d="M-600 1652 L1800 1652 L1800 1880 L-600 1880 Z" fill="#3e2c1e"/></g>
+        <path d="M-600 1880 L1800 1880 L1800 2600 L-600 2600 Z" fill="#2a2018"/>`;
+      const thumb = `<g filter="url(#pks_jp)"><path d="${capsuleD(W[0] - 2, W[1] - 2, 10, W[0] + 20, W[1] - 14, 8)}" fill="${SKJ.mid}"/></g><ellipse cx="${F1(W[0] + 18)}" cy="${F1(W[1] - 14)}" rx="4" ry="5" fill="${SKJ.hi}" opacity=".5"/>`;
+      return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t))}${carriageInterior(t, (t - 27.2) * 900)}${bench}
+        ${who(TSU_BAND, t, P0, { armL: RA, armR: { ...slingArm(), hand: 'none' }, bust: 1, sit: 1, burn: .4, soot: .3, look: 6, lookY: 5, lid: .62 + blinkL(t, [27.6]), smirk: lerp(0, .5, seg(t, 27.8, 28.6)), tilt: 10, turn: .2 }, { top: slingCloth() })}
+        ${photoHisako(W[0] + 124, W[1] - 22, .78, { rot: -6 })}${thumb}</g>`;
     } },
   // 17 "Three days after Hiroshima," — Nagasaki: the harbour, the hills of houses, the shipyard cranes; a slow pan
   { at: 28.98, draw(v, t) {
@@ -288,7 +296,7 @@ const SHOTS = [
       const p = seg(t, 30.72, 33.42), st = stride(t, .7, 16), x = lerp(170, 470, ease(p));
       const C = camF(t, t => [lerp(420, 520, ease(seg(t, 30.72, 33.42))), 1180, 1.08, { hh: .6 }]);
       const lookUp = ease(seg(t, 31.2, 31.6));
-      const cols = who(COL1, t, [880, 1560, .62], { bust: 1, look: -10 * lookUp, turn: -.3 * lookUp, shock: .4 * lookUp, lid: 0 }, { ph: 1 }) + desk(880, 1600, 420, .7, { seed: 6, board: 1 });
+      const cols = who(COL1, t, [880, 1990, .62], { bust: 1, look: -10 * lookUp, turn: -.3 * lookUp, shock: .4 * lookUp, lid: 0 }, { ph: 1 }) + desk(880, 1600, 420, .7, { seed: 6, board: 1 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_OFFICE(t))}${officeSet(t, { clockT: 10.95 + (t - 30.72) / 3600, colleagues: cols })}
         ${who(TSU_BAND, t, [x, 1740 + st.bob * 2, .78], { armL: tHang(-1), armR: slingArm(), ...st, burn: .5, soot: .3, look: 6 * lookUp, lid: .3, smirk: -.2, tilt: 3 }, { top: slingCloth() })}
         ${desk(-60, 1900, 600, 1.1, { seed: 8, board: 1, lamp: 1 })}</g>`;
@@ -296,7 +304,7 @@ const SHOTS = [
   // 19 "to report what you saw." — at the boss's desk he describes it with his good hand: a flash, this big
   { at: 33.42, draw(v, t) {
       const sweep = ease(seg(t, 33.6, 34.3)), C = camF(t, t => [560, 860, lerp(1.9, 2.05, seg(t, 33.42, 34.82)), { hh: .7 }]);
-      const A0 = tArm(-1, [-110, -900], 'openJ', { hs: HS, bend: 1, spread: .5 }), A1 = tArm(-1, [-250, -1180], 'openJ', { hs: HS, bend: 1, spread: 1.2 });
+      const A0 = tArm(-1, [-110, -900], 'openJ', { hs: HS, bend: 1, spread: .5 }), A1 = tArm(-1, [-250, -1180], 'openJ', { hs: HS, spread: 1.2 });
       return `<g transform="${C.tf}">${lights(C.v, RIG_OFFICE(t))}<g filter="url(#dofHeavy)">${officeSet(t, { clockT: 11.0 })}</g>
         ${who(TSU_BAND, t, [600, 1760, .8], { armL: armMix(A0, A1, sweep), armR: slingArm(), burn: .5, soot: .3, talk: talkW(t, 33.48, 34.71, .5), look: 6, lid: 0, shock: .3 + .3 * sweep, bIn: 6, turn: .25, tilt: -2 }, { top: slingCloth() })}</g>`;
     } },
@@ -304,7 +312,8 @@ const SHOTS = [
   { at: 34.82, draw(v, t) {
       const shake = Math.sin((t - 34.9) * 11) * bell(t, 34.9, 35.9), wave = bell(t, 35.2, 36.2);
       const C = camF(t, t => [560, 880, lerp(1.95, 2.1, seg(t, 34.82, 36.32)), { hh: .6 }]);
-      const A = tArm(1, [lerp(170, 120, wave), lerp(-640, -960, wave) + 30 * Math.sin(t * 14) * wave], wave > .3 ? 'openJ' : 'relax', { hs: HS, bend: -1 });
+      const up = ease(seg(t, 35.1, 35.35)) * (1 - ease(seg(t, 36.0, 36.3))), sw = .5 - .5 * Math.cos(Math.max(0, t - 35.35) * 2 * Math.PI / .45);
+      const A = armMix(tHang(1, 0, 0, { hs: HS }), jArm(1, [170, -792], [lerp(96, 246, sw), lerp(-884, -906, sw)], 'openJ', { hs: HS, spread: .8 }), up);
       return `<g transform="${C.tf}">${lights(C.v, RIG_OFFICE(t))}<g filter="url(#dofHeavy)">${officeSet(t, { clockT: 11.01 })}</g>
         ${who(BOSS, t, [540, 1760, .82], { armR: A, armL: tHang(-1), smirk: lerp(0, .5, seg(t, 35.4, 35.9)), side: -.5, lid: .3, turn: -.25 + .15 * shake, tilt: 4 * shake + 3, look: -6, bIn: -2, bOut: 6, talk: talkW(t, 35.4, 36.2, .25) }, { lean: -3 })}</g>`;
     } },
@@ -314,10 +323,10 @@ const SHOTS = [
       const w = Math.pow(ease(seg(t, 39.35, 40.15)), 1.4), C = camF(t, t => [560, lerp(1000, 930, ease(seg(t, 36.32, 40.4))), lerp(1.2, 1.4, ease(seg(t, 36.32, 40.4))), { hh: .6 }]);
       flashK(.98 * Math.pow(seg(t, 39.8, 40.32), 1.5), '#ffffff'); if (w > .3) ab(.005 * w);
       const jab = Math.sin((t - 36.4) * 8) * bell(t, 36.5, 38.2);
-      const PA = tArm(-1, [-330, -1000 + 26 * jab], 'pointF', { hs: HS, bend: 1 });
+      const PA = tArm(-1, [-420, -1010 + 26 * jab], 'pointF', { hs: HS });
       return `<g transform="${C.tf}">${lights(C.v, RIG_OFFICE(t, { white: w }))}${officeSet(t, { white: w, clockT: 11.03 })}
-        ${who(BOSS, t, [470, 1520, .62], { bust: 1, armL: tHang(-1), armR: tHang(1), turn: lerp(.25, 0, w), look: lerp(8, 0, w), lid: .2, smirk: lerp(.3, -.3, w), shock: .6 * w, bIn: 4 * w })}
-        ${desk(470, 1550, 760, .85, { seed: 2, lamp: 1 })}
+        ${desk(70, 1640, 640, .85, { seed: 2, lamp: 1 })}
+        ${who(BOSS, t, [480, 1720, .7], { armL: tHang(-1), armR: tHang(1), turn: lerp(.25, 0, w), look: lerp(8, 0, w), lid: .2, smirk: lerp(.3, -.3, w), shock: .6 * w, bIn: 4 * w })}
         ${who(TSU_BAND, t, [900, 3150, 1.95], { armL: PA, armR: slingArm(), bust: 1, burn: .5, soot: .3, turn: -.35, look: -8, talk: talkW(t, 36.39, 38.14, .5), bIn: 8, tilt: 4, shock: .5 * w }, { top: slingCloth(), lean: -4 })}</g>`;
     } },
   // 22 "You survived that one too." — the wreck: the window blown in and, outside, the second cloud climbing; dust in the
@@ -325,10 +334,11 @@ const SHOTS = [
   { at: 40.40, draw(v, t) {
       const up = ease(seg(t, 40.6, 41.4)), C = camF(t, t => [560, 1150, lerp(1.25, 1.38, seg(t, 40.4, 41.86)), { hh: .7 }]);
       const Wk = officeWreck(t), P0 = [560, lerp(2400, 2140, up), .95], b = brS(t, 0, 1) * .8;
-      const PA = tArm(-1, toLocal([372, 1482], P0[0], P0[1], P0[2], b), 'back', { hs: HS, bend: 1, curl: .2 });
+      const cough = ease(seg(t, 40.72, 40.98)) * (1 - ease(seg(t, 41.55, 41.8)));
+      const PA = armMix(tHang(-1, 0, 0, { hs: HS }), jArm(-1, [-156, -800], [-22, -952], 'back', { hs: HS, curl: .3 }), cough);
       return `<g transform="${C.tf}">${lights(C.v, RIG_WRECK(t))}${Wk.back}
         ${who(TSU_BAND, t, P0, { bust: 1, armL: PA, armR: slingArm(), burn: .5, soot: 1, lid: lerp(1.6, .3, up), squint: .6, grit: .3 * (1 - up), talk: .3 * Math.abs(Math.sin(t * 9)) * bell(t, 40.9, 41.5), tilt: lerp(-10, 2, up), look: -3 }, { top: slingCloth() })}
-        ${Wk.front}${atb(P0[0], P0[1], P0[2], redraw(-1, PA, SKJ, 'jp', HS), b)}</g>`;
+        ${Wk.front}${cough > .5 ? atb(P0[0], P0[1], P0[2], redraw(-1, PA, SKJ, 'jp', HS), b) : ''}</g>`;
     } },
   // 23 "You live another sixty-five years." — spring, decades on: the old man sits on his veranda, hands on his knees, tea
   //   at his side; blossom near the lens, petals drifting
@@ -347,13 +357,13 @@ const SHOTS = [
       flashK(.25 * fl);
       const CS = ceremonySet(t);
       const cl = Math.abs(Math.sin((t - 44.3) * 8)), clap = 1 - ease(seg(t, 45.9, 46.3));
-      const OL = armMix(tHang(-1), { ...tArm(-1, [-24 - 34 * cl, -836], 'relax', { hs: HS, bend: 1 }), front: true }, clap), OR = armMix(tHang(1), { ...tArm(1, [24 + 34 * cl, -836], 'relax', { hs: HS, bend: -1 }), front: true }, clap);
-      const TL = { ...tArm(-1, [-86, -792], 'relax', { hs: HS, bend: 1 }), front: true }, TR = { ...tArm(1, [86, -792], 'relax', { hs: HS, bend: -1 }), front: true };
+      const OL = armMix(tHang(-1, 0, 0, { hs: HS }), jArm(-1, [-150, -788], [-22 - 34 * cl, -846], 'relax', { hs: HS }), clap), OR = armMix(tHang(1, 0, 0, { hs: HS }), jArm(1, [150, -788], [22 + 34 * cl, -846], 'relax', { hs: HS }), clap);
+      const TL = jArm(-1, [-154, -792], [-82, -848], 'relax', { hs: HS }), TR = jArm(1, [154, -792], [82, -848], 'relax', { hs: HS });
       const thumb = (A, k) => { const w = A.wr; return `<g filter="url(#pks_jpOld)"><path d="${capsuleD(w[0] + k * 2, w[1] - 18, 7.5, w[0] - k * 20, w[1] + 4, 6)}" fill="${SKJO.mid}"/></g><ellipse cx="${F1(w[0] - k * 18)}" cy="${F1(w[1] + 2)}" rx="3.4" ry="4" fill="${SKJO.hi}" opacity=".5"/>`; };
-      const cert = `<g filter="url(#pcl)"><rect x="-96" y="-916" width="192" height="236" rx="4" fill="#5a1e1e"/></g><rect x="-84" y="-904" width="168" height="212" fill="#f4eee0"/>
-        <rect x="-74" y="-894" width="148" height="192" fill="none" stroke="#b89a5a" stroke-width="3"/>
-        <path d="M-50 -866 L50 -866 M-56 -846 L56 -846 M-56 -830 L40 -830 M-56 -814 L52 -814 M-56 -798 L30 -798" stroke="#8a8270" stroke-width="3" opacity=".45"/>
-        <circle cx="44" cy="-736" r="17" fill="#b8242a" opacity=".85"/>${thumb(TL, -1)}${thumb(TR, 1)}`;
+      const cert = `<g filter="url(#pcl)"><rect x="-88" y="-952" width="176" height="214" rx="4" fill="#5a1e1e"/></g><rect x="-77" y="-941" width="154" height="192" fill="#f4eee0"/>
+        <rect x="-68" y="-932" width="136" height="174" fill="none" stroke="#b89a5a" stroke-width="3"/>
+        <path d="M-46 -906 L46 -906 M-52 -888 L52 -888 M-52 -874 L36 -874 M-52 -860 L48 -860 M-52 -846 L28 -846" stroke="#8a8270" stroke-width="3" opacity=".45"/>
+        <circle cx="40" cy="-782" r="15" fill="#b8242a" opacity=".85"/>${thumb(TL, -1)}${thumb(TR, 1)}`;
       return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t, { extra: [{ pos: [100, 1800, 900], col: '#ffffff', int: 6 * fl, rad: 2000, shin: 20 }] }))}${CS.back}
         ${who(OFFICIAL, t, [300, 2250, 1.0], { bust: 1, armL: OL, armR: OR, turn: .3, look: 8, smirk: .4, lid: .2 + .4 * obow, lookY: 4 * obow }, { lean: -5 * obow })}
         ${who(TSU_OLD, t, [720, 2330, 1.1], { bust: 1, armL: TL, armR: TR, turn: -.2, look: -4, lookY: 2 + 5 * bow, smirk: .3, lid: .3 + .35 * bow, tilt: -5 * bow }, { top: cert, lean: -6 * bow })}
@@ -374,7 +384,7 @@ const SHOTS = [
       return `<g transform="${C.tf}">${lights(C.v, RIG_ROOM(t))}${lectureSet(t)}
         ${who(TSU_OLD, t, [540, 2500, 1.6], { armL: AL, armR: AR, bust: 1, talk: talkW(t, 49.92, 52.15, .45), lid: .3, bIn: 9, bOut: 2, look: lerp(-4, 4, seg(t, 50.5, 51.5)), tilt: 3 + 2 * beat, lookY: 1 }, { rate: .8 })}
         <g filter="url(#pcl)"><path d="M300 1420 L780 1420 L740 2400 L340 2400 Z" fill="#6a4a30"/></g><path d="M300 1420 L780 1420" stroke="#8a6a48" stroke-width="10"/>
-        <g filter="url(#dof)">${studentBacks(1720, t, { n: 6, s: 1.3 })}</g></g>`;
+        <g filter="url(#dof)"><g filter="url(#pcl)">${studentBacks(1720, t, { n: 6, s: 1.3 })}</g></g></g>`;
     } },
   // 27 "never to use them again." — the Dome as it stands today; paper cranes rise from the river into the sky; we tilt up
   //   with them into the same summer sky the film began with
