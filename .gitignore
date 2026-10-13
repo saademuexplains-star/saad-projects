@@ -15,3 +15,5 @@ __pycache__/
 **/out/
 **/audio/takes/*.wav
 **/audio/score*.wav
+**/._*
+**/wip_*.jpg
