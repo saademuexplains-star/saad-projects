@@ -18,22 +18,76 @@ addDefs(`
   <linearGradient id="leatherG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6e4e34"/><stop offset=".5" stop-color="#4a3220"/><stop offset="1" stop-color="#2a1a0e"/></linearGradient>
 `);
 
-// ---------- hands: a fist closed around a bar (the bucket handle). Wrist at (0,0), fingers toward +y, thumb toward +x for k = -1 ----------
-// seen from the back: the dorsum, a row of four knuckle ridges with the first finger joints, the fingers folded away from us,
-// a thumb folded over the front. Each finger end is its own rounded piece so the knuckles read.
+// ---------- hands (wrist at (0,0), fingers toward +y; scale(-k*s, s) mirrors them; local +x is the thumb side) ----------
+// Each hand starts with a rounded heel the size of the forearm's wrist, so it joins the arm at any wrist bend (no cut edge),
+// is built from a back-of-hand mass, knuckles, fingers and thumb as separate skin pieces, and carries its own creases,
+// knuckle lights and occlusion, so it reads as a hand in the scene rather than a flat cut-out.
+const handG = (id, S) => `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="-20" y1="0" x2="20" y2="0"><stop offset="0" stop-color="${darken(S.lo, .08)}"/><stop offset=".5" stop-color="${darken(S.mid, .07)}"/><stop offset="1" stop-color="${mix(S.mid, S.hi, .08)}"/></linearGradient>`;
+let HGN = 0;
+// a fist closed around a bar (the bucket handle), seen from the back: the bar runs across at y ≈ 20, under the curled fingers
 function handHold(k, x, y, s, rot, { S, sk }) {
-  const fing = [[-13.4, 31, 17, 10], [-4.6, 32, 20, 10.4], [4.4, 32, 19, 10.2], [13.0, 31, 15, 9.4]];
-  return `<g transform="translate(${F1(x)} ${F1(y)}) rotate(${F1(rot)}) scale(${F1(-k * s)} ${F1(s)})">
-    <g filter="url(#pks_${sk})" fill="${S.mid}"><path d="M-16 -4 C-20 8 -22 22 -20 33 C-18 38 18 38 20 33 C22 22 20 8 16 -4 Z"/>
-      ${fing.map(([fx, fy, L, w]) => `<path d="${capsuleD(fx, fy, w / 2, fx - .4, fy + L - w * .5, w / 2 - .5)}"/>`).join('')}</g>
-    <g stroke="${S.shade}" stroke-width="1.6" fill="none" opacity=".6" stroke-linecap="round">${[-9, 0, 8.6].map((fx, i) => `<path d="M${fx} 38 L${fx} ${46 + (i === 1 ? 3 : 0)}"/>`).join('')}</g>
-    <g fill="${S.hi}" opacity=".5">${fing.map(([fx, fy]) => `<ellipse cx="${fx}" cy="${fy + 1}" rx="3.8" ry="2.5"/>`).join('')}</g>
-    <g filter="url(#pks_${sk})" fill="${S.mid}"><path d="${capsuleD(15.6, 3, 6.8, 19, 27, 5.6)}"/></g>
-    <path d="M13.5 8 C16 15 17.6 21 18 26" stroke="${S.shade}" stroke-width="1.5" fill="none" opacity=".55"/>
-    <ellipse cx="19" cy="27" rx="3.2" ry="2.2" fill="#f4dccb" opacity=".5"/>
-    <path d="M-12 2 C-16 14 -16 24 -14 32" stroke="${S.hi}" stroke-width="3.4" fill="none" opacity=".35" stroke-linecap="round"/></g>`;
+  const id = 'hg' + (HGN++), fx = [-13.2, -4.4, 4.6, 13.2], fw = [8.4, 9.4, 9.2, 8.2];
+  const fingers = fx.map((f, i) => capsuleD(f, 12, fw[i] / 2, f - .4, 31 - (i === 0 || i === 3 ? 1.5 : 0), fw[i] / 2 - .4)).join(' ');
+  return `<g transform="translate(${F1(x)} ${F1(y)}) rotate(${F1(rot)}) scale(${F1(-k * s)} ${F1(s)})"><defs>${handG(id, S)}</defs>
+    <g filter="url(#pks_${sk})" fill="url(#${id})"><path d="${capsuleD(14.5, 1, 6.6, 13.4, 22.5, 5.2)}"/></g>
+    <g filter="url(#pks_${sk})" fill="url(#${id})">
+      <path d="M-12 -2 C-12 -10 12 -10 12 -2 C15 3 17.5 8 18.2 13 L-17.6 13 C-17 8 -15 3 -12 -2 Z"/>
+      <path d="${fingers}"/></g>
+    <g filter="url(#softW2)">
+      <path d="M-17 27 C-8 33 8 33 17 27" stroke="${S.deep}" stroke-width="7" fill="none" opacity=".35"/>
+      <path d="M-15 12 C-6 15 6 15 15 12" stroke="${S.deep}" stroke-width="3" fill="none" opacity=".22"/>
+      ${fx.map(f => `<ellipse cx="${F1(f)}" cy="10.5" rx="3.6" ry="2.6" fill="${S.hi}" opacity=".28"/>`).join('')}
+      <path d="M-7 -5 L-9 9 M0 -6 L-1 9 M7 -5 L7 9" stroke="${S.hi}" stroke-width="2" opacity=".16"/></g>
+    <g stroke="${S.line}" fill="none" stroke-linecap="round">
+      ${[-8.8, 0, 8.9].map((f, i) => `<path d="M${f} 15 L${F1(f - .3)} ${31 - (i === 1 ? 0 : .6)}" stroke-width="1.5" opacity=".55"/>`).join('')}
+      ${fx.map((f, i) => `<path d="M${F1(f - fw[i] * .32)} 22.5 Q${F1(f)} 24.5 ${F1(f + fw[i] * .32)} 22.5" stroke-width="1.1" opacity=".35"/>`).join('')}
+      <path d="M11 3 C13.5 9 14 15 13.4 21" stroke-width="1.2" opacity=".4"/></g>
+    <ellipse cx="13" cy="23.4" rx="2.2" ry="2.8" fill="${mix(S.mid, '#f0d8cc', .35)}" opacity=".35"/></g>`;
 }
-Object.assign(HANDS, { hold: handHold });
+// the hush: index finger up against the lips, the other fingers curled into the palm, seen from the back of the hand.
+// The index rises flush from the thumb-side edge; the curled middle, ring and little fingers make a row of knuckles that
+// steps down toward the far edge, so the silhouette reads unmistakably as a raised forefinger. The thumb tucks low.
+function handHush(k, x, y, s, rot, { S, sk }) {
+  const id = 'hg' + (HGN++), kn = [[1.8, 34.4, 6.2], [-5.6, 32, 5.9], [-12.6, 28.6, 5.4]];
+  return `<g transform="translate(${F1(x)} ${F1(y)}) rotate(${F1(rot)}) scale(${F1(-k * s)} ${F1(s)})"><defs>${handG(id, S)}</defs>
+    <g filter="url(#pks_${sk})" fill="url(#${id})"><path d="${capsuleD(15, 3, 6, 14.2, 18.5, 5)}"/></g>
+    <g filter="url(#pks_${sk})" fill="url(#${id})">
+      <path d="M-12 -1 C-12 -10 12 -10 12 -1 C15 6 16.6 18 16.4 30 C16.2 34 14.8 37 11 38 L-11 31 C-15 28.6 -17 24 -17 18 C-16.6 10 -15 4 -12 -1 Z"/>
+      <path d="${kn.map(([a, b, r]) => capsuleD(a, b - 3.5, r, a - .8, b, r - .4)).join(' ')}"/>
+      <path d="${capsuleD(10.4, 34, 6.4, 10.7, 76, 4.9)}"/></g>
+    <g filter="url(#softW2)">
+      <path d="M-16 28 C-9 35 -2 38 5 38" stroke="${S.deep}" stroke-width="5" fill="none" opacity=".3"/>
+      ${kn.map(([a, b]) => `<ellipse cx="${F1(a - .6)}" cy="${F1(b + 1.6)}" rx="3.4" ry="2.4" fill="${S.hi}" opacity=".26"/>`).join('')}<ellipse cx="10.6" cy="39" rx="3.4" ry="2.6" fill="${S.hi}" opacity=".26"/>
+      <path d="M6 40 C7 52 7.4 62 8 72" stroke="${S.deep}" stroke-width="3" fill="none" opacity=".25"/>
+      <path d="M-6 -4 L-8 26 M1 -5 L0 30 M8 -4 L8 30" stroke="${S.hi}" stroke-width="2" opacity=".14"/></g>
+    <g stroke="${S.line}" fill="none" stroke-linecap="round">
+      <path d="M7.6 50 Q10.6 48.6 13.6 50 M8 53 Q10.6 52 13.2 53" stroke-width="1.1" opacity=".45"/>
+      <path d="M8 63.5 Q10.8 62.5 13.6 63.5" stroke-width="1.1" opacity=".4"/>
+      <path d="M-1.8 31.6 L-2.4 38.6 M-9.4 28.6 L-10 35" stroke-width="1.4" opacity=".5"/>
+      <path d="M13 8 C14 12 14.2 16 13.8 19" stroke-width="1.2" opacity=".35"/></g>
+    <path d="M7.4 67 C7.3 72 8.5 75.6 10.6 75.8 C12.7 75.6 13.7 72 13.5 67 C11.9 65.6 8.9 65.6 7.4 67 Z" fill="${mix(S.hi, '#f2d6cc', .55)}" stroke="${S.line}" stroke-width=".9" stroke-opacity=".4"/>
+    <path d="M8.5 68.6 C9.3 67.6 11.5 67.6 12.5 68.6" stroke="#fff" stroke-width="1" fill="none" opacity=".35"/></g>`;
+}
+// The piece normal filter measures slopes in the piece's OWN coordinates; a hand drawn under rotate(rot) scale(-k*s, s)
+// therefore writes normals in its rotated / mirrored frame, and the relight would light it from the wrong side. In the
+// normal pass, turn the encoded (R, G) normal back into screen space with the same rotation + mirror. The id starts with
+// "dof" so the normal-pass CSS keeps the filter without making the hand's detail strokes visible.
+let NFN = 0;
+const normFix = (rot, k, svg) => { if (PASS() !== 'normal') return svg;
+  const r = rot * Math.PI / 180, c = Math.cos(r), sn = Math.sin(r), sg = k > 0 ? -1 : 1, id = 'dofNF' + (NFN++);
+  const m = [c * sg, -sn, 0, 0, .5 * (1 - c * sg + sn), sn * sg, c, 0, 0, .5 * (1 - sn * sg - c), 0, 0, 1, 0, 0, 0, 0, 0, 1, 0].map(v => +v.toFixed(4)).join(' ');
+  return `<defs><filter id="${id}" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${m}"/></filter></defs><g filter="url(#${id})">${svg}</g>`; };
+// every hand in the kit uses the same translate / rotate / scale(-k*s, s) frame, so all of them get the fix
+Object.assign(HANDS, { hold: handHold, hush: handHush });
+for (const n of Object.keys(HANDS)) { const f = HANDS[n]; if (f.__nf) continue;
+  const w = (k, x, y, s, rot, o) => normFix(rot, k, f(k, x, y, s, rot, o)); w.__nf = 1; HANDS[n] = w; }
+// a soft drop shadow of a redrawn hand onto whatever is under it (flat pass only: the normal pass must not see a second hand)
+addDefs(`<filter id="castSh" x="-50%" y="-50%" width="200%" height="200%"><feFlood flood-color="#140806"/><feComposite in2="SourceAlpha" operator="in"/><feGaussianBlur stdDeviation="5"/></filter>`);
+const cuffOver = (A, sleeve, r3 = 19) => { const d = unit(A.el, A.wr), m = [A.wr[0] - d[0] * 16, A.wr[1] - d[1] * 16], c = [m[0] - d[0] * 4, m[1] - d[1] * 4];
+  return `<g filter="url(#pcl)" fill="${sleeve}"><path d="${band(c, d, r3 + 8, 16, 4)}"/></g><path d="${band(c, d, r3 + 8, 16, 4)}" fill="none" stroke="${darken(sleeve, .3)}" stroke-width="1.6" opacity=".5"/>`; };
+const handShadow = (A, k, S, sk, hs, dx = -5, dy = 7, op = .45) => PASS() === 'normal' ? '' :
+  `<g opacity="${op}" transform="translate(${dx} ${dy})"><g filter="url(#castSh)">${gripHandOn(A, k, S, sk, hs)}</g></g>`;
+
 
 // ---------- arms: shoulders ±140, bones 165 / 155 (a lean man) or ±156, 175 / 165 (the broad guard) ----------
 const tArm = (k, T, hand = 'back', o = {}) => ({ ...autoIK(k, [k * 140, -930], T, 165, 155, o.bend), hand, ...o });
@@ -203,9 +257,10 @@ const guardFace = ({ g, S, e }) => `<g clip-path="url(#${g('face')})"><g filter=
   ${noseForm(S, 1)}${shortBeard(g, { col: '#3a2a1e', hi: '#8a7a68', seed: 23 })}${eyes2(e, EYE_G)}${brows2(e, BROW_G)}${mouth2(e, MOUTH_G)}${sweat2(e, S)}`;
 
 // ---------- the people (natural dyes: moss, oat, oxblood, umber; worn linen and a faded madder cross) ----------
+const THIEF_SLEEVE = '#94764f';
 const THIEF = { skin: 'olive', hair: 'bald', hairColor: 'black', beard: 'none', hat: 'feathercap', hatColor: '#5a4632', customHat: featherCap({ col: '#5a4632', hair: '#1a130e' }), legs: 'none', top: 'vest',
   eyeColor: '#3a2616', browW: .01, id: 'tf', ownFace: 1, noMustache: 1, faceExtra: thiefFace, facePath: FACE_M,
-  body: cotteBody({ tunic: '#4a5233', sleeve: '#94764f', trim: '#6a5638', hose: ['#4b3a2c', '#4b3a2c'], boot: '#2c1e14', belt: '#3a2614', w: 1, cape: '#5c2a24' }) };
+  body: cotteBody({ tunic: '#4a5233', sleeve: THIEF_SLEEVE, trim: '#6a5638', hose: ['#4b3a2c', '#4b3a2c'], boot: '#2c1e14', belt: '#3a2614', w: 1, cape: '#5c2a24' }) };
 const WATCHMAN = { skin: 'ruddy', hair: 'bald', hairColor: 'brown', beard: 'none', hat: 'kettle', hatColor: '#9aa3ae', customHat: kettleHat({ dent: 1 }), legs: 'none', top: 'vest',
   eyeColor: '#3e4e5e', browW: .01, id: 'gd', ownFace: 1, noMustache: 1, faceExtra: guardFace, facePath: FACE_M,
   body: cotteBody({ tunic: '#c4b99e', sleeve: '#5e3a2e', trim: '#7a2a22', hose: ['#3a3632', '#3a3632'], boot: '#2c1e14', belt: '#3a2614', w: 1.14, emblem: 'cross', emblemCol: '#7c2a22', mail: true, pouch: false, armFn: gArm, hangFn: gHang, sh: 156, r1: 36, r2: 28, r3: 22, hs: 1.7 }) };

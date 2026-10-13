@@ -7,11 +7,12 @@ function heroFrame(t = 0) {
   const GA = gripArm(tArm, 1, [194, -598], { hs: HS, bend: -1, hand: 'hold' });
   const F = fistAt(GA, HS);
   // left arm: elbow in, finger to the lips (the hand is redrawn on top of the face)
-  const LA0 = tArm(-1, [-20, -902], 'none', { hs: HS });
-  const LA = { ...aim(LA0, -90), gh: 'point', front: true };   // the arm crosses the body: its upper arm is drawn in front of the surcoat
+  const LA0 = tArm(-1, [6, -902], 'none', { hs: HS });
+  const LA = { ...aim(LA0, -90), gh: 'hush', front: true };   // the arm crosses the body: its upper arm is drawn in front of the surcoat
   const thief = manb(THIEF_X, THIEF_Y, THIEF_S, THIEF, { smirk: 1.0, side: .6, bIn: -6, bOut: 8, lid: .5, look: 0, lookY: 0, turn: .0, tilt: -4,
     armR: GA, armL: LA, breath: 0 });
-  const held = atb(THIEF_X, THIEF_Y, THIEF_S, bucketProp(F[0], F[1] - 2, .94, { rot: -2 }) + gripHandOn(GA, 1, SB, SKB, HS) + gripHandOn(LA, -1, SB, SKB, HS), 0);
+  const held = atb(THIEF_X, THIEF_Y, THIEF_S, bucketProp(F[0], F[1] - 2, .94, { rot: -2 }) + handShadow(GA, 1, SB, SKB, HS, -3, 5, .35) + gripHandOn(GA, 1, SB, SKB, HS) + cuffOver(GA, THIEF_SLEEVE)
+    + handShadow(LA, -1, SB, SKB, HS, -8, 11, .62) + gripHandOn(LA, -1, SB, SKB, HS) + cuffOver(LA, THIEF_SLEEVE), 0);
   const guard = manb(120, 2190, 1.12, WATCHMAN, { lid: 2, smirk: -.2, talk: .14, tilt: 9, bIn: 4, bOut: 2, turn: .15, armL: gArm(-1, [-170, -520], 'back', { bend: 1 }), armR: gHang(1) });
   return { thief, held, guard, GA, LA, F };
 }

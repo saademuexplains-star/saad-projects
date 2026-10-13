@@ -161,7 +161,7 @@ RIG.cine = (t, { sun = [868, 1046], k = 1 } = {}) => ({
   lights: [
     { pos: [1560, 760, -230], col: '#ffcf9a', int: 5.2 * k, rad: 1250, shin: 22 },   // low sun off frame-right, behind: golden rim down his right edges
     { pos: [1250, 180, -260], col: '#ffd7a8', int: 2.6 * k, rad: 1250, shin: 22 },   // sky glow above it: rim on hat, feather, shoulders
-    { pos: [-480, 980, -200], col: '#86a4ff', int: 2.2, rad: 1100, shin: 24 },       // cool dusk sky behind-left: blue edge on the shadow side
+    { pos: [-480, 980, -200], col: '#86a4ff', int: 1.3, rad: 1000, shin: 24 },       // cool dusk sky behind-left: blue edge on the shadow side
     { pos: [980, 420, 760], col: '#ffe6cc', int: .56 * k, rad: 2600, shin: 30 },     // soft warm key from the sun side, high
     { pos: [-200, 1300, 1100], col: '#8a9ad0', int: .26, rad: 3600, shin: 10 },      // faint cool fill from camera-left
     { pos: [820, 2000, 240], col: '#ffb47e', int: .45, rad: 1200, shin: 16 },        // warm bounce off the sunlit street
