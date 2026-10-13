@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Poppins;font-weight:800;src:url(../fonts/Poppins-ExtraBold.ttf)}
+@font-face{font-family:Anton;src:url(../fonts/Anton-Regular.ttf)}
+body{margin:0;background:#000}canvas{display:block}</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script src="lib.js"></script><script src="chars.js"></script>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+window.testRender=(which)=>{
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle=lgrad(ctx,0,0,0,1920,['#7fbbe8','#d8ecf5','#c7b27a','#a88a52']);ctx.fillRect(0,0,1080,1920);
+  const sets={
+   a:[['guard',300,1750,.92,{lid:.5,smile:.3,smirk:.2}],['thief',790,1750,.92,{lid:.1,smile:1,smirk:1,browL:[6,-10],browR:[0,10],look:[-1,0]}]],
+   b:[['guard',300,1750,.92,{rage:.9,open:.8,browL:[-6,22],browR:[-6,22],eyeW:.5,vein:.5,steam:1,aL:30,bL:70,aR:30,bR:70,gripL:1,gripR:1}],['thief',790,1750,.92,{lid:0,smile:1,open:.4,aR:130,bR:50,sweat:.5,look:[-1,0]}]],
+  };
+  for(const [n,x,y,s,p] of sets[which]){ctx.save();ctx.translate(x,y);ctx.scale(s,s);drawPuppet(ctx,n,p,0.3);ctx.restore();}
+  vignette(ctx);grain(ctx);
+};
+</script></body></html>
