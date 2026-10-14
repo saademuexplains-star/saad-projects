@@ -119,7 +119,7 @@ def E(*spans):                                                          # a sum 
     out = np.zeros(N)
     for a, b, lv, r in spans: out += lv * np.clip((T - (a - r)) / r, 0, 1) * np.clip(((b + r) - T) / r, 0, 1)
     return out
-outside = [S(0, 2.6), S(35.93, 39.36), S(39.36, 40.35, .6), S(49.25, 51.0)]
+outside = [S(35.93, 39.36), S(39.36, 40.35, .6)]
 AMB += wind * E(*outside) * db(-24)
 AMB += city * E(*outside) * db(-27)
 bar = [S(3.85, 6.12), S(8.21, 19.38, .8), S(22.19, 23.6, .5), S(23.6, 26.67, .3), S(31.27, 34.02, .8), S(40.35, 43.21, .7), S(46.08, 48.5, 1.3)]
@@ -129,6 +129,7 @@ AMB += room * E(*bar, S(19.38, 22.19, .6), S(26.67, 31.27, .6)) * db(-27)
 AMB += (room + hum) * E(S(2.6, 3.85), S(6.12, 8.21), S(34.02, 35.93)) * db(-25)
 AMB += room * E(S(43.21, 46.08, 1.2)) * db(-25) + wind * E(S(43.21, 46.08, .4)) * db(-30)
 AMB += room * E(S(48.5, 49.25, .8)) * db(-26)                         # the room after the laughter stops
+AMB += room * E(S(0, 2.6, .9), S(49.25, 51.0, .9)) * db(-27)            # the desk, the front page
 
 # ---------------- effects ----------------
 def clack(t0, g=-20):                                                   # a rail joint on the El, deep
@@ -148,9 +149,13 @@ def engine(t0, dur, f0, f1, g=-14):                                     # an old
     x *= (1 + .3 * np.sin(4 * ph))
     place(FX, fade(x / np.abs(x).max() * (.2 + .8 * (tt / dur) ** 1.6), .1, .05), t0, g)
 
-# 1 the El rattles across overhead; the snow street
-place(FX, rumble(2.8, 25, 180, .5, 3.0), 0.1, -17)
-for k in range(9): clack(.45 + k * .26 + (k % 2) * .06, -21 - 2 * (k % 2))
+# 1 the front page: a low rush as we punch in, a deep stamp on the year, a rush down the page, a flashbulb pop on each of
+#   the five photographs (low thumps, never thin)
+place(FX, whoomph(.6, 40, 260, rev=True), 0.0, -18)
+place(FX, thump(70, 28, 1.0, .3), 0.62, -8); place(FX, boom(1.6, 52, 26, .45), 0.62, -16)
+place(FX, whoomph(.55, 50, 300), 1.26, -19)
+for k, tp in enumerate((1.52, 1.68, 1.84, 1.99, 2.14)):
+    place(FX, thump(130 - 6 * k, 55, .22, .045), tp, -12); place(FX, whoomph(.14, 200, 700), tp - .03, -26)
 # 2 the policy lifted; 3 the glass raised, the gulp
 place(FX, whoomph(.35, 60, 240), 2.62, -26)
 place(FX, whoomph(.4, 60, 220), 3.98, -27)
@@ -226,8 +231,11 @@ tap(46.62, -16, 95); tap(46.66, -19, 110)
 place(FX, load('v_door_2', ss=0, dur=.8, pitch=.66, hi=1200), 47.78, -20); place(FX, whoomph(.4, 40, 180), 47.8, -24)
 for k in range(2): step(48.0 + k * .28, -21, k)
 place(FX, thump(60, 28, 1.2, .4), 48.5, -12)
-# 25 outside: the snow, a far El, the lamp clicks off
-place(FX, rumble(1.6, 25, 120, .6, 2.0), 49.3, -24); tap(49.95, -24, 90)
+# 25 the paper spins in out of the dark and slaps down on the desk
+place(FX, whoomph(1.15, 35, 420, rev=True), 49.28, -14)
+n = int(1.1 * SR); tt = np.arange(n) / SR; fl = band(rng.standard_normal(n), lo=80, hi=600) * (.5 + .5 * np.sin(2 * np.pi * (6 + 10 * tt) * tt)) * (tt / 1.1) ** 1.5
+place(FX, fl / np.abs(fl).max(), 49.32, -24)
+place(FX, thump(95, 30, .9, .2), 50.42, -6); place(FX, rumble(.6, 30, 200, .005, .2), 50.42, -14)
 fx_gate = np.ones(N); a_, b_ = int(48.48 * SR), int(48.55 * SR); fx_gate[a_:b_] = np.linspace(1, 0, b_ - a_); fx_gate[b_:int(49.25 * SR)] = 0
 # ---------------- mix ----------------
 # the effects duck ~6 dB under the voice (fast attack, slow release) and pass a soft limiter, so the narration stays on top

@@ -212,7 +212,8 @@ def padc(ch, a, b, level=-25, cutoff=800, bass=None, wet=.5):
     x = pad(ch, b - a, att=.4, rel=.3, cutoff=cutoff, bass=bass, level=level); place(DRY, x, a); place(WET, x * wet, a)
 # A — night, the gang, the plan (wraps in from the coda): a dark C minor pad, the sly tune on the harp, the bass walks in
 padc([C3, Eb3, G3], 49.25, 49.25 + 10.85, level=-25, cutoff=700, bass=C2)        # 49.25 → 51 → 0 → 8.1 (circular)
-hp(.4, SLY[:9], B / 2, level=-19)
+hp(.95, SLY[:7], B / 2, level=-19)
+place(DRY, stab([C3, Eb3, G3, C4], 1.0, .35, level=-12, cutoff=2000), 0.62); place(DRY, boom(2.0, 48, 24, .7, level=-15), 0.62)
 walk(2.6, 8.15, [C2 + 12, G2, Ab2, G2, C2 + 12, Bb2, Ab2, G2], level=-15)
 place(DRY, drone(C2, 2.1, [(0, 0), (.5, 1), (1.8, 1), (2.1, 0)], level=-27), 6.12)
 place(DRY, stab([C3, Eb3, Ab3], .8, .25, level=-17, cutoff=1600), 7.58)            # "payout"
@@ -259,7 +260,8 @@ brush(46.12, 48.48, -29)
 for k in range(int((48.4 - 46.12) / B)): place(DRY, kick(68, 36, .45, .14, level=-19), 46.12 + k * B)
 place(DRY, boom(2.4, 50, 24, .8, level=-12), 48.5)
 place(DRY, drone(C2, .8, [(0, 0), (.3, 1), (.8, 1)], level=-26), 48.5)
-hp(49.4, [G4, None, Eb4, None, C4], B / 2, level=-20, wet=.9)                    # "the man who wouldn't die": the tune's last notes
+hp(49.4, [G4, None, Eb4], B / 2, level=-20, wet=.9)
+place(DRY, stab([C3, Eb3, G3, C4], .9, .3, level=-13, cutoff=1800), 50.42)                    # "the man who wouldn't die": the tune's last notes
 # ---------------------------------------------------------------- reverb, silences, master
 def make_ir(rt60=2.7, secs=3.4, pre=.025):
     n = int(secs * SR); t = np.arange(n) / SR; ir = np.zeros((2, n))

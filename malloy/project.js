@@ -1,6 +1,6 @@
 // "The Man Who Wouldn't Die" — Michael Malloy, the Bronx, winter 1932–33. 51.0 s, 1080x1920, 30 fps, no captions.
 // Relit (flat + normal passes → deferred lights + post). Every shot moves; plain cuts between shots (nothing announces
-// itself as a transition); the cab's headlights fade through white. The first and last frames are the same night sky.
+// itself as a transition); the cab's headlights fade through white. The first and last frames are the same front page.
 
 // ---------- camera with motion blur from its own velocity ----------
 function camF(t, fn, mbK = 1) {
@@ -58,6 +58,10 @@ const RIG_INS = (t, o = {}) => ({ lights: [ { pos: [200, 300, 800], col: '#ffe0b
   amb: '#4a3428', ambGround: '#2a1a12', ambInt: .4, bgLight: .85, exposure: 1.1, bloom: .45, bloomThresh: .74, white: 2.3, tonemap: 'soft', emisGain: 1.5, normalStrength: 1.4, specScale: .4,
   vignette: .55, grain: .018, shadowTint: '#1a1420', highTint: '#ffe0b8', shadowAmt: .22, highAmt: .1, sat: .92, contrast: 1.1, ...o });
 
+const RIG_PAPER = t => ({ lights: [ { pos: [200, 200, 1100], col: '#fff0d8', int: 1.5, rad: 4200, shin: 18 }, { pos: [1100, 1600, 500], col: '#ffd0a0', int: .5, rad: 2200, shin: 16 } ],
+  amb: '#5a4a3a', ambGround: '#3a2a1a', ambInt: .5, bgLight: 1.0, exposure: 1.06, bloom: .3, bloomThresh: .85, white: 2.4, tonemap: 'soft', normalStrength: 1.0, specScale: .12,
+  vignette: .5, grain: .02, shadowTint: '#1e1610', highTint: '#fff0d8', shadowAmt: .2, highAmt: .06, sat: .92, contrast: 1.08 });
+
 // ---------- hands and props ----------
 const HS = 1.5;
 const blinkL = (t, list) => blinkAt(t, list);
@@ -79,13 +83,18 @@ function gangTable(t, x, yF, { look = -8, turn = -.25, smirk = .3, shock = 0, li
 }
 
 // ================= SHOTS =================
-const SKY_FY = -1500;   // the loop frame: only the night sky and the snow
 const SHOTS = [
-  // 1 "In 1933, five men in New York" — from the winter night sky the camera cranes down over the El (a train rattles
-  //   across) to a snowy Bronx street and the lit speakeasy door. Frame 0 = the last frame.
+  // 1 "In 1933, five men in New York" — the hook: a 1933 front page, THE MAN WHO WOULDN'T DIE. The camera punches in
+  //   on the year as it's said, then drops to the strip of five photographs: each pops with a flashbulb on "five men in
+  //   New York". Frame 0 = the last frame (the page settled on the desk).
   { at: 0, draw(v, t) {
-      const C = camF(t, t => { const p = glide(seg(t, 0, 2.6)); return [540, lerp(SKY_FY, 1060, p), lerp(1.0, 1.08, p), { hh: .6 }]; }, .45);
-      return `<g transform="${C.tf}">${lights(C.v, RIG_STREET(t))}${bronxStreet(t, C, { trainX: 1500 - t * 950, ts: t })}</g>`;
+      const C = camF(t, t => { const a = glide(seg(t, 0, 1.15)), b = ease(seg(t, 1.28, 1.78)), u = seg(t, 1.36, 2.4), px = u * u * (3 - 2 * u);
+        const x = lerp(540, lerp(370, 710, px), b), y = lerp(lerp(960, 412, a), 1000, b), z = lerp(lerp(1.0, 2.9, a), 1.72, b) * (1 + .05 * seg(t, 1.8, 2.6));
+        return [x, y, z, { hh: .4, r: lerp(0, -1.5, a) * (1 - b) }]; }, .25);
+      const pops = [1.52, 1.68, 1.84, 1.99, 2.14];
+      const fl = pops.map(p => t >= p ? Math.exp(-(t - p) / .09) : 0), blank = pops.map(p => t > .62 && t < p ? 1 : 0);
+      pops.forEach((p, i) => { if (t >= p) flashK(.22 * Math.exp(-(t - p) / .06), '#fff8ec'); });
+      return `<g transform="${C.tf}">${lights(C.v, RIG_PAPER(t))}${paperDesk(t)}${frontPage(t, 540, 960, { fl, blank, yearK: bell(t, .5, .95) })}</g>`;
     } },
   // 2 "took out life insurance" — the back room: Pasqua holds up the signed policy, a thin smile; Kriesberg leans in
   //   over his shoulder
@@ -134,23 +143,23 @@ const SHOTS = [
         ${who(MARINO, t, [X, Y + 10 * sag, s], { bust: 1, armL: tHang(-1), armR: A, turn: .3, look: 8, lookY: lerp(2, 8, dr), lid: lerp(.2, .7, sag) + blinkL(t, [8.6]), smirk: lerp(.1, -.5, sag), tilt: -3 * sag, bIn: 4 * sag })}
         ${barCounter(1500, { depth: 150 })}</g>`;
     } },
-  // 6 "Malloy an unlimited tab," — Marino slides a full bottle across the bar to us (to Malloy), then opens his hands:
-  //   drink all you like
+  // 6 "Malloy an unlimited tab," — Marino brings a full bottle up from under the bar by its neck, plants it on the counter
+  //   in front of us (Malloy's place, the glass waiting), lets go and opens his hands: drink all you like
   { at: 10.12, draw(v, t) {
       const C = camF(t, t => [560, lerp(1160, 1190, seg(t, 10.12, 11.9)), lerp(1.24, 1.32, ease(seg(t, 10.12, 11.9))), { hh: .6 }]);
-      const s = 1.3, X = 470, Y = behindY(1500, s), sk = SKN.MARINO;
-      const push = ease(seg(t, 10.45, 10.85)), slide = ease(seg(t, 10.45, 11.25));
-      const bx = lerp(640, 610, slide), by = lerp(1530, 1640, slide), bs = lerp(1.15, 1.5, slide);
-      const neck = [(bx - X) / s, (by - 172 * bs + 40 * bs - Y) / s];
-      const G = gripAt(1, neck), open = ease(seg(t, 10.95, 11.4));
+      const s = 1.3, X = 470, Y = behindY(1500, s), sk = SKN.MARINO, bL = .95;
+      const up = ease(seg(t, 10.15, 10.5)), put = ease(seg(t, 10.5, 10.8)), open = ease(seg(t, 10.95, 11.4)), hold = t < 10.85;
+      const A0 = jArm(1, [180, -790], [190, -610], 'grip', { hs: HS }), A1 = jArm(1, [208, -800], [156, -905], 'grip', { hs: HS }), A2 = jArm(1, [212, -790], [140, -815], 'grip', { hs: HS });
+      const G = put > 0 ? armMix(A1, A2, put) : armMix(A0, A1, up);
+      const F = fistAt(hold ? G : A2, HS), bottleL = bottle(F[0], F[1] + 140 * bL, bL, { kind: 0, col: '#6a4a1a', fill: .92 });
       const OA = jArm(1, [196, -792], [276, -900], 'openJ', { hs: HS, spread: 1 }), OL = jArm(-1, [-196, -792], [-276, -900], 'openJ', { hs: HS, spread: 1 });
-      const RA = open > 0 ? armMix({ ...G, hand: 'relax' }, OA, open) : { ...G, hand: 'none' };
+      const RA = hold ? { ...G, hand: 'none' } : armMix({ ...A2, hand: 'relax' }, OA, open);
       const LA = armMix(tHang(-1, 0, 0, { hs: HS }), OL, open);
-      const hold = open === 0;
+      const held = atb(X, Y, s, bottleL + (hold ? gripHandOn(G, 1, sk[0], sk[1], HS) : ''));
+      const after = !hold || put > 0;
       return `<g transform="${C.tf}">${lights(C.v, RIG_BAR(t))}${backBar(t)}
-        ${who(MARINO, t, [X, Y, s], { bust: 1, armL: LA, armR: RA, smirk: lerp(.35, .75, seg(t, 10.9, 11.3)), look: 2, lookY: lerp(6, 0, open), lid: .25 + blinkL(t, [11.6]), tilt: 3 * open, bIn: -3 * open, bOut: 3 * open })}
-        ${barCounter(1500, { depth: 150 })}${bottle(bx, by, bs, { kind: 0, col: '#6a4a1a', fill: .92 })}${shotGlass(bx + 120, lerp(1560, 1600, slide), 1.2, { fill: 0 })}
-        ${hold ? atb(X, Y, s, gripHandOn({ ...G, wr: [G.wr[0], G.wr[1]] }, 1, sk[0], sk[1], HS)) : ''}</g>`;
+        ${who(MARINO, t, [X, Y, s], { bust: 1, armL: LA, armR: RA, smirk: lerp(.35, .75, seg(t, 10.9, 11.3)), look: 2, lookY: lerp(5, 0, open), lid: .25 + blinkL(t, [11.6]), tilt: 3 * open, bIn: -3 * open, bOut: 3 * open })}
+        ${after ? '' : held}${barCounter(1500, { depth: 150 })}${shotGlass(745, 1588, 1.2, { fill: 0 })}${after ? held : ''}</g>`;
     } },
   // 7 "figuring he'd drink himself to death in a week." — Murphy leans to Marino's ear, polishing a glass; both look down
   //   the bar at their man and smile
@@ -338,11 +347,15 @@ const SHOTS = [
         ${man(KRIESBERG, 120, 1.15, 1, SKN.W, 0, 0)}${man(FIFTH, 900, 1.12, -1, SKN.W, 1, 2)}${man(PASQUA, 680, 1.2, -1, SKN.W, 2, 4)}
         ${barCounter(yc, { side: 'back' })}</g>`;
     } },
-  // 25 "about the man who wouldn't die." — outside, the snow keeps falling on the speakeasy; its lamp goes out and the
-  //   camera rises past the El into the night sky (= frame 0)
+  // 25 "about the man who wouldn't die." — the front page spins in out of the dark and slaps down on the desk: THE MAN WHO
+  //   WOULDN'T DIE (= frame 0)
   { at: 49.25, draw(v, t) {
-      const C = camF(t, t => { const p = ease(seg(t, 49.35, DUR - 1 / 30)); return [540, lerp(1180, SKY_FY, p), lerp(1.14, 1.0, p), { hh: .6 }]; }, .45);
-      return `<g transform="${C.tf}">${lights(C.v, RIG_STREET(t))}${bronxStreet(t, C, { ts: t - DUR, glow: 1 - .7 * seg(t, 49.6, 50.2) })}</g>`;
+      const land = 50.42, e = easeOut(seg(t, 49.28, land)), bounce = t > land ? .03 * Math.exp(-(t - land) / .09) * Math.cos((t - land) * 30) * (1 - seg(t, 50.8, 50.95)) : 0;
+      const sc = lerp(.04, 1, e) * (1 + bounce), rot = lerp(-820, 0, e);
+      const C = camF(t, t => [540, 960, 1.0, { hh: .4, ...SHK(t, [[land, 9, .3]]) }], 0);
+      const ghosts = t < land ? [1, 2, 3].map(k => { const e2 = easeOut(seg(t - k * .022, 49.28, land)); return `<g transform="translate(540 960) rotate(${F1(lerp(-820, 0, e2))}) scale(${F1(lerp(.04, 1, e2))})"><rect x="-490" y="-750" width="980" height="1500" fill="#e6dcc2" opacity="${F1(.22 / k)}"/></g>`; }).join('') : '';
+      return `<g transform="${C.tf}">${lights(C.v, RIG_PAPER(t))}${paperDesk(t)}${ghosts}
+        <g transform="translate(540 960) rotate(${F1(rot)}) scale(${(sc).toFixed(4)}) translate(-540 -960)">${frontPage(t, 540, 960)}</g></g>`;
     } },
 ];
 

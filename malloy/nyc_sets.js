@@ -538,3 +538,71 @@ function sandwichHeld(x, y, s = 1, { bite = 0 } = {}) {
     <path d="${bitEdge}" stroke="#d8b890" stroke-width="5" fill="none" opacity=".8"/>
     <path d="M${F1(L + 6)} -40 L22 -40" stroke="#c89a6a" stroke-width="3" opacity=".6"/></g>`;
 }
+
+// ======================= the front page (the hook, and the last image) =======================
+addDefs(`<filter id="sepiaF" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".42 .74 .18 0 -.02  .36 .66 .16 0 -.03  .26 .5 .12 0 -.02  0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="linear" slope="1.15" intercept="-.05"/><feFuncG type="linear" slope="1.15" intercept="-.05"/><feFuncB type="linear" slope="1.15" intercept="-.05"/></feComponentTransfer></filter>
+  <filter id="paperTex" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7"/><feColorMatrix type="matrix" values="0 0 0 0 .35  0 0 0 0 .28  0 0 0 0 .18  0 0 0 -1.6 1.1"/></filter>
+  <radialGradient id="paperAge" cx=".5" cy=".5" r=".72"><stop offset=".55" stop-color="#b89c6c" stop-opacity="0"/><stop offset="1" stop-color="#9a7c4c" stop-opacity=".55"/></radialGradient>`);
+// a press photo: a sepia portrait clipped to its frame; fl = the flashbulb (0..1) whitening it; blank = not yet "taken"
+function pressPhoto(t, ch, x, y, w, h, { s = .45, headY = .45, pose = {}, fl = 0, blank = 0, bg = '#a89878' } = {}) {
+  const id = fid('pp'), Y = y + h * headY + 1075 * s;
+  const fig = PASS() === 'normal' || blank > .99 ? '' : `<g filter="url(#sepiaF)"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${bg}"/>
+      <ellipse cx="${x + w / 2}" cy="${y + h * .4}" rx="${w * .45}" ry="${h * .4}" fill="#d8ccb0" opacity=".45" filter="url(#b16)"/>
+      ${who(ch, t, [x + w / 2, Y, s], { bust: 1, armL: tHang(-1), armR: tHang(1), ...pose }, { still: 1 })}</g>`;
+  return `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>
+    <rect x="${x - 4}" y="${y - 4}" width="${w + 8}" height="${h + 8}" fill="#2a2420"/>
+    <g clip-path="url(#${id})">${fig}${blank > 0 ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#3a3430" opacity="${F1(blank)}"/>` : ''}
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#000" opacity=".12" filter="url(#paperTex)"/>
+      ${fl > .01 ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fffaf0" opacity="${F1(Math.min(1, fl))}"/>` : ''}</g>`;
+}
+// grey bars of column type (never readable)
+function typeCol(x0, x1, y0, y1, seed = 1, step = 21) {
+  const R = rng(seed); let d = '';
+  for (let y = y0; y < y1; y += step) { const w = (x1 - x0) * (R() < .12 ? .4 + R() * .4 : .92 + R() * .08); d += `M${F1(x0)} ${F1(y)} h${F1(w)} `; }
+  return `<path d="${d}" stroke="#4a4438" stroke-width="7" opacity=".55"/>`;
+}
+// the front page, 980 × 1500, centred on (cx, cy): masthead, dateline with the year, the headline, Malloy's photo, a
+// band and a strip of the five men's photos. fl[i] / blank[i] for the five; mal = flash on the big photo
+function frontPage(t, cx, cy, { fl = [0, 0, 0, 0, 0], blank = [0, 0, 0, 0, 0], yearK = 0 } = {}) {
+  const gang = [MARINO, MURPHY, PASQUA, KRIESBERG, FIFTH];
+  const poses = [{ smirk: .35, lid: .35, look: 2 }, { smirk: .1, lid: .2 }, { smirk: .2, lid: .4, look: -2 }, { smirk: -.1, lid: .2 }, { smirk: .2, lid: .3 }];
+  const strip = gang.map((ch, i) => { const k = 1 + .12 * Math.min(1, fl[i] * 1.4), cx = -380 + i * 190, cy = 48;
+    return `<g transform="translate(${cx} ${cy}) scale(${k.toFixed(3)}) translate(${-cx} ${-cy})">${pressPhoto(t, ch, -470 + i * 190, -60, 180, 216, { s: .5, headY: .46, pose: poses[i], fl: fl[i], blank: blank[i] })}</g>`
+    + `<rect x="${-470 + i * 190 + 30}" y="164" width="120" height="8" fill="#3a342c" opacity=".7"/>`; }).join('');
+  const T = (txt, x, y, size, o = '') => `<text x="${x}" y="${y}" font-size="${size}" ${o}>${txt}</text>`;
+  return `<g transform="translate(${F1(cx)} ${F1(cy)})">
+    <rect x="-470" y="-722" width="980" height="1500" fill="#000" opacity=".45" filter="url(#b16)"/>
+    <g filter="url(#pcl)"><rect x="-490" y="-750" width="980" height="1500" fill="#e6dcc2"/></g>
+    <rect x="-490" y="-750" width="980" height="1500" fill="url(#paperAge)"/>
+    <rect x="-490" y="-750" width="980" height="1500" fill="#000" opacity=".5" filter="url(#paperTex)"/>
+    <g font-family="Liberation Serif" font-weight="700" fill="#16130f" text-anchor="middle">
+      ${T('EXTRA', 0, -612, 150, 'letter-spacing="10"')}
+      ${T('★', -300, -650, 40)}${T('★', 300, -650, 40)}</g>
+    <rect x="-470" y="-594" width="940" height="6" fill="#16130f"/><rect x="-470" y="-584" width="940" height="2" fill="#16130f"/>
+    <g font-family="Liberation Serif" font-weight="700" fill="#16130f" font-size="28" letter-spacing="3">
+      <text x="-468" y="-536">NEW YORK</text><text x="468" y="-536" text-anchor="end">EVENING EDITION</text></g>
+    <g transform="translate(0 -548) scale(${F1(1 + .08 * yearK)})"><rect x="-96" y="-38" width="192" height="76" fill="#16130f"/>
+      <text x="0" y="24" font-family="Liberation Serif" font-weight="700" font-size="66" fill="#efe6cf" text-anchor="middle" letter-spacing="4">1933</text></g>
+    <rect x="-470" y="-504" width="940" height="2" fill="#16130f"/><rect x="-470" y="-498" width="940" height="6" fill="#16130f"/>
+    <g font-family="Inter Display" font-weight="900" fill="#100e0c" text-anchor="middle">
+      <text x="0" y="-352" font-size="150" textLength="930" lengthAdjust="spacingAndGlyphs">THE MAN WHO</text>
+      <text x="0" y="-200" font-size="150" textLength="930" lengthAdjust="spacingAndGlyphs">WOULDN'T DIE</text></g>
+        <rect x="-470" y="-162" width="940" height="88" fill="#16130f"/>
+    <text x="0" y="-96" font-family="Inter Display" font-weight="900" font-size="64" fill="#efe6cf" text-anchor="middle" textLength="760" lengthAdjust="spacingAndGlyphs">FIVE MEN HELD</text>
+    ${strip}
+    <rect x="-470" y="190" width="940" height="3" fill="#16130f"/>
+    ${pressPhoto(t, MALLOY, -470, 214, 560, 440, { s: 1.24, headY: .44, pose: { smirk: .9, lid: .3, look: 2 }, bg: '#b0a080' })}
+    <rect x="-470" y="666" width="560" height="10" fill="#3a342c" opacity=".6"/>
+    <g font-family="Liberation Serif" font-weight="700" fill="#16130f" font-size="34" text-anchor="middle"><text x="292" y="250">INSURANCE</text><text x="292" y="288">PLOT</text></g>
+    <rect x="130" y="304" width="324" height="2" fill="#16130f"/>
+    ${typeCol(130, 300, 330, 676, 3)}${typeCol(312, 470, 330, 676, 5)}
+    ${typeCol(-470, -170, 716, 745, 9, 14)}${typeCol(-150, 150, 716, 745, 11, 14)}${typeCol(170, 470, 716, 745, 13, 14)}
+    <path d="M-490 0 L490 0" stroke="#8a7a5c" stroke-width="3" opacity=".35"/><path d="M-490 4 L490 4" stroke="#fff" stroke-width="2" opacity=".25"/></g>`;
+}
+// the desk the paper lands on: dark wood under a pool of lamplight
+function paperDesk(t) {
+  return `<rect x="-1400" y="-1400" width="3880" height="4720" fill="#24170e"/>
+    ${Array.from({ length: 30 }, (_, i) => `<path d="M-1400 ${-1400 + i * 160} C0 ${-1380 + i * 160} 1000 ${-1420 + i * 160} 2480 ${-1390 + i * 160}" stroke="#1a100a" stroke-width="5" opacity=".6"/>`).join('')}
+    <ellipse cx="540" cy="900" rx="900" ry="1100" fill="#6a4a2c" opacity=".35" filter="url(#b60)"/>`;
+}

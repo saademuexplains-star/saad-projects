@@ -3,18 +3,18 @@
 1080x1920, 30 fps, DUR 51.0 s (VO tightened 53.3 s -> 51.0 s, pauses only, nothing cut too tight). No captions, no readable
 text anywhere (policy, cans, tins and bills carry plain bands and lines only). Relight pipeline as in "Two Bombs".
 Plain cuts between all shots — nothing should feel like a transition; the only effect is the cab's headlamps fading
-through white into the daylight street. Loop: the first frame and the last frame are the same winter night sky.
+through white into the daylight street. Loop: the first frame and the last frame are the same 1933 front page on the desk.
 Sound: low, bassy effects only (thumps, low tocks for glasses, pitched-down steps/doors/laughs); the score is a sly 1930s
 noir (pizzicato walking bass, music box, low strings).
 
 | # | time | line | picture |
 |---|------|------|---------|
-| 1 | 0.00-2.60 | In 1933, five men in New York | crane down from the night sky past the El (a train crosses) to the snowy street and the speakeasy |
+| 1 | 0.00-2.60 | In 1933, five men in New York | the hook: a 1933 front page; the camera punches in on the year, then pans the strip of five photographs, each popping with a flashbulb |
 | 2 | 2.60-3.85 | took out life insurance | back room: Pasqua holds up the signed policy; Kriesberg over his shoulder |
 | 3 | 3.85-6.12 | on a homeless drunk named Michael Malloy, | Malloy at the bar raises his glass to us, then knocks it back |
 | 4 | 6.12-8.21 | then tried to kill him for the payout. | the five round the card table under the lamp, leaning in over the policy |
 | 5 | 8.21-10.12 | It started when a broke bar owner gave | Marino rings the register: the drawer jumps open on next to nothing |
-| 6 | 10.12-11.90 | Malloy an unlimited tab, | Marino slides a full bottle across the bar to us, opens his hands |
+| 6 | 10.12-11.90 | Malloy an unlimited tab, | Marino brings a bottle up from under the bar by its neck, plants it by the waiting glass, lets go and opens his hands |
 | 7 | 11.90-14.40 | figuring he'd drink himself to death in a week. | Murphy leans to Marino's ear; both smile down the bar |
 | 8 | 14.40-17.83 | Instead, Malloy drank nonstop and felt great. | glass after glass, the empties lining up; he throws his arms up, beaming |
 | 9 | 17.83-19.38 | So they swapped his liquor | Murphy glances round, holds up a can of antifreeze |
@@ -33,4 +33,4 @@ noir (pizzicato walking bass, music box, low strings).
 | 22 | 40.35-43.21 | he walked right back through the doors, thirsty again. | the door swings open: Malloy, head bandaged, walks in grinning to the bar, finger up; the gang gape |
 | 23 | 43.21-46.08 | They finally killed him with a gas hose while he slept | a rented room: the gas cock turns; down the hose to the pillow where he sleeps; shadows of two men cross the bed |
 | 24 | 46.08-49.25 | and only got caught because they couldn't stop bragging around town | the gang toast and roar at the bar; behind them the door opens on two policemen; the laughter dies |
-| 25 | 49.25-51.00 | about the man who wouldn't die. | outside in the snow the speakeasy's lamp goes out; crane up past the El to the night sky (= frame 0) |
+| 25 | 49.25-51.00 | about the man who wouldn't die. | the front page spins in out of the dark and slaps down on the desk: THE MAN WHO WOULDN'T DIE (= frame 0) |
