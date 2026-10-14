@@ -233,37 +233,46 @@ function machiya(side, z0, z1, o, { seed = 1, lit = 1 } = {}) {
 function street1945(t, o = {}, { sunK = 1 } = {}) {
   o = { cz: 0, f: 900, hy: 820, camY: 170, cx: 540, ...o };
   const R = rng(31); let houses = '', poles = '', wires = '';
-  const left = [], right = []; let z = 300; while (z < 9000) { const w = 380 + R() * 320; left.push([z, z + w]); z += w + (R() < .2 ? 120 : 6); }
-  z = 300; while (z < 9000) { const w = 380 + R() * 320; right.push([z, z + w]); z += w + (R() < .2 ? 140 : 6); }
+  // the rows of houses run from behind the camera (so a dolly back never shows their ends) to a cross street at ZF
+  const ZF = 7600, left = [], right = []; let z = -2400; while (z < ZF) { const w = 380 + R() * 320; left.push([z, Math.min(ZF, z + w)]); z += w + (R() < .2 ? 120 : 6); }
+  z = -2400; while (z < ZF) { const w = 380 + R() * 320; right.push([z, Math.min(ZF, z + w)]); z += w + (R() < .2 ? 140 : 6); }
+  // the far end: a row of shop fronts across the street closes the view (plaster, dark lattice, a tiled roof)
+  const fP = (X, Y) => P3(X, Y, ZF, o), fq = pts => 'M' + pts.map(([X, Y]) => fP(X, Y)).map(([x, y]) => `${F1(x)} ${F1(y)}`).join(' L') + ' Z';
+  const farEnd = `<path d="${fq([[-1400, 0], [1400, 0], [1400, 500], [-1400, 500]])}" fill="#c8bca4"/><path d="${fq([[-1400, 0], [1400, 0], [1400, 260], [-1400, 260]])}" fill="#5a4a38"/>
+    <path d="${fq([[-1500, 500], [1500, 500], [1400, 640], [-1400, 640]])}" fill="#4a4e54"/><path d="${fq([[-1500, 270], [1500, 270], [1420, 330], [-1420, 330]])}" fill="#3e434a"/>
+    ${[-900, -300, 300, 900].map(X => `<path d="${fq([[X - 120, 330], [X + 120, 330], [X + 120, 450], [X - 120, 450]])}" fill="#4a3c2e"/>`).join('')}
+    <path d="${fq([[-160, 0], [160, 0], [160, 200], [-160, 200]])}" fill="#2a2018"/>`;
   // far to near so near houses overlap
   [...left.map(a => [-1, ...a]), ...right.map(a => [1, ...a])].sort((a, b) => b[2] - a[2]).forEach(([sd, z0, z1], i) => { if (z1 - (o.cz) > 60) houses += machiya(sd, z0, z1, o, { seed: i + 7, lit: sd }); });
+  houses = farEnd + houses;
   // utility poles every ~900 on the right side, wires converging
-  const polesZ = []; for (let pz = 500; pz < 9000; pz += 900) polesZ.push(pz);
+  const polesZ = []; for (let pz = -400; pz < ZF; pz += 900) if (pz - o.cz > 120) polesZ.push(pz);
   polesZ.slice().reverse().forEach(pz => { const a = P3(330, 0, pz, o), b = P3(330, 820, pz, o), w = Math.max(1, 26 * o.f / Math.max(60, pz - o.cz));
     poles += `<path d="M${F1(a[0])} ${F1(a[1])} L${F1(b[0])} ${F1(b[1])}" stroke="#3a2e24" stroke-width="${F1(w)}"/>`;
     const c1 = P3(220, 780, pz, o), c2 = P3(440, 780, pz, o); poles += `<path d="M${F1(c1[0])} ${F1(c1[1])} L${F1(c2[0])} ${F1(c2[1])}" stroke="#3a2e24" stroke-width="${F1(w * .5)}"/>`; });
   for (const wx of [230, 330, 430]) { let d = ''; polesZ.forEach((pz, i) => { const q = P3(wx, 770, pz, o); d += (i ? ' L' : 'M') + `${F1(q[0])} ${F1(q[1])}`; }); wires += `<path d="${d}" stroke="#2a2420" stroke-width="1.4" fill="none" opacity=".7"/>`; }
   // ground: packed earth, darker ruts, the long shadow of the left side across the road (sun from the left)
-  const g0 = P3(-420, 0, 9000, o), g1 = P3(420, 0, 9000, o), g2 = P3(420, 0, 40 + o.cz, o), g3 = P3(-420, 0, 40 + o.cz, o);
-  const sh = poly3([[-420, 0, 300], [-420, 0, 9000], [-80, 0, 9000], [-80, 0, 300]], o);
+  const g0 = P3(-420, 0, ZF, o), g1 = P3(420, 0, ZF, o), g2 = P3(420, 0, 40 + o.cz, o), g3 = P3(-420, 0, 40 + o.cz, o);
+  const sh = poly3([[-420, 0, -2400], [-420, 0, ZF], [-80, 0, ZF], [-80, 0, -2400]], o);
   return `${sky1945({ y0: -800, y1: o.hy + 40, haze: '#d8e2e4', top: '#5a8ec4' })}${cumulus(300, 380, 420, 160, { seed: 21, op: .8 })}${cumulus(900, 300, 360, 130, { seed: 22, op: .7 })}
     ${par({ v: { fx: 540, fy: 960 } }, 1, hills(o.hy - 30, ['#94aab0', '#86a09c'], { seed: 9, amp: 90, step: 120 }))}
     <path d="M-1400 ${F1(o.hy)} L2500 ${F1(o.hy)} L2500 2400 L-1400 2400 Z" fill="#b49a76"/>
     <path d="M${F1(g0[0])} ${F1(g0[1])} L${F1(g1[0])} ${F1(g1[1])} L${F1(g2[0])} ${F1(g2[1])} L${F1(g3[0])} ${F1(g3[1])} Z" fill="#a8906c"/>
     <path d="${sh}" fill="#5a4a3a" opacity="${F1(.35 * sunK)}"/>
-    ${[-120, 120].map(rx => `<path d="${poly3([[rx - 14, 0, 300], [rx - 14, 0, 9000], [rx + 14, 0, 9000], [rx + 14, 0, 300]], o)}" fill="#8a7458" opacity=".4"/>`).join('')}
+    ${[-120, 120].map(rx => `<path d="${poly3([[rx - 14, 0, -2400], [rx - 14, 0, ZF], [rx + 14, 0, ZF], [rx + 14, 0, -2400]], o)}" fill="#8a7458" opacity=".4"/>`).join('')}
     <g fill="#8a7454" opacity=".35">${Array.from({ length: 220 }, (_, i) => { const R2 = rng(i * 7 + 3), zz = 700 + R2() * 6000, xx = -400 + R2() * 800, q = P3(xx, 0, zz + o.cz, o); return q[1] > o.hy + 2 && q[2] > 500 ? `<ellipse cx="${F1(q[0])}" cy="${F1(q[1])}" rx="${F1(Math.max(.8, 14 * o.f / q[2]))}" ry="${F1(Math.max(.4, 5 * o.f / q[2]))}"/>` : ''; }).join('')}</g>
     ${houses}${poles}${wires}${farFolk(o)}
     <rect x="-1400" y="${F1(o.hy - 300)}" width="3880" height="420" fill="#d8e0e0" opacity=".25" filter="url(#b40)"/>`;
 }
 
 // ---------- the wristwatch at 8:15 (ECU): a steel case, cream dial, blued hands; hm = hours as a float ----------
-function wristWatch(x, y, s, hm, { secs = 0, glint = 0 } = {}) {
+function wristWatch(x, y, s, hm, { secs = 0, glint = 0, rot = 0, strap = 150 } = {}) {
   const ha = (hm % 12) / 12 * 360, ma = (hm * 60 % 60) / 60 * 360, sa = secs / 60 * 360;
   const hand = (a, L, w, col, tail = 10) => `<g transform="rotate(${F1(a)})"><path d="M${-w / 2} ${tail} L${-w * .3} ${-L * .8} L0 ${-L} L${w * .3} ${-L * .8} L${w / 2} ${tail} Z" fill="${col}"/></g>`;
   const ticks = Array.from({ length: 60 }, (_, i) => `<path d="M0 -92 L0 ${i % 5 ? -86 : -76}" stroke="#2a2420" stroke-width="${i % 5 ? 1.4 : 4}" transform="rotate(${i * 6})"/>`).join('');
-  return `<g transform="translate(${F1(x)} ${F1(y)}) scale(${s})">
-    <g filter="url(#pcl)"><path d="M-46 -150 L46 -150 L40 -96 L-40 -96 Z M-46 150 L46 150 L40 96 L-40 96 Z" fill="#5a3a22"/></g>
+  return `<g transform="translate(${F1(x)} ${F1(y)}) rotate(${F1(rot)}) scale(${s})">
+    <g filter="url(#pcl)"><path d="M-48 ${-strap} L48 ${-strap} L40 -96 L-40 -96 Z M-48 ${strap} L48 ${strap} L40 96 L-40 96 Z" fill="#5a3a22"/></g>
+    <path d="M-44 ${-strap + 8} L44 ${-strap + 8} M-44 ${strap - 8} L44 ${strap - 8}" stroke="#2e1c10" stroke-width="10" opacity=".55"/>
     <g filter="url(#pcl)"><circle r="112" fill="url(#steelH)"/></g><circle r="100" fill="#2a2a2a" opacity=".5"/>
     <circle r="98" fill="#ece2c8"/><circle r="98" fill="url(#glassG)" opacity=".4"/>
     ${ticks}

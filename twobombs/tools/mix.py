@@ -137,16 +137,12 @@ AMB += wind * env([(0, 0), (41.85, 0), (42.0, .7), (44.25, .7), (44.3, 0), (47.4
 # ---------------- effects ----------------
 # 1 → 2: the dive into the town
 place(FX, rumble(2.2, 30, 140, .6, 2.0), .4, -26)                                                     # the tram across the bridge
-zoomin(2.62, -14)
 for k in range(8):                                                                                       # footsteps (stride .62 s, two per cycle)
     ts = 2.62 + .155 + k * .31
     if ts < 4.95: place(FX, load('v_steps_1', ss=.05 + (k % 3) * .4, dur=.25, pitch=.75, hi=1500), ts, -24); place(FX, thump(90, 50, .15, .03), ts, -26)
-place(FX, thump(64, 32, .3, .08), 4.98, -17)                                                          # punch-in
 place(FX, load('breath_2', ss=.15, dur=.6, pitch=.78, hi=1600), 5.3, -26)                              # a breath out in the heat
-zoomin(6.60, -15)
 for ts, g in ((6.95, -19), (7.30, -13), (7.65, -19), (8.0, -20)):                                     # the watch: low tocks, the minute clunk on "fifteen"
     place(FX, knock(0, 150 if g < -15 else 110), ts, g); place(FX, thump(120, 60, .12, .025), ts, g - 4)
-whip(8.02, -15)
 # the B-29: a far, low, beating drone; then the light — a rising suck — and nothing
 n = int(1.7 * SR); tt = np.arange(n) / SR
 drone = (np.sin(2 * np.pi * 57 * tt) + .8 * np.sin(2 * np.pi * 59.3 * tt) + .4 * np.sin(2 * np.pi * 114 * tt) + .25 * band(rng.standard_normal(n), lo=60, hi=240)) * np.minimum(1, tt / .5)
@@ -175,13 +171,12 @@ place(FX, thump(60, 30, .5, .14), 16.38, -16)
 n = int(4.7 * SR); tt = np.arange(n) / SR
 sw = np.sin(2 * np.pi * np.cumsum(30 + 12 * tt / 4.7) / SR) * (tt / 4.7) ** 1.2 + .5 * band(rng.standard_normal(n), lo=25, hi=90) * (tt / 4.7)
 place(FX, fade(sw / np.abs(sw).max(), .2, .4), 16.4, -10)
-whip(17.42, -15); place(FX, boom(3.6, 48, 24, 1.3), 17.45, -8)
+place(FX, boom(3.6, 48, 24, 1.3), 17.45, -8)
 # 21.12 the dip to black; the shelter
 place(FX, whoomph(.5, 50, 160), 20.9, -17); place(FX, thump(46, 26, 1.0, .35), 21.12, -14)
 place(FX, load('breath_1', ss=.2, dur=.5, pitch=.7, hi=1300), 21.9, -27)                             # someone coughs in the dark
 place(FX, load('sob_1', ss=0, dur=1.2, pitch=.82, hi=1500), 22.3, -32)
 # 23.3 the station: steam, the locomotive breathing
-whip(23.30, -14)
 place(FX, fade(band(rng.standard_normal(int(1.0 * SR)), lo=80, hi=900), .05, .6), 23.35, -20)        # a gust of steam (low)
 for k in range(4): place(FX, thump(70, 40, .25, .06), 23.45 + k * .26, -18)
 place(FX, knock(0, 70), 24.0, -18)
@@ -189,17 +184,14 @@ place(FX, knock(0, 70), 24.0, -18)
 place(FX, load('breath_2', ss=.2, dur=.6, pitch=.74, hi=1500), 24.35, -21); place(FX, knock(0, 90), 24.45, -19)
 place(FX, load('breath_2', ss=.9, dur=.6, pitch=.72, hi=1500), 25.15, -22); place(FX, thump(80, 40, .3, .07), 25.6, -19)
 # 25.92 the train: a chuff rhythm, rail joints
-whip(25.92, -14)
 for k in range(10): place(FX, thump(64, 36, .22, .05), 26.0 + k * .13, -19 - (k % 2) * 3)
 for k in range(3): place(FX, knock(0, 80), 26.1 + k * .42, -21); place(FX, knock(0, 76), 26.24 + k * .42, -22)
 place(FX, fade(load('v_horn_2', ss=0, dur=1.0, pitch=.62, hi=1800), .05, .3), 26.25, -24)           # the whistle, pitched low
 # 27.2 the carriage: muffled joints under the photo
 for k in range(4): place(FX, band(knock(0, 70), hi=300), 27.3 + k * .42, -24); place(FX, band(knock(0, 66), hi=300), 27.44 + k * .42, -25)
 # 28.98 Nagasaki: a ship's horn across the harbour
-whip(28.98, -14)
 place(FX, fade(load('v_horn_1', ss=0, dur=1.6, pitch=.5, hi=1200), .1, .5), 29.1, -19)
 # 30.72 the office: he limps in; a chair creaks as they look up
-zoomin(30.72, -15)
 for k, ts in enumerate((31.15, 31.5, 31.85, 32.2, 32.55, 32.9, 33.25)): place(FX, load('v_steps_2', ss=.1 + (k % 4) * .3, dur=.25, pitch=.72, hi=1400), ts, -23 - 4 * (k % 2))   # a limp: one foot heavier
 place(FX, load('v_creak_1', ss=.3, dur=.6, pitch=.6, hi=1200), 31.25, -24)
 place(FX, thump(64, 32, .3, .08), 33.42, -17)
@@ -213,7 +205,6 @@ for k in range(14): place(FX, knock(0, 60 + rng.integers(0, 50)), 40.5 + rng.ran
 place(FX, load('breath_3', ss=.2, dur=.7, pitch=.72, hi=1400), 40.95, -21)                             # he coughs
 place(FX, load('breath_1', ss=.4, dur=.5, pitch=.7, hi=1400), 41.4, -23)
 # 41.86 decades pass
-whip(41.86, -16)
 # 44.3 the ceremony: flash bulbs (soft low pops), a ripple of applause
 for ts in (44.55, 45.25, 46.3, 46.9): place(FX, thump(140, 70, .14, .03), ts, -19); place(FX, whoomph(.12, 300, 900), ts - .02, -30)
 place(FX, fade(load('crowd_1', ss=1.0, dur=1.4, pitch=.86, lo=100, hi=1500), .2, .5), 46.1, -27)
@@ -228,10 +219,8 @@ def clap():
     return out
 for i in range(5): place(FX, clap(), 44.30 + i * .3927 + .01, -27 - (i == 4) * 4)
 # 47.4 the hill: the ghosts rise — a far, slow rumble
-zoomin(47.40, -17)
 place(FX, rumble(2.5, 22, 80, 1.2, 3.0), 47.5, -15)
 # 52.3 the cranes: paper wings — a soft low flutter — rising into the sky
-whip(52.30, -16)
 n = int(1.6 * SR); tt = np.arange(n) / SR
 flut = band(rng.standard_normal(n), lo=90, hi=700) * (.5 + .5 * np.sin(2 * np.pi * 11 * tt)) * np.sin(np.pi * tt / 1.6) ** 1.5
 place(FX, flut / np.abs(flut).max(), 52.35, -26)

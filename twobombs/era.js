@@ -128,8 +128,9 @@ const tArm = (k, T, hand = 'back', o = {}) => ({ ...autoIK(k, [k * 140, -930], T
 // an arm placed by its elbow and wrist directly (body-local). For poses the two-bone solve gets wrong: hands held in
 // front of the body (the forearm toward us reads shorter), gestures where the elbow must stay down at the side
 const jArm = (k, E, W, hand = 'relax', o = {}) => ({ el: E, wr: W, hand, side: k, ...o });
-// arms hanging at rest: nearly straight, the elbow by the waist, the hand beside the thigh (no elbows jutting out)
-const tHang = (k, dx = 0, dy = 0, o = {}) => jArm(k, [k * (149 + dx * .4), -768 + dy * .5], [k * (163 + dx), -612 + dy], 'relax', o);
+// arms hanging at rest: nearly straight and a little away from the body, so the whole arm reads beside the torso
+// (the forearm never seems to come out of the waist); the elbow by the waist, the hand beside the thigh
+const tHang = (k, dx = 0, dy = 0, o = {}) => jArm(k, [k * (170 + dx * .4), -770 + dy * .5], [k * (182 + dx), -614 + dy], 'relax', o);
 // blend two arm poses (same side) — for gestures that travel. The joints turn (upper arm about the shoulder, forearm
 // about the elbow) the short way round and the bones keep their length, so an arm swings in arcs instead of shrinking
 // through a straight-line blend
