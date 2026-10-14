@@ -104,7 +104,7 @@ const SHOTS = [
   { at: 3.85, draw(v, t) {
       const z0 = 1.34, C = camF(t, t => [540, 1000, lerp(z0, 1.48, ease(seg(t, 3.85, 6.12))), { hh: .6 }]);
       const s = 2.0, Y = mcuY(1000, s, z0), sk = SKN.MALLOY;
-      const L = gripAt(1, [200, -700]), H = gripAt(1, [92, -1060]), M = toMouth(1, [14, -1002], -48);
+      const L = gripAt(1, [190, -600]), H = gripAt(1, [165, -1075]), M = toMouth(1, [14, -1002], -48);
       const up = ease(seg(t, 4.0, 4.45)), dr = ease(seg(t, 5.15, 5.6));
       const A = dr > 0 ? armMix(H, M, dr) : armMix(L, H, up);
       const fill = lerp(.75, .1, seg(t, 5.55, 6.05));
@@ -218,7 +218,7 @@ const SHOTS = [
   { at: 23.60, draw(v, t) {
       const z0 = 1.3, C = camF(t, t => [560, 1020, lerp(z0, 1.42, ease(seg(t, 23.6, 26.67))), { hh: .5 }]);
       const s = 2.0, Y = mcuY(1020, s, z0), wake = ease(seg(t, 24.7, 25.05)), ask = ease(seg(t, 25.5, 25.85)), sk = SKN.MALLOY;
-      const L = gripAt(1, [200, -680]), H = gripAt(1, [100, -1050]), tap = Math.sin((t - 25.9) * 16) * 10 * bell(t, 25.9, 26.6);
+      const L = gripAt(1, [190, -600]), H = gripAt(1, [165, -1070]), tap = Math.sin((t - 25.9) * 16) * 10 * bell(t, 25.9, 26.6);
       const A = ask > 0 ? armMix(L, H, ask) : L;
       const AA = { ...A, wr: [A.wr[0], A.wr[1] + tap * ask], el: A.el };
       return `<g transform="${C.tf}">${lights(C.v, RIG_ROOMB(t, { morning: 1 }))}<g filter="url(#dofHeavy)">${barRoom(t, { tables: 0, morning: 1 })}${gangTable(t, 900, 1500, { look: -8, smirk: lerp(.3, -.6, seg(t, 24.8, 25.3)), shock: .5 * seg(t, 24.8, 25.2), lid: lerp(1.1, .1, seg(t, 24.75, 24.95)), lean: -5 })}</g>
@@ -235,7 +235,7 @@ const SHOTS = [
   //   a box of carpet tacks tipped over it, then the lid of bread
   { at: 27.61, draw(v, t) {
       const C = camF(t, t => [540, lerp(1020, 990, seg(t, 27.61, 31.27)), lerp(1.12, 1.26, ease(seg(t, 27.61, 31.27))), { hh: .35, r: lerp(-2, 1, seg(t, 27.61, 31.27)) }]);
-      const p = kf(t, [[27.61, 0], [29.85, .3], [30.05, .4], [30.95, .72], [31.25, .95]], x => x);
+      const p = kf(t, [[27.61, 0], [29.85, .3], [30.05, .4], [30.75, .72], [31.2, .95]], x => x);
       return `<g transform="${C.tf}">${lights(C.v, RIG_INS(t))}${sandwichInsert(t, p)}</g>`;
     } },
   // 16 "Malloy ate the whole thing and asked for seconds." — he wolfs it down, bite after bite, chewing, delighted; then
@@ -327,14 +327,14 @@ const SHOTS = [
   { at: 46.08, draw(v, t) {
       const C = camF(t, t => [520, lerp(1340, 1300, seg(t, 46.08, 49.25)), lerp(1.42, 1.52, ease(seg(t, 46.08, 49.25))), { hh: .5 }]);
       const door = ease(seg(t, 47.75, 48.05)), cops = ease(seg(t, 47.9, 48.4)), turn = ease(seg(t, 48.45, 48.8));
-      const yc = 1560, laugh = k => .6 + .4 * Math.abs(Math.sin(t * 7 + k)), clink = ease(seg(t, 46.2, 46.6)) * (1 - ease(seg(t, 47.3, 47.7)));
-      const man = (ch, x, s, k, sk, i, ph) => { const L = gripAt(k, [k * 205, -690]), H = gripAt(k, [k * 120, -1080]), A = armMix(L, H, clink);
+      const yc = 1560, laugh = k => .6 + .4 * Math.abs(Math.sin(t * 7 + k)), clink = ease(seg(t, 46.2, 46.6)) * (1 - ease(seg(t, 48.5, 48.9)));
+      const man = (ch, x, s, k, sk, i, ph) => { const L = gripAt(k, [k * 196, -600]), H = gripAt(k, [k * 165, -960]), A = armMix(L, H, clink);
         const lt = laugh(ph) * (1 - turn);
         return who(ch, t, [x, behindY(yc, s), s], { bust: 1, armL: k < 0 ? { ...A, hand: 'none' } : tHang(-1), armR: k > 0 ? { ...A, hand: 'none' } : tHang(1), smirk: lerp(1, -.35, turn), open: .3 * lt * (1 - turn),
           lid: lerp(.9, 0, turn) * lt, tilt: (4 * Math.sin(t * 7 + ph) * (1 - turn)) + i * 2, look: lerp(-k * 6, -9, turn), turn: lerp(-k * .15, -.4, turn), shock: .6 * turn, lookY: lerp(-3, 0, turn) },
           { top: clink > .02 ? glassIn(A, k, sk, { fill: .5 }) : '', ph }); };
-      const copsSVG = door > .35 ? `<g>${who(COP2, t, [400, 1385 + 12 * cops, .56], { armL: tHang(-1), armR: tHang(1), lid: .3, smirk: -.2, look: 3 })}${who(COP, t, [330, 1372 + 14 * cops, .55], { armL: tHang(-1), armR: tHang(1), lid: .2, smirk: -.3, look: 4 })}</g>` : '';
-      return `<g transform="${C.tf}">${lights(C.v, RIG_ROOMB(t))}<g filter="url(#dof)">${barRoom(t, { tables: 0, door })}${copsSVG}</g>
+      const copsSVG = door > .35 ? `<g>${who(COP2, t, [425, 1385 + 12 * cops, .58], { armL: tHang(-1), armR: tHang(1), lid: .3, smirk: -.2, look: 3 })}${who(COP, t, [300, 1375 + 14 * cops, .57], { armL: tHang(-1), armR: tHang(1), lid: .2, smirk: -.3, look: 4 })}</g>` : '';
+      return `<g transform="${C.tf}">${lights(C.v, RIG_ROOMB(t))}<g filter="url(#dof)">${barRoom(t, { tables: 0, door })}</g>${copsSVG}
         ${man(KRIESBERG, 120, 1.15, 1, SKN.W, 0, 0)}${man(FIFTH, 900, 1.12, -1, SKN.W, 1, 2)}${man(PASQUA, 680, 1.2, -1, SKN.W, 2, 4)}
         ${barCounter(yc, { side: 'back' })}</g>`;
     } },
