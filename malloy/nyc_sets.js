@@ -348,6 +348,7 @@ function barRoom(t, { yF = 1360, door = 0, morning = 0, ts = t, tables = 1 } = {
     : `<rect x="${dx}" y="${dyT}" width="${dw}" height="${yF - dyT}" fill="${morning ? '#d8dce0' : '#3a4458'}"/>
       <rect x="${dx}" y="${yF - 120}" width="${dw}" height="120" fill="${morning ? '#eef0f2' : '#8a94a8'}"/>
       <clipPath id="brd"><rect x="${dx}" y="${dyT}" width="${dw}" height="${yF - dyT}"/></clipPath><g clip-path="url(#brd)">${snowFall(ts, { area: [dx, dyT, dx + dw, yF], n: 26, seed: 13, near: 0 })}</g>
+      ${door < 1 ? `<g filter="url(#pcs)"><rect x="${dx}" y="${dyT}" width="${F1(dw * (1 - door))}" height="${yF - dyT}" fill="#4a2a18"/></g>` : ''}
       <g filter="url(#pcs)"><path d="M${dx} ${dyT} L${F1(dx - 160 * door)} ${dyT - 30} L${F1(dx - 160 * door)} ${yF + 30} L${dx} ${yF} Z" fill="#3a2010"/></g>`;
   const table = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><g filter="url(#pcs)"><ellipse cx="0" cy="-260" rx="150" ry="34" fill="#4a2a18"/><rect x="-12" y="-250" width="24" height="230" fill="#2a1810"/><ellipse cx="0" cy="-12" rx="70" ry="14" fill="#2a1810"/></g>
       <ellipse cx="0" cy="-266" rx="130" ry="24" fill="#6a3a24" opacity=".6"/>${bottle(-40, -268, .5, { kind: 0 })}${shotGlass(30, -266, .5, {})}</g>`;

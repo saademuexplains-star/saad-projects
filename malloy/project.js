@@ -326,14 +326,14 @@ const SHOTS = [
   //   laughter; behind them the door opens on two policemen; the laughter dies
   { at: 46.08, draw(v, t) {
       const C = camF(t, t => [520, lerp(1340, 1300, seg(t, 46.08, 49.25)), lerp(1.42, 1.52, ease(seg(t, 46.08, 49.25))), { hh: .5 }]);
-      const door = ease(seg(t, 47.75, 48.05)), cops = ease(seg(t, 47.9, 48.4)), turn = ease(seg(t, 48.45, 48.8));
+      const door = ease(seg(t, 47.7, 48.2)), cops = ease(seg(t, 47.9, 48.5)), turn = ease(seg(t, 48.45, 48.8));
       const yc = 1560, laugh = k => .6 + .4 * Math.abs(Math.sin(t * 7 + k)), clink = ease(seg(t, 46.2, 46.6)) * (1 - ease(seg(t, 48.5, 48.9)));
       const man = (ch, x, s, k, sk, i, ph) => { const L = gripAt(k, [k * 196, -600]), H = gripAt(k, [k * 165, -960]), A = armMix(L, H, clink);
         const lt = laugh(ph) * (1 - turn);
         return who(ch, t, [x, behindY(yc, s), s], { bust: 1, armL: k < 0 ? { ...A, hand: 'none' } : tHang(-1), armR: k > 0 ? { ...A, hand: 'none' } : tHang(1), smirk: lerp(1, -.35, turn), open: .3 * lt * (1 - turn),
           lid: lerp(.9, 0, turn) * lt, tilt: (4 * Math.sin(t * 7 + ph) * (1 - turn)) + i * 2, look: lerp(-k * 6, -9, turn), turn: lerp(-k * .15, -.4, turn), shock: .6 * turn, lookY: lerp(-3, 0, turn) },
           { top: clink > .02 ? glassIn(A, k, sk, { fill: .5 }) : '', ph }); };
-      const copsSVG = door > .35 ? `<g>${who(COP2, t, [425, 1385 + 12 * cops, .58], { armL: tHang(-1), armR: tHang(1), lid: .3, smirk: -.2, look: 3 })}${who(COP, t, [300, 1375 + 14 * cops, .57], { armL: tHang(-1), armR: tHang(1), lid: .2, smirk: -.3, look: 4 })}</g>` : '';
+      const copsSVG = door > .01 ? `<clipPath id="copc"><rect x="${F1(250 + 190 * (1 - door))}" y="700" width="${F1(190 * door)}" height="740"/></clipPath><g clip-path="url(#copc)">${who(COP2, t, [395, 1385 + 12 * cops, .52], { armL: tHang(-1), armR: tHang(1), lid: .3, smirk: -.2, look: 3 })}${who(COP, t, [300, 1375 + 14 * cops, .52], { armL: tHang(-1), armR: tHang(1), lid: .2, smirk: -.3, look: 4 })}</g>` : '';
       return `<g transform="${C.tf}">${lights(C.v, RIG_ROOMB(t))}<g filter="url(#dof)">${barRoom(t, { tables: 0, door })}</g>${copsSVG}
         ${man(KRIESBERG, 120, 1.15, 1, SKN.W, 0, 0)}${man(FIFTH, 900, 1.12, -1, SKN.W, 1, 2)}${man(PASQUA, 680, 1.2, -1, SKN.W, 2, 4)}
         ${barCounter(yc, { side: 'back' })}</g>`;
