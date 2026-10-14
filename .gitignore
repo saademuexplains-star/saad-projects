@@ -18,3 +18,7 @@ __pycache__/
 **/audio/score*.wav
 **/._*
 **/wip_*.jpg
+**/_preview.js
+**/audio/vo48.wav
+**/audio/vo_t16.wav
+**/audio/vo16.wav
