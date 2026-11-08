@@ -886,3 +886,38 @@ What the Coca-Cola look test taught (rig3):
 - **One gradient per head**, shared by every hair piece (front, back, plait), in the same user space, so the pieces meet
   without a change of tone. Few, wide locks with faint lines between them, not many hairline strokes.
 - Review hair at 2.5x (a page rendered with `deviceScaleFactor`): the cuts did not show on 1080 crops.
+
+### The Coca-Cola video, arms and hands (2026-11-08): "arm is invisible and blending with shirt", "they are so obvious the cutout hands ... unmatched ... odd ... immature and irregular"
+- **An arm in front of the body needs a contact shadow.** Lit in ONE pass with the body (the rule since the Semmelweis
+  test), an arm crossing the torso gets no edge at all: a white sleeve on a white jacket, or grey wool on grey wool,
+  disappears. `Q.armAO(P, o, 'RL', L)` (cast21.js) lays a soft dark shadow of the arms (and detached fists) on the torso,
+  offset away from the light, masked to the torso and never over the arm itself; put it first in `litHair`'s `extra`.
+- **No arm crosses a face, ever** - check every pose against the head at 2.5x. A seated man stirring a tall jar raised
+  his fist to his chin: give him a short vessel at his side (and pour from a cask tap, not from a hand that has to reach
+  across). A paddle held high put the upper fist at his cheek: keep both fists at chest height.
+- **No 90-degree wrists.** A hand gripping sideways on an arm that hangs down bent the wrist piece over itself into a
+  pointed tail. Grip at about 45 degrees to the forearm (`gripAt(..., [-0.78, 0.62])`); the rig now also shortens the
+  wrist curve on the inside of a sharp bend.
+- **Fists are not mittens**: the rig's curled fingers now fan a few degrees from the knuckles and differ in length (the
+  middle finger longest), with short soft creases between them instead of four parallel blocks with slits.
+- **Hands match the body**: the hand's outline is the body's weight (it was 1.5x and read as a sticker), its skin is
+  the face's (it was tinted 14% red), its own shading gentle so the figure's light pass does the modelling.
+- **Sleeves are not boxes**: round shading along the arm (soft and wide), the forearm's outer edge swelling a little
+  and tapering into the cuff, folds gathering above the cuff, the cuff in the sleeve's own cloth (not a dark block) with
+  a small button.
+- A hand pressed to a wound is a fist clutching the cloth, not a flat open hand (it read as a paddle). (Rig note: with
+  `pose2`/`poseK`, a poseK of exactly 1 falls back to `pose` - switch `pose` itself when the blend is done.)
+
+### The Coca-Cola video, technical (2026-11-08)
+- **Never screen-blend inside a filtered, half-transparent group.** Window-light glows drawn inside the wall's blurred
+  group, over a semi-transparent dark overlay, left a coloured ring at the edge of every gradient. Draw such glows after
+  the filtered group, onto the finished picture.
+- **Darken a near layer with a filter, not a rectangle.** A dark rectangle on the p=1 layer also covers every layer
+  behind it (the wall, the calendar that had to be read). Use a feColorMatrix filter on that layer's group.
+- **Camera paths through keys** (`V.cam` in shots_x.js): a monotone cubic through every key in x, y, log(zoom) and roll.
+  `X.track` eases every segment in and out, so the camera stops dead at each key. Keep the measured speed under ~60
+  (pan x zoom + zoom change + roll per frame): long moves between far-apart framings get a wider key half-way.
+- **Fonts**: period type (Playfair Display, Abril Fatface, Old Standard TT, Rye, Pinyon Script; `_render/fonts`) must be
+  installed as system fonts: the transitions rasterise each shot into an SVG image, and images cannot use web fonts.
+- **ElevenLabs on Linux**: the generated files are served from elevenlabsusercontent.com, which the cloud environment's
+  network must allow. The 48 s music-model score costs 720 credits; sound effects cost about 3-4 credits a second.

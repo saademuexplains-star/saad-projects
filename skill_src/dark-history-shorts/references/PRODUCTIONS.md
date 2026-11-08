@@ -294,3 +294,18 @@ rounds of feedback shaped it (FEEDBACK_LOG 2026-11-08):
 3. Cleaner render, tailored clothes, no kilt pleats or belt bands (`tailored: true`).
 
 The full video continues these files in `main20.html`.
+## Coca-Cola ("A sword slices open your chest...") - 8 November 2026
+- Files: `main20.html`, `cast21.js`, `sets25.js`, `sets25b.js`, `map18.js`, `shots_x.js`, `shots_x2.js`, `shots_x3.js`;
+  VO `_vo18` (47.320 s, 2840 frames), beats `_vo18/beats.md`, sound `_sfx18` (mixed by `_tools/mix_coca.py`).
+- 14 shots: SLASH (the sabre's streak and the cut opening, frame 0 already pushing in) -> carry tilt -> BATTLE (the
+  surgeon holds out MORPHINE; push to the label) -> rack on the same label -> BATTLE2 (the bottle now in your fist;
+  relief, then the glassy stare) -> morph bottle to bottle -> ROOM1 (1885, the same bottle in the old hand) -> zmatch
+  window lamp to street lamp -> STREET (J. S. PEMBERTON & CO., rain) -> push through the window -> ROOM2 (diploma, the
+  hidden bottle, the desperate notebook, the pestle, the COCA sack) -> organic -> MACRO (leaves spilling, COCAINE, the
+  kola nut splitting) -> liquid (wine red) -> WINE (the cask, the jar, the French Wine Coca handbill line by line, his
+  guilty face) -> newspaper wipe -> BAN (ATLANTA GOES DRY slaps down) -> carry pan -> SYRUP (the copper kettle over
+  the fire) -> zmatch swirl to glass -> FOUNT (the soda tap, BRAIN TONIC 5c, the nickel spinning) -> facepush ->
+  ROOM3 (eyes shut, the bottle at his chest; the lamp gutters out; the calendar flies to 1888; the empty chair, the
+  bill of sale, the last glass) -> surface dive -> MAP (lights from Atlanta over the world) -> radial -> NAME (BRAIN
+  TONIC fades, the name is written in red script) -> loop morph (bubbles to the embers of frame 0).
+- The user's notes during it: arms and hands (three rounds) - see FEEDBACK_LOG "The Coca-Cola video, arms and hands".

@@ -1,5 +1,15 @@
 # Handoff: where things stand (8 November 2026, after the Semmelweis test)
 
+## Newest: the Coca-Cola video (8 November 2026)
+
+Built from the user's voiceover (`_vo18`: trimmed to 47.320 s, 2840 frames; `words.txt` force-aligned on Linux with
+PocketSphinx) in `main20.html`: `cast21.js` (the cast20 faces on the new standard), `sets25.js` / `sets25b.js` (new sets),
+`map18.js` (Natural Earth outlines), `shots_x.js` / `shots_x2.js` / `shots_x3.js` (14 shots, 14 transitions, the loop).
+Beats in `_vo18/beats.md`. Sound in `_sfx18` (`sessions.txt` lists every ElevenLabs session), mixed by
+`_tools/mix_coca.py`. Mid-production the user flagged the arms and hands three times; the fixes are in the rig and in
+FEEDBACK_LOG ("The Coca-Cola video, arms and hands"): an arm contact shadow (`Q.armAO`), no arm across a face, 45-degree
+grips, fanned fists, matching outline and skin, round sleeves with a buttoned cuff. Fonts: install `_render/fonts`.
+
 ## Newest: the Semmelweis test and its fixes (approved: "ok perfect")
 
 In another account the skill was tested on a new topic (Vienna 1847, Ignaz Semmelweis and handwashing: `castT1.js`,
