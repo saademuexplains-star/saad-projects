@@ -309,3 +309,9 @@ The full video continues these files in `main20.html`.
   bill of sale, the last glass) -> surface dive -> MAP (lights from Atlanta over the world) -> radial -> NAME (BRAIN
   TONIC fades, the name is written in red script) -> loop morph (bubbles to the embers of frame 0).
 - The user's notes during it: arms and hands (three rounds) - see FEEDBACK_LOG "The Coca-Cola video, arms and hands".
+- Delivered 8 Nov 2026 (23:35 UTC) without music: the ElevenLabs workspace had fewer than the 720 credits the 48 s
+  score needs, four attempts failed with "Insufficient funds" (no charge). Pass A and pass B matched (worst block diff
+  3.82), no spikes, loop seam 1.56 against a median step of 3.25. Rendering on Linux (CPU raster, 3 parallel Chromiums,
+  about 0.6 frames a second) is deterministic: sampled frames were bit-identical. Background commands stop at their
+  timeout (30 min by default; pass up to 2 hours) and a session's worker restart kills its children: keep render jobs
+  resumable (`_tools/render_list.sh` renders only the frames that are missing).
