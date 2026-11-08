@@ -1,0 +1,1104 @@
+diff -ruN old/_render/lib/hairkit.js new/_render/lib/hairkit.js
+--- old/_render/lib/hairkit.js	1970-01-01 00:00:00.000000000 +0000
++++ new/_render/lib/hairkit.js	2026-11-08 12:35:21.246802028 +0000
+@@ -0,0 +1,162 @@
++// Hair kit for rig3 heads (the detailing pass of 2026-11-08: "their clothes and hairs look uneven ... not detailed and
++// clean", then "hairs still look very off and cutted at some points ... not matching"). Hair is built the way painted
++// hair is, in layers - never one flat blob with a few scratched lines:
++//   - the mass, shaded by ONE gradient per head (lighter on the crown, darker toward the nape) shared by every piece -
++//     front, back and plait - so their tones meet without a seam;
++//   - wide tapered locks that follow the flow from the parting, in alternating tones, with only faint lines between;
++//   - a sheen band across the crown, stronger on the key-light side;
++//   - a soft hairline: a thin line a shade darker than the hair where it meets the skin, no ink, a faint brow shadow.
++// No hair ends in a straight cut: a woman's hair rounds over the ear and goes back behind it, sideburns taper to a
++// rounded end, a bald man's fringe thins out at both ends, a parting is a soft groove.
++// Drawn on the base head (rig3 FACE[kind]) and carried onto the character's morphed head with the rig's own face map
++// (faceP), like its beards. Use with the rig's hairStyle 'bald'. Each style returns { back, front }: draw them INSIDE
++// the figure's light pass (back + P.svg + front through one C.lit, e.g. the cast's litHair), so the hair takes the same
++// key, rim and face light as the head (drawn outside it, it reads as a cut-out laid on top).
++//   HK.centrePart({ kind: 'woman', fx, col, id, light: 1, braid: 1 | -1 | 0, ribbon })
++//   HK.sidePart({ kind: 'man', fx, col, id, light: 1, part: 28 })
++//   HK.baldFringe({ kind: 'man', fx, col, id, light: 1 })
++(function (G) {
++  const { shade, faceP } = G.RIG;
++  const HK = {};
++  const f = v => Math.round(v * 10) / 10;
++  const Q = p => `${f(p[0])},${f(p[1])}`;
++  const OUTL = 'stroke="#20140c" stroke-width="2" stroke-linejoin="round"';
++  // base head point -> the character's morphed head
++  const mapper = (kind, fx) => { const P = faceP(kind, fx || {}); return p => [P.MX(p[0], p[1]), P.MY(p[1])]; };
++  // cmds: [['M', p], ['C', p1, p2, p3], ['Q', p1, p2], ['L', p]] in base points
++  const path = (m, cmds) => cmds.map(([c, ...ps]) => c + ps.map(p => Q(m(p))).join(' ')).join(' ');
++  const nr = (a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; };
++  const off = (p, n, w) => [p[0] + n[0] * w / 2, p[1] + n[1] * w / 2];
++  // a tapered lock along the quadratic p0 -> c -> p1: w0 wide at p0, w1 at p1
++  const lock = (m, p0, c, p1, w0, w1) => {
++    const n0 = nr(p0, c), n1 = nr(c, p1), nc = nr(p0, p1), wc = (w0 + w1) / 2;
++    return path(m, [['M', off(p0, n0, w0)], ['Q', off(c, nc, wc), off(p1, n1, w1)], ['L', off(p1, n1, -w1)], ['Q', off(c, nc, -wc), off(p0, n0, -w0)]]) + 'Z';
++  };
++  const curve = (m, p0, c, p1, dn = 0) => { const n = nr(p0, p1); return path(m, [['M', off(p0, n, dn)], ['Q', off(c, n, dn), off(p1, n, dn)]]); };
++  // one gradient per head, top of the crown to the nape (userSpaceOnUse, head-local after mapping)
++  const grad = (id, col, y0, y1) => `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${f(y0)}" x2="0" y2="${f(y1)}"><stop offset="0" stop-color="${shade(col, 0.2)}"/><stop offset="0.38" stop-color="${col}"/><stop offset="1" stop-color="${shade(col, -0.3)}"/></linearGradient>`;
++  // locks over a mass: wide fills in alternating tones; only faint lines between them
++  const lockSet = (m, col, L, op = 0.42) => {
++    let g = '';
++    L.forEach(([p0, c, p1, w0, w1], i) => { g += `<path d="${lock(m, p0, c, p1, w0, w1)}" fill="${shade(col, i % 2 ? 0.14 : -0.16)}" opacity="${op}"/>`; });
++    L.forEach(([p0, c, p1, w0], i) => { g += `<path d="${curve(m, p0, c, p1, -w0 * 0.9)}" stroke="${shade(col, -0.45)}" stroke-width="1" fill="none" opacity="0.22" stroke-linecap="round"/>`; if (i % 2) g += `<path d="${curve(m, p0, c, p1, w0 * 0.4)}" stroke="${shade(col, 0.45)}" stroke-width="1" fill="none" opacity="0.2" stroke-linecap="round"/>`; });
++    return g;
++  };
++
++  // ======================================================= women: a centre parting, over the ears and back, a night plait
++  HK.centrePart = (o = {}) => {
++    const m = mapper(o.kind || 'woman', o.fx), col = o.col || '#4a2814', id = o.id || 'hkc', lt = o.light || 1, fx = o.fx || {};
++    const G0 = m([0, -152])[1], G1 = m([0, 150])[1];
++    // the cap: smooth over the crown, down over each ear (covered whole, as the 1840s wore it: a lobe peeping out under
++    // the hair read as a stray sliver), where it rounds under and turns back behind it
++    const side = s => [['C', [s * 98, -108], [s * 97, -40], [s * 87, 14]], ['C', [s * 85, 30], [s * 79, 39], [s * 70, 37]]];
++    const outerD = [['M', [-70, 37]], ['C', [-79, 39], [-85, 30], [-87, 14]], ['C', [-97, -40], [-98, -108], [-62, -132]], ['C', [-34, -152], [34, -152], [62, -132]], ...side(1)];
++    const hlD = [['M', [70, 37]], ['C', [70, 14], [69, -14], [67, -28]], ['C', [64, -52], [58, -64], [50, -74]], ['C', [34, -94], [12, -100], [0, -96]], ['C', [-12, -100], [-34, -94], [-50, -74]], ['C', [-58, -64], [-64, -52], [-67, -28]], ['C', [-69, -14], [-70, 14], [-70, 37]]];
++    const cap = path(m, outerD) + ' L' + path(m, hlD).slice(1) + 'Z';
++    let front = `<defs>${grad(id + 'g', col, G0, G1)}<clipPath id="${id}c"><path d="${cap}"/></clipPath></defs>`;
++    front += `<path d="${path(m, hlD)}" stroke="#3a1c0c" stroke-width="10" fill="none" opacity="0.14" filter="url(#b4)" transform="translate(0,5)"/>`;
++    front += `<path d="${cap}" fill="url(#${id}g)"/>`;
++    // five wide locks a side from the parting: the upper over the crown to the back, the lower along the hairline and
++    // round over the ear
++    let lk = '';
++    for (const s of [-1, 1]) {
++      const L = [];
++      for (let i = 0; i < 5; i++) { const t = i / 4; L.push([[s * 2, -146 + 48 * t], [s * (48 + 14 * t), -156 + 80 * t], [s * (94 - 16 * t), -104 + 124 * t], 24, 8]); }
++      lk += lockSet(m, col, L);
++    }
++    for (const s of [-1, 1]) lk += `<path d="${path(m, [['M', [s * 8, -140]], ['Q', [s * 40, -144], [s * 72, -112]]])}" stroke="${shade(col, 0.55)}" stroke-width="13" fill="none" opacity="${s === lt ? 0.28 : 0.14}" filter="url(#b4)" stroke-linecap="round"/>`;
++    for (let i = 0; i < 3; i++) lk += `<path d="${path(m, [['M', [lt * (18 + 14 * i), -141 + 4 * i]], ['Q', [lt * (32 + 15 * i), -139 + 6 * i], [lt * (46 + 16 * i), -131 + 10 * i]]])}" stroke="${shade(col, 0.7)}" stroke-width="1.3" fill="none" opacity="0.45" stroke-linecap="round"/>`;
++    // the parting: a soft groove where the locks divide (shading, not a drawn line)
++    lk += `<path d="${path(m, [['M', [0, -98]], ['L', [0, -148]]])}" stroke="${shade(col, -0.45)}" stroke-width="4" opacity="0.35" filter="url(#b1)"/>`;
++    front += `<g clip-path="url(#${id}c)">${lk}</g>`;
++    front += `<path d="${path(m, outerD)}" fill="none" ${OUTL}/><path d="${path(m, hlD)}" stroke="${shade(col, -0.35)}" stroke-width="1.3" fill="none" opacity="0.8"/>`;
++    // behind the head, in the same gradient: the hair taken back from behind each ear toward the nape; on the plait's
++    // side it runs down behind the jaw to where the plait comes round the neck
++    let back = '';
++    for (const s of [-1, 1]) {
++      const big = s === (o.braid || 0);
++      const d = big ? [['M', [s * 66, -24]], ['C', [s * 98, -10], [s * 106, 40], [s * 96, 96]], ['C', [s * 90, 116], [s * 76, 126], [s * 58, 124]], ['L', [s * 50, 104]], ['C', [s * 70, 88], [s * 74, 40], [s * 58, -6]]]
++        : [['M', [s * 66, -20]], ['C', [s * 94, -8], [s * 98, 24], [s * 88, 56]], ['C', [s * 84, 66], [s * 78, 70], [s * 72, 68]], ['C', [s * 76, 40], [s * 72, 12], [s * 58, -4]]];
++      back += `<path d="${path(m, d)}Z" fill="url(#${id}g)" ${OUTL}/><path d="${path(m, [['M', [s * 72, -6]], ['C', [s * 90, 8], [s * 96, 40], [s * 88, big ? 90 : 52]]])}" stroke="${shade(col, 0.35)}" stroke-width="1.2" fill="none" opacity="0.3"/>`;
++    }
++    // the plait: round the side of the neck, over the shoulder, down the front; thick at the top, tapering. A solid
++    // core, then pointed three-strand lenses leaning in turn, overlapping closely; tied with a ribbon over a little tuft.
++    // (Head-local, scaled with the head's width only - it lies on the body.) Its tones come from the same gradient
++    // (the core) plus light and dark lenses, so it matches the hair it grows from.
++    if (o.braid) {
++      const s = o.braid, W0 = fx.w ?? 1, B = p => [p[0] * W0, p[1]];
++      const pts = [[s * 50, 112], [s * 72, 150], [s * 92, 206], [s * 102, 270], [s * 104, 330]];
++      const seg = [0]; for (let i = 1; i < pts.length; i++) seg.push(seg[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
++      const at = t => { const d = t * seg[seg.length - 1]; let k = 0; while (k < seg.length - 2 && seg[k + 1] < d) k++; const u = (d - seg[k]) / (seg[k + 1] - seg[k]); return [pts[k][0] + (pts[k + 1][0] - pts[k][0]) * u, pts[k][1] + (pts[k + 1][1] - pts[k][1]) * u]; };
++      const wid = t => 30 - 13 * t;
++      let core = '', coreB = '';
++      for (let i = 0; i <= 16; i++) { const t = i / 16, p = B(at(t)), q = B(at(Math.min(1, t + 0.01))), a = Math.atan2(q[1] - p[1], q[0] - p[0]), n = [-Math.sin(a), Math.cos(a)], w = wid(t) * 0.42; core += (i ? ' L' : 'M') + Q([p[0] + n[0] * w, p[1] + n[1] * w]); coreB = ' L' + Q([p[0] - n[0] * w, p[1] - n[1] * w]) + coreB; }
++      let br = `<path d="${core}${coreB}Z" fill="${shade(col, -0.3)}" ${OUTL}/>`;
++      const N = 22;
++      for (let i = 0; i < N; i++) {
++        const t = i / (N - 1), p = B(at(t)), q = B(at(Math.min(1, t + 0.01))), a = Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI, w = wid(t), hl = w * 0.5, hw = w * 0.27, lean = (i % 2 ? 1 : -1) * 38;
++        const lens = `M0,${f(-hl)} Q${f(hw * 1.9)},0 0,${f(hl)} Q${f(-hw * 1.9)},0 0,${f(-hl)}Z`;
++        br += `<g transform="translate(${f(p[0])},${f(p[1])}) rotate(${f(a - 90 + lean)})"><path d="${lens}" fill="${shade(col, (i % 2 ? 0.06 : -0.1) - 0.12 * t)}" stroke="${shade(col, -0.55)}" stroke-width="1.1"/><path d="M${f(hw * 0.5)},${f(-hl * 0.6)} Q${f(hw * 0.95)},0 ${f(hw * 0.5)},${f(hl * 0.6)}" stroke="${shade(col, 0.5)}" stroke-width="1.2" fill="none" opacity="${(i % 2 ? 1 : -1) * lt > 0 ? 0.45 : 0.22}"/></g>`;
++      }
++      const e = B(at(1)), rb = o.ribbon || '#b88a7e';
++      br += [-8, -4, 0, 4, 8].map((dx, k) => `<path d="M${Q([e[0] + dx * 0.4, e[1] - 2])} q${f(dx * 0.5)},${12 + k % 2 * 4} ${f(dx * 0.9)},${24 + (k % 3) * 4}" stroke="${shade(col, k % 2 ? 0 : -0.3)}" stroke-width="${3 - Math.abs(dx) * 0.14}" fill="none" stroke-linecap="round"/>`).join('');
++      br += [-1, 1].map(k => `<path d="M${Q(e)} q${f(k * 14)},-9 ${f(k * 16)},4 q${f(-k * 4)},9 ${f(-k * 16)},-4Z" fill="${rb}" stroke="${shade(rb, -0.5)}" stroke-width="1.1"/><path d="M${Q([e[0] + k * 4, e[1] - 2])} q${f(k * 6)},-4 ${f(k * 10)},-3" stroke="${shade(rb, 0.5)}" stroke-width="1.1" fill="none" opacity="0.7"/>`).join('') + `<circle cx="${f(e[0])}" cy="${f(e[1])}" r="4" fill="${shade(rb, -0.15)}" stroke="${shade(rb, -0.5)}" stroke-width="1"/>`;
++      front += br;
++    }
++    return { back: `<defs>${grad(id + 'g', col, G0, G1)}</defs>` + back, front };
++  };
++
++  // ======================================================= men: a side parting, swept across the crown, sideburns
++  HK.sidePart = (o = {}) => {
++    const m = mapper(o.kind || 'man', o.fx), col = o.col || '#5e4026', id = o.id || 'hks', lt = o.light || 1, pt = o.part ?? 28;
++    // the cap, its sideburns ending in a rounded taper (never a straight cut)
++    const outerD = [['M', [-70, 30]], ['C', [-74, 34], [-80, 30], [-80, 20]], ['C', [-84, -6], [-88, -24], [-90, -46]], ['C', [-95, -90], [-88, -122], [-62, -138]], ['C', [-32, -156], [30, -158], [60, -140]], ['C', [84, -126], [96, -96], [90, -46]], ['C', [88, -24], [84, -6], [80, 20]], ['C', [80, 30], [74, 34], [70, 30]]];
++    const hlD = [['M', [70, 30]], ['C', [68, 26], [67, 10], [67, -4]], ['C', [67, -30], [67, -40], [66, -52]], ['C', [58, -74], [42, -84], [24, -86]], ['C', [6, -88], [-20, -96], [-44, -88]], ['C', [-58, -82], [-66, -62], [-66, -34]], ['C', [-67, -12], [-67, 10], [-68, 26]], ['C', [-68, 28], [-69, 30], [-70, 30]]];
++    const cap = path(m, outerD) + ' L' + path(m, hlD).slice(1) + 'Z';
++    const G0 = m([0, -158])[1], G1 = m([0, 34])[1];
++    let front = `<defs>${grad(id + 'g', col, G0, G1)}<clipPath id="${id}c"><path d="${cap}"/></clipPath></defs>`;
++    front += `<path d="${path(m, hlD)}" stroke="#3a1c0c" stroke-width="10" fill="none" opacity="0.14" filter="url(#b4)" transform="translate(0,5)"/>`;
++    front += `<path d="${cap}" fill="url(#${id}g)"/>`;
++    // the long side: from the parting over the crown and across the forehead in a wave, down to the far temple
++    const L1 = []; for (let i = 0; i < 6; i++) { const t = i / 5; L1.push([[pt + 1 - 3 * t, -146 + 50 * t], [-12 - 18 * t, -166 + 68 * t], [-90 + 6 * t, -98 + 72 * t], 22, 7]); }
++    // the short side: from the parting down to the near temple
++    const L2 = []; for (let i = 0; i < 3; i++) { const t = i / 2; L2.push([[pt + 3, -146 + 44 * t], [pt + 36, -148 + 40 * t], [91 - 2 * t, -100 + 70 * t], 20, 7]); }
++    let lk = lockSet(m, col, L1) + lockSet(m, col, L2);
++    // the wave's rolled front edge catches the light; the sheen across the crown
++    lk += `<path d="${path(m, [['M', [pt - 2, -104]], ['C', [0, -110], [-40, -106], [-80, -46]]])}" stroke="${shade(col, 0.5)}" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>`;
++    lk += `<path d="${path(m, [['M', [-46, -142]], ['Q', [8, -166], [64, -138]]])}" stroke="${shade(col, 0.55)}" stroke-width="13" fill="none" opacity="0.24" filter="url(#b4)" stroke-linecap="round"/>`;
++    // the parting: a soft groove (shading, not a drawn line)
++    lk += `<path d="${path(m, [['M', [pt + 1, -148]], ['Q', [pt - 1, -124], [pt - 3, -100]]])}" stroke="${shade(col, -0.45)}" stroke-width="4" fill="none" opacity="0.32" filter="url(#b1)"/>`;
++    // the sideburns: fine strands down to the rounded end
++    for (const s of [-1, 1]) for (let i = 0; i < 3; i++) lk += `<path d="${path(m, [['M', [s * (70 + i * 4), -30 + i * 2]], ['Q', [s * (71 + i * 4), 6], [s * (72 + i * 2), 28]]])}" stroke="${shade(col, i % 2 ? 0.3 : -0.35)}" stroke-width="1" fill="none" opacity="0.4"/>`;
++    front += `<g clip-path="url(#${id}c)">${lk}</g>`;
++    front += `<path d="${path(m, outerD)}" fill="none" ${OUTL}/><path d="${path(m, hlD)}" stroke="${shade(col, -0.35)}" stroke-width="1.3" fill="none" opacity="0.8"/>`;
++    return { back: '', front };
++  };
++
++  // ======================================================= an old man: bald crown, soft fringe over the sides and back
++  HK.baldFringe = (o = {}) => {
++    const m = mapper(o.kind || 'man', o.fx), col = o.col || '#b8b2a8', id = o.id || 'hkb', lt = o.light || 1;
++    const G0 = m([0, -110])[1], G1 = m([0, 80])[1];
++    // behind the head: the fringe round the back, from the temple past the ear to the nape, thinning to nothing at
++    // both ends (no hard start or stop)
++    let back = `<defs>${grad(id + 'g', col, G0, G1)}</defs>`;
++    for (const s of [-1, 1]) {
++      const d = [['M', [s * 52, -112]], ['C', [s * 74, -110], [s * 89, -88], [s * 91, -54]], ['C', [s * 93, -16], [s * 91, 18], [s * 86, 42]], ['C', [s * 83, 56], [s * 76, 66], [s * 64, 72]], ['C', [s * 70, 50], [s * 74, 20], [s * 74, -10]], ['C', [s * 74, -48], [s * 68, -88], [s * 52, -112]]];
++      back += `<path d="${path(m, d)}Z" fill="url(#${id}g)" stroke="${shade(col, -0.55)}" stroke-width="1.3" stroke-linejoin="round"/>`;
++      for (let i = 0; i < 3; i++) back += `<path d="${path(m, [['M', [s * (60 + i * 6), -104 + i * 8]], ['C', [s * (80 + i * 2), -84 + i * 4], [s * (86 + i), -30], [s * (78 + i * 2), 46 - i * 6]]])}" stroke="${shade(col, i % 2 ? 0.3 : -0.3)}" stroke-width="1.1" fill="none" opacity="0.45"/>`;
++    }
++    // over the head: the hair on each side of the head above the ear, overlapping the skull's edge and thinning
++    // upward into the bald crown; ending in a soft rounded tuft just above the ear (it never covers the ear)
++    let front = `<defs>${grad(id + 'f', col, G0, G1)}</defs>`;
++    for (const s of [-1, 1]) {
++      const d = [['M', [s * 60, -96]], ['C', [s * 76, -92], [s * 88, -70], [s * 90, -44]], ['C', [s * 91, -32], [s * 89, -24], [s * 84, -21]], ['C', [s * 79, -20], [s * 76, -26], [s * 75, -34]], ['C', [s * 73, -56], [s * 69, -78], [s * 60, -96]]];
++      front += `<path d="${path(m, d)}Z" fill="url(#${id}f)"/><path d="${path(m, [['M', [s * 90, -44]], ['C', [s * 91, -32], [s * 89, -24], [s * 84, -21]], ['C', [s * 79, -20], [s * 76, -26], [s * 75, -34]]])}" fill="none" stroke="${shade(col, -0.55)}" stroke-width="1.2"/>`;
++      for (let i = 0; i < 3; i++) front += `<path d="${path(m, [['M', [s * (66 + i * 5), -88 + i * 4]], ['Q', [s * (78 + i * 3), -70], [s * (80 + i * 3), -30 + i * 2]]])}" stroke="${shade(col, i % 2 ? 0.35 : -0.25)}" stroke-width="1.1" fill="none" opacity="0.5"/>`;
++      front += `<path d="${path(m, [['M', [s * 70, -86]], ['C', [s * 82, -74], [s * 87, -56], [s * 87, -40]]])}" stroke="${shade(col, 0.5)}" stroke-width="2.2" fill="none" opacity="${s === lt ? 0.45 : 0.18}" stroke-linecap="round"/>`;
++    }
++    return { back, front };
++  };
++
++  G.HAIRKIT = HK;
++})(window);
+diff -ruN old/_render/lib/rig3.js new/_render/lib/rig3.js
+--- old/_render/lib/rig3.js	2026-11-08 12:35:21.226122298 +0000
++++ new/_render/lib/rig3.js	2026-11-08 12:35:21.223050818 +0000
+@@ -261,9 +261,14 @@
+     const thumbG = thumbOver ? `<g>${outl(`<path d="${thumb}"/>`)}<path d="${thumb}" fill="url(#${id})"/></g>` : '';
+     // (the outline runs down both sides of the wrist but not across it: the hand is drawn over its sleeve and meets the
+     // wrist below the cuff, where a line across would read as the edge of a glove)
+-    const mk = `<mask id="${id}m" maskUnits="userSpaceOnUse" x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}"><rect x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}" fill="#fff"/><rect x="${f(-0.138 * L)}" y="${f(-0.4 * L)}" width="${f(0.276 * L)}" height="${f(0.405 * L)}" fill="#000"/></mask>`;
++    // (o.joinWrist, with G.RIG_CRISP on a sleeved arm: the hand's top dissolves over a short band into the wrist piece
++    // drawn under it (wristBridge), and its side outlines start just below where the wrist's take over, so no flat top
++    // edge, corner or line across the wrist shows - the joint reads as one limb, not a hand pinned to a sleeve)
++    const join = !!o.joinWrist;
++    const mk = `<mask id="${id}m" maskUnits="userSpaceOnUse" x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}"><rect x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}" fill="#fff"/><rect x="${f((join ? -0.26 : -0.138) * L)}" y="${f(-0.4 * L)}" width="${f((join ? 0.52 : 0.276) * L)}" height="${f((join ? 0.43 : 0.405) * L)}" fill="#000"/></mask>` +
++      (join ? `<linearGradient id="${id}fg" gradientUnits="userSpaceOnUse" x1="0" y1="${f(-0.05 * L)}" x2="0" y2="${f(0.035 * L)}"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient><mask id="${id}f" maskUnits="userSpaceOnUse" x="${f(-L)}" y="${f(-L)}" width="${f(2 * L)}" height="${f(2.6 * L)}"><rect x="${f(-L)}" y="${f(-L)}" width="${f(2 * L)}" height="${f(2.6 * L)}" fill="url(#${id}fg)"/></mask>` : '');
+     let g = `<defs>${grd}${mk}<clipPath id="${id}c">${body}</clipPath></defs>` + objBack;
+-    g += `<g mask="url(#${id}m)">${outl(body)}</g><g fill="url(#${id})">${body}</g><g clip-path="url(#${id}c)">${sh}</g>${det}${thumbG}`;
++    g += `<g mask="url(#${id}m)">${outl(body)}</g>` + (join ? `<g mask="url(#${id}f)">` : '') + `<g fill="url(#${id})">${body}</g><g clip-path="url(#${id}c)">${sh}</g>` + (join ? '</g>' : '') + `${det}${thumbG}`;
+     g += objFront;
+     return `<g transform="translate(${f(o.x)},${f(o.y)}) rotate(${f(a * 180 / Math.PI)})">${g}</g>`;
+   }
+@@ -277,7 +282,7 @@
+   // forearm in front of them is in front); 'end' - only the end of the sleeve (for a hand the shot draws on its own).
+   // Fresh ids on every call.
+   function sleeveV2(g, part = 'all') {
+-    const { sh, E, Wc, ud, dn, ul, fcl, w0, w1, w2, sl, lat, sw, fsK } = g;
++    const { sh, E, Wc, ud, dn, ul, fcl, w0, w1, w2, sl, lat, sw, fsK, weave } = g;
+     const add = (p, v, k) => [p[0] + v[0] * k, p[1] + v[1] * k], Q = p => `${f(p[0])},${f(p[1])}`;
+     const nU = [-ud[1], ud[0]], nF = [-dn[1], dn[0]], cr = ud[0] * dn[1] - ud[1] * dn[0];
+     const sIn = cr >= 0 ? 1 : -1, sOut = -sIn, sLat = nU[0] * lat >= 0 ? 1 : -1, sMed = -sLat;
+@@ -338,9 +343,11 @@
+     let band = `<path d="M${Q(add(C0, nF, w2 * 0.8))} L${Q(add(Cx, nF, w2 * 0.8))} L${Q(add(Cx, nF, -w2 * 0.8))} L${Q(add(C0, nF, -w2 * 0.8))}Z" fill="${shade(sl, -0.14)}" opacity="0.85"/>`;
+     band += `<path d="M${Q(add(C0, nF, w2 * 0.6))} L${Q(add(C0, nF, -w2 * 0.6))}" stroke="${shade(sl, -0.55)}" stroke-width="1.2" ${NS} opacity="0.55"/>`;
+     const id = uid('sv');
+-    let body = `<defs><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><g filter="url(#clothN)"><path d="${shape}" fill="${sl}"/><g clip-path="url(#${id}c)">${shd}<g filter="url(#b1)">${box}${fo}</g>${band}<g filter="url(#b1)">${box}<path d="M${Q(add(add(C0, dn, cb * 0.35), nF, w2 * 0.5))} L${Q(add(add(C0, dn, cb * 0.35), nF, -w2 * 0.5))}" stroke="${shade(sl, 0.32)}" stroke-width="${f(sw * 0.03)}" opacity="0.45"/></g></g></g><path d="${outline}" fill="none" ${ol()}/>`;
++    let body = `<defs><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><g filter="url(#clothN)"><path d="${shape}" fill="${sl}"/><g clip-path="url(#${id}c)">${weaveFill(weave, bx0, by0, bx1 - bx0, by1 - by0)}${shd}<g filter="url(#b1)">${box}${fo}</g>${band}<g filter="url(#b1)">${box}<path d="M${Q(add(add(C0, dn, cb * 0.35), nF, w2 * 0.5))} L${Q(add(add(C0, dn, cb * 0.35), nF, -w2 * 0.5))}" stroke="${shade(sl, 0.32)}" stroke-width="${f(sw * 0.03)}" opacity="0.45"/></g></g></g><path d="${outline}" fill="none" ${ol()}/>`;
+     // a forearm coming toward the lens (drawn short) shows the open end of its sleeve, deepening with the foreshortening
+-    if (fsK > 0) {
++    // (not with G.RIG_CRISP: half-transparent over light cloth it read as a glassy bubble on the cuff; the wrist piece
++    // now leaves the cuff cleanly at any angle)
++    if (fsK > 0 && !G.RIG_CRISP) {
+       const rx = w2 * 0.48, ry = w2 * 0.48 * (0.28 + 0.5 * fsK), r = Math.atan2(dn[1], dn[0]) * 180 / Math.PI + 90, oc = add(Wc, dn, -ry * 0.25);
+       body += `<g opacity="${f(0.6 * fsK)}"><ellipse cx="${f(oc[0])}" cy="${f(oc[1])}" rx="${f(rx)}" ry="${f(ry)}" transform="rotate(${f(r)},${f(oc[0])},${f(oc[1])})" fill="${shade(sl, -0.42)}" stroke="${shade(sl, -0.6)}" stroke-width="1.2" ${NS}/></g>`;
+     }
+@@ -367,6 +374,31 @@
+     const r = Math.atan2(-dx, dy) * 180 / Math.PI;
+     return `<defs>${g}</defs><path d="${d}" fill="url(#${id})" ${ol()}/>` + (extra ? `<g transform="translate(${f(A[0])},${f(A[1])}) rotate(${f(r)})">${extra}</g>` : '');
+   }
++  // (o.weave = { kind: 'twill' | 'linen', op }) the cloth's own weave, laid over the torso and the sleeves under their
++  // shading: a fine, regular thread texture in neutral dark and light threads, so it works on any colour (2026-11-08:
++  // plain flat fills read as "not detailed"). tailor.js lays the same patterns (same ids) on lapels and waistcoats.
++  const WEAVE = {
++    twill: `<pattern id="rgWvTwill" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(38)"><path d="M0,1.2 L5,1.2" stroke="#000" stroke-width="1.3" opacity="0.55"/><path d="M0,3.7 L5,3.7" stroke="#fff" stroke-width="1" opacity="0.4"/></pattern>`,
++    linen: `<pattern id="rgWvLinen" patternUnits="userSpaceOnUse" width="3.6" height="3.6"><path d="M0,0.9 L3.6,0.9" stroke="#000" stroke-width="0.8" opacity="0.4"/><path d="M0.9,0 L0.9,3.6" stroke="#000" stroke-width="0.6" opacity="0.28"/><path d="M0,2.7 L3.6,2.7" stroke="#fff" stroke-width="0.7" opacity="0.35"/></pattern>`
++  };
++  const weaveFill = (w, x, y, W, H) => w && WEAVE[w.kind] ? `<defs>${WEAVE[w.kind]}</defs><rect x="${f(x)}" y="${f(y)}" width="${f(W)}" height="${f(H)}" fill="url(#rgWv${w.kind === 'twill' ? 'Twill' : 'Linen'})" opacity="${w.op ?? 0.16}"/>` : '';
++  // (G.RIG_CRISP) the wrist as one smooth piece from inside the cuff to the back of the hand. Its sides leave the cuff
++  // along the forearm and curve into the hand's own line, as wide as the cuff opening at one end and as the back of the
++  // hand at the other, so a hand bent at the wrist never shows the corner of its flat top edge standing out past a
++  // straight wrist (a capsule laid along the forearm did: the hand read as a cut-out pinned on - the user, 2026-11-08:
++  // "they look like cutted pngs"). Outlined along its two sides only; the hand is drawn over its lower end.
++  function wristBridge(Wc, dn, W, hn, wIn, cw, HL, col) {
++    const add = (p, v, k) => [p[0] + v[0] * k, p[1] + v[1] * k], Q = p => `${f(p[0])},${f(p[1])}`;
++    const nF = [-dn[1], dn[0]]; let nH = [-hn[1], hn[0]]; if (nF[0] * nH[0] + nF[1] * nH[1] < 0) nH = [-nH[0], -nH[1]];
++    const a0 = add(Wc, dn, -wIn), wa = cw * 0.46, wb = HL * 0.152, b0 = add(W, hn, -0.045 * HL), b1 = add(W, hn, 0.12 * HL);
++    const k = 0.5 * Math.hypot(b0[0] - Wc[0], b0[1] - Wc[1]) + 0.5;
++    const S = s => { const p1 = add(Wc, nF, s * wa), q0 = add(b0, nH, s * wb); return { p0: add(a0, nF, s * wa), p1, q0, q1: add(b1, nH, s * wb * 0.98), c1: add(p1, dn, k), c2: add(q0, hn, -k) }; };
++    const A = S(1), B = S(-1), id = uid('wb'), g1 = add(W, nH, wb), g2 = add(W, nH, -wb);
++    const d = `M${Q(A.p0)} L${Q(A.p1)} C${Q(A.c1)} ${Q(A.c2)} ${Q(A.q0)} L${Q(A.q1)} L${Q(B.q1)} L${Q(B.q0)} C${Q(B.c2)} ${Q(B.c1)} ${Q(B.p1)} L${Q(B.p0)}Z`;
++    const grd = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f(g1[0])}" y1="${f(g1[1])}" x2="${f(g2[0])}" y2="${f(g2[1])}"><stop offset="0" stop-color="${shade(col, -0.22)}"/><stop offset="0.4" stop-color="${shade(col, 0.05)}"/><stop offset="0.7" stop-color="${col}"/><stop offset="1" stop-color="${shade(col, -0.2)}"/></linearGradient>`;
++    const side = s => `M${Q(s.p1)} C${Q(s.c1)} ${Q(s.c2)} ${Q(s.q0)} L${Q(s.q1)}`;
++    return `<defs>${grd}</defs><path d="${d}" fill="url(#${id})"/><path d="${side(A)} ${side(B)}" fill="none" ${ol()}/>`;
++  }
+   // the sore on the front of a bare shin just above the ankle (person-local), shared by the drawing and the shots
+   function woundPt(D, s) { return [s * D.legX - s * D.legW * 0.06, -D.foot * 0.98]; }
+   // burning / blister / open sore / wet sheen drawn on the rig's own lower leg, so it stays attached at any zoom or angle
+@@ -560,7 +592,8 @@
+     const wSkin = hSkin === C.skin ? mix(C.skin, '#c97a62', 0.14) : hSkin;
+     const wrist = bare ? '' : V2 ? limb([W[0] - dn[0] * (cutB + sw * 0.3), W[1] - dn[1] * (cutB + sw * 0.3)], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin)
+       : limb([W[0] - dn[0] * sw * 0.4, W[1] - dn[1] * sw * 0.4], [W[0] + hn[0] * D.hand * 0.06, W[1] + hn[1] * D.hand * 0.06], D.hand * 0.36, D.hand * 0.34, wSkin);
+-    const handSvg = o.pose === 'none' ? '' : (V2 ? handV2 : hand)({ x: W[0], y: W[1], dir, side, facing: o.facing || 'back', thumb: o.thumb || 'auto', pose: o.pose || 'relaxed', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails) });
++    const joinWrist = !!(G.RIG_CRISP && V2 && !bare);
++    const handSvg = o.pose === 'none' ? '' : (V2 ? handV2 : hand)({ x: W[0], y: W[1], dir, side, facing: o.facing || 'back', thumb: o.thumb || 'auto', pose: o.pose || 'relaxed', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails), joinWrist });
+     const cuffShadow = V2 && !bare ? (() => { const c = add(Wc, dn, HLn * 0.06), r = Math.atan2(-dn[0], dn[1]) * 180 / Math.PI; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(fw2 * 0.5)}" ry="${f(HLn * 0.075)}" transform="rotate(${f(r)},${f(c[0])},${f(c[1])})" fill="#1e0c04" opacity="0.34" filter="url(#b4)"/>`; })()
+       : `<ellipse cx="${f(W[0] + hn[0] * sw * 0.18)}" cy="${f(W[1] + hn[1] * sw * 0.18)}" rx="${f(sw * 0.36)}" ry="${f(sw * 0.26)}" fill="#1e0c04" opacity="0.35" filter="url(#b4)"/>`;
+     const up = `<g filter="url(#clothN)">${upper}</g>${upperLines}${innerShade}`;
+@@ -583,12 +616,13 @@
+       if (o.pose2 && o.poseK > 0 && o.poseK < 1 && o.pose !== 'none' && o.pose2 !== 'none') {
+         // (between two flat poses - relaxed and open, same side to the lens - the fingers and thumb move in between; any other
+         // change of pose dissolves quickly)
+-        const hO = { x: W[0], y: W[1], dir, side, thumb: o.thumb || 'auto', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails) }, flat = q => q === 'relaxed' || q === 'open';
++        const hO = { x: W[0], y: W[1], dir, side, thumb: o.thumb || 'auto', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails), joinWrist }, flat = q => q === 'relaxed' || q === 'open';
+         if (flat(o.pose) && flat(o.pose2) && (o.facing || 'back') === (o.facing2 || 'back')) handG = `<g filter="url(#skinS)">${handV2(Object.assign({}, hO, { pose: o.pose, facing: o.facing || 'back', morphTo: o.pose2, morphK: o.poseK }))}</g>`;
+         else { const h2 = handV2(Object.assign({}, hO, { pose: o.pose2, facing: o.facing2 || 'back' })); handG = `<g filter="url(#skinS)" opacity="${f(1 - o.poseK)}">${handSvg}</g><g filter="url(#skinS)" opacity="${f(o.poseK)}">${h2}</g>`; }
+       }
+-      const gS = { sh, E, Wc, ud, dn, ul, fcl, w0: sw, w1: sw * 0.84, w2: fw2 * (1 + 0.2 * fsK), sl, lat, sw, fsK };
+-      const wIn = Math.min(sw * 0.3, fcl * 0.5), wristS = limb([Wc[0] - dn[0] * wIn, Wc[1] - dn[1] * wIn], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin);
++      const gS = { sh, E, Wc, ud, dn, ul, fcl, w0: sw, w1: sw * 0.84, w2: fw2 * (1 + 0.2 * fsK), sl, lat, sw, fsK, weave: C.weave };
++      const wIn = Math.min(sw * 0.3, fcl * 0.5), wristS = G.RIG_CRISP ? wristBridge(Wc, dn, W, hn, wIn, gS.w2, HLn, wSkin)
++        : limb([Wc[0] - dn[0] * wIn, Wc[1] - dn[1] * wIn], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin);
+       const upS = sleeveV2(gS, 'all');
+       if (!o.detachHand) lo += `<g filter="url(#skinS)">${wristS}</g>${cuffShadow}`;
+       lo += sleeveV2(gS, 'fore');
+@@ -1089,7 +1123,7 @@
+     let D = Object.assign({}, DIMS[kind], o.dims || {});
+     if (o.build === 'fat') D = Object.assign(D, { shX: D.shX * 1.18, wX: D.wX * 1.42, hemX: D.hemX * 1.32, belly: 1, sw: D.sw * 1.22, hand: D.hand * 1.08, legX: D.legX * 1.25, legW: D.legW * 1.25 });
+     if (o.robe) D = Object.assign(D, { hemY: -10, hemX: D.hemX * 1.22 });
+-    const C = { skin: o.skin || '#eec1a2', sleeve: o.sleeve || o.tunic || '#76664e', tunic: o.tunic || '#76664e', nails: o.nails, glove: o.glove };
++    const C = { skin: o.skin || '#eec1a2', sleeve: o.sleeve || o.tunic || '#76664e', tunic: o.tunic || '#76664e', nails: o.nails, glove: o.glove, weave: o.weave };
+     const tun = C.tunic, id = uid('p'), u = D.shX / 128; // unit scale for line widths
+     let out = '';
+     // o.legsW: a woman in a knee-length skirt (raise dims.hemY, give legX/legW) gets legs like everyone else
+@@ -1145,6 +1179,8 @@
+     const TP = torsoPath(D), tg = id + 't';
+     let t = `<defs><linearGradient id="${tg}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${shade(tun, -0.24)}"/><stop offset="0.28" stop-color="${shade(tun, 0.05)}"/><stop offset="0.55" stop-color="${tun}"/><stop offset="1" stop-color="${shade(tun, -0.28)}"/></linearGradient><clipPath id="${tg}c"><path d="${TP}"/></clipPath></defs>`;
+     t += `<path d="${TP}" fill="url(#${tg})"/>`;
++    // o.weave: the cloth's thread texture (under the costume, so a shirt front or lapel drawn by it covers it)
++    if (o.weave) t += `<g clip-path="url(#${tg}c)">${weaveFill(o.weave, -D.shX * 1.8, D.shY - 140, D.shX * 3.6, -D.shY + 260)}</g>`;
+     // o.costume: patterns sewn on the garment (person-local), cut to the torso's own shape and shaded with it
+     if (o.costume) t += `<g clip-path="url(#${tg}c)">${o.costume}</g>`;
+     let sh = '';
+diff -ruN old/_render/lib/stage.js new/_render/lib/stage.js
+--- old/_render/lib/stage.js	2026-11-08 12:35:21.234006196 +0000
++++ new/_render/lib/stage.js	2026-11-08 12:35:21.232040431 +0000
+@@ -13,6 +13,30 @@
+   ST.up = (P, o) => { P.chest = o.y - 1000 * o.s; return P; };
+   ST.lit = (P, L) => { const r = G.CINE.lit(Object.assign({}, P, { info: ST.infoOf(P) }), Object.assign(V(), L)); return r.cast + r.body; };
+   ST.armsOver = (P, L, which = 'RL') => G.CINE.lit({ svg: (which.includes('R') ? P.armRsvg : '') + (which.includes('L') ? P.armLsvg : ''), info: ST.infoOf(P) }, Object.assign(V(), L)).body;
++  // Prefer ST.behind to armsOver. Furniture drawn after a lit figure (a quilt over the lap, a basin, a counter) that the
++  // figure's forearms and hands must stay in front of is masked out wherever those forearms and hands are, so they keep
++  // the body's own light pass. (armsOver relights the arms on their own: the rim then runs round each arm's own outline,
++  // the inner edge against the body too, and the arms read as cut-out pieces laid on top - the user, 2026-11-08:
++  // "they look like cutted pngs".) The mask is the arms' exact silhouette (alpha sharpened so soft shadows leave no
++  // ghost), so the furniture meets the arm's ink outline cleanly.
++  ST.behind = (P, id, svg, which = 'RL') => {
++    const arms = (which.includes('R') ? P.armRsvg : '') + (which.includes('L') ? P.armLsvg : '');
++    const E = P.info && P.info.ext, m = 120, [x0, y0, x1, y1] = E ? [E[0] - m, E[1] - m, E[2] + m, E[3] + m] : [-1500, -1500, 4000, 4000];
++    const R = `x="${Math.round(x0)}" y="${Math.round(y0)}" width="${Math.round(x1 - x0)}" height="${Math.round(y1 - y0)}"`;
++    // (window.DBG_BEHIND = true: also paint the mask's silhouette red over the frame)
++    const dbg = G.DBG_BEHIND ? `<defs><filter id="${id}d" filterUnits="userSpaceOnUse" ${R} color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 0  0 0 0 0 0  0 0 0 3 -1"/></filter></defs><g filter="url(#${id}d)" opacity="0.5">${arms}</g>` : '';
++    return `<defs><filter id="${id}k" filterUnits="userSpaceOnUse" ${R} color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 3 -1"/></filter>` +
++      `<mask id="${id}" maskUnits="userSpaceOnUse" x="-1500" y="-1500" width="5500" height="5500"><rect x="-1500" y="-1500" width="5500" height="5500" fill="#fff"/><g filter="url(#${id}k)">${arms}</g></mask></defs><g mask="url(#${id})">${svg}</g>` + dbg;
++  };
++  // a figure lit together with what it holds (a prop drawn over the body, the detached hand over the prop) in ONE pass:
++  // rims only on the outer outline of the whole group. ext [x0, y0, x1, y1] widens the light's box for a prop that
++  // reaches past the body (the box clips, and a prop cut at its edge seems to shake)
++  ST.litWith = (P, L, svg, ext) => {
++    const I = ST.infoOf(P), E0 = I.ext;
++    const ext2 = ext ? (E0 ? [Math.min(E0[0], ext[0]), Math.min(E0[1], ext[1]), Math.max(E0[2], ext[2]), Math.max(E0[3], ext[3])] : ext) : E0;
++    const r = G.CINE.lit({ svg, info: Object.assign({}, I, { ext: ext2 }) }, Object.assign(V(), L));
++    return r.cast + r.body;
++  };
+   ST.handsLit = (P, L, which = 'RL') => G.CINE.lit({ svg: (which.includes('R') ? P.handR || '' : '') + (which.includes('L') ? P.handL || '' : ''), info: ST.infoOf(P) }, Object.assign(V(), L)).body;
+   // an arm whose grip slot sits exactly on world point Gw, the fingers along world direction dW (hand = rig hand size)
+   ST.gripAt = (o, hand, Gw, dW, extra = {}) => { const R = G.RIG, dl = nrm(R.dirLocal(o, dW)), gl = R.toLocal(o, Gw), gy = R.gripSlot ? R.gripSlot(hand) : 0.33 * hand; return Object.assign({ hand: [gl[0] - dl[0] * gy, gl[1] - dl[1] * gy], dir: dl, pose: 'grip', facing: 'back' }, extra); };
+diff -ruN old/_render/lib/tailor.js new/_render/lib/tailor.js
+--- old/_render/lib/tailor.js	2026-11-08 12:35:21.242161445 +0000
++++ new/_render/lib/tailor.js	2026-11-08 12:35:21.240264659 +0000
+@@ -27,21 +27,39 @@
+   T.star = (x, y, r, col = '#d8b050') => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.42 : r; d += (i ? ' L' : 'M') + f(x + Math.cos(a) * rr) + ',' + f(y + Math.sin(a) * rr); } return `<path d="${d}Z" fill="${col}" stroke="#4a3208" stroke-width="0.8"/>`; };
+ 
+   // ---------------- the shirt front seen in an opening (col: fill the V in that colour; null = the tunic is the shirt)
++  // the cloth weaves (the same patterns and ids as rig3's o.weave, so a lapel matches the coat it is cut from)
++  const WV = {
++    twill: `<pattern id="rgWvTwill" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(38)"><path d="M0,1.2 L5,1.2" stroke="#000" stroke-width="1.3" opacity="0.55"/><path d="M0,3.7 L5,3.7" stroke="#fff" stroke-width="1" opacity="0.4"/></pattern>`,
++    linen: `<pattern id="rgWvLinen" patternUnits="userSpaceOnUse" width="3.6" height="3.6"><path d="M0,0.9 L3.6,0.9" stroke="#000" stroke-width="0.8" opacity="0.4"/><path d="M0.9,0 L0.9,3.6" stroke="#000" stroke-width="0.6" opacity="0.28"/><path d="M0,2.7 L3.6,2.7" stroke="#fff" stroke-width="0.7" opacity="0.35"/></pattern>`
++  };
++  T.WV = WV;
+   T.shirt = (o = {}) => {
+     const vy = o.vy ?? -1000;
+-    let g = o.col ? `<path d="M-46,-1182 L46,-1182 L20,-1036 L0,${vy} L-20,-1036Z" fill="${o.col}"/>` : '';
+-    if (o.placket) g += `<path d="M-6,-1150 L-5,${vy - 10} M6,-1150 L5,${vy - 10}" stroke="#dcd8ce" stroke-width="1.4"/>`;
+-    if (o.pleats) g += `<path d="M-24,-1170 L-24,-990 M24,-1170 L24,-990 M-12,-1170 L-12,-990 M12,-1170 L12,-990" stroke="#b8b0a0" stroke-width="1.6" opacity="0.6"/>`;
++    const V = `M-46,-1182 L46,-1182 L20,-1036 L0,${vy} L-20,-1036Z`, sid = 'tlS' + (nid++);
++    let g = o.col ? `<path d="${V}" fill="${o.col}"/>` : '';
++    let fr = '';
++    if (o.placket) fr += `<path d="M-6,-1150 L-5,${vy - 10} M6,-1150 L5,${vy - 10}" stroke="#dcd8ce" stroke-width="1.4"/>`;
++    // pressed pleats: each a shadowed fold with a lit edge beside it
++    if (o.pleats) fr += [12, 24, 36].map(x => [-1, 1].map(s => `<path d="M${s * x},-1172 L${s * x},-990" stroke="#a49c8c" stroke-width="1.4" opacity="0.6"/><path d="M${s * (x + 2.4)},-1172 L${s * (x + 2.4)},-990" stroke="#ffffff" stroke-width="1.5" opacity="0.65"/>`).join('')).join('');
++    // a shirt front seen in an opening keeps its pleats inside it (they ran on below the V onto the coat)
++    g += o.col && fr ? `<defs><clipPath id="${sid}"><path d="${V}"/></clipPath></defs><g clip-path="url(#${sid})">${fr}</g>` : fr;
+     for (let i = 0; i < (o.studs || 0); i++) g += `<circle cx="0" cy="${-1120 + i * 60}" r="5" fill="#f4f0e8" stroke="#8a8478" stroke-width="1.2"/>`;
+     return g;
+   };
+   // ---------------- the collar and tie (type 'stand' | 'wing'; tie 'bow' | 'none'; y = the knot's height)
+   T.collar = (o = {}) => {
+     const type = o.type || 'stand', y = o.y ?? -1168, tc = o.tieCol || '#161414';
++    const cid = 'tlC' + (nid++);
+     let g = type === 'wing'
+       ? `<path d="M-46,-1192 L-6,-1166 L-30,-1150 L-58,-1176Z M46,-1192 L6,-1166 L30,-1150 L58,-1176Z" fill="#f2eee6" stroke="#8a8478" stroke-width="1.4"/>`
+-      : `<path d="M-40,-1198 L40,-1198 L37,-1160 L-37,-1160Z" fill="#fbfaf6" stroke="#a8a49a" stroke-width="1.3"/>`;
+-    if ((o.tie || 'bow') === 'bow') g += `<path d="M0,${y} L-34,${y - 18} Q-42,${y + 2} -34,${y + 20}Z M0,${y} L34,${y - 18} Q42,${y + 2} 34,${y + 20}Z" fill="${tc}" stroke="#000" stroke-width="1.4"/><rect x="-8" y="${y - 9}" width="16" height="18" rx="4" fill="${shade(tc, 0.1)}" stroke="#000" stroke-width="1.2"/><path d="M-30,${y - 10} Q-20,${y - 3} -10,${y - 4} M30,${y - 10} Q20,${y - 3} 10,${y - 4}" stroke="${shade(tc, 0.4)}" stroke-width="1.5" fill="none" opacity="0.8"/>`;
++      : `<path d="M-40,-1198 L40,-1198 L37,-1160 L-37,-1160Z" fill="#fbfaf6" stroke="#a8a49a" stroke-width="1.3"/><rect x="-40" y="-1198" width="80" height="11" fill="#5a5048" opacity="0.2" filter="url(#b2)"/><path d="M-37,-1191 L37,-1191" stroke="#bdb8ad" stroke-width="0.9" stroke-dasharray="2.4 2" opacity="0.8"/>`;
++    // the bow: silk, lit along its upper edges, two folds in each wing, the knot pinched with creases
++    if ((o.tie || 'bow') === 'bow') {
++      g += `<defs><linearGradient id="${cid}" gradientUnits="userSpaceOnUse" x1="0" y1="${y - 20}" x2="0" y2="${y + 20}"><stop offset="0" stop-color="${shade(tc, 0.5)}"/><stop offset="0.42" stop-color="${tc}"/><stop offset="1" stop-color="${shade(tc, -0.3)}"/></linearGradient></defs>`;
++      g += `<path d="M0,${y} L-34,${y - 18} Q-42,${y + 2} -34,${y + 20}Z M0,${y} L34,${y - 18} Q42,${y + 2} 34,${y + 20}Z" fill="url(#${cid})" stroke="#000" stroke-width="1.4"/>`;
++      g += [-1, 1].map(s => `<path d="M${s * 7},${y - 3} Q${s * 19},${y - 6} ${s * 31},${y - 11} M${s * 7},${y + 4} Q${s * 19},${y + 8} ${s * 31},${y + 13}" stroke="${shade(tc, -0.6)}" stroke-width="1.3" fill="none" opacity="0.8"/><path d="M${s * 9},${y - 6} Q${s * 21},${y - 11} ${s * 31},${y - 15}" stroke="${shade(tc, 0.75)}" stroke-width="1.6" fill="none" opacity="0.55"/>`).join('');
++      g += `<rect x="-8" y="${y - 9}" width="16" height="18" rx="4" fill="url(#${cid})" stroke="#000" stroke-width="1.2"/><path d="M-3,${y - 7} L-3,${y + 7} M3,${y - 7} L3,${y + 7}" stroke="${shade(tc, -0.6)}" stroke-width="1" opacity="0.7"/><path d="M-5,${y - 6} L5,${y - 6}" stroke="${shade(tc, 0.8)}" stroke-width="1.2" opacity="0.5"/>`;
++    }
+     return g;
+   };
+ 
+@@ -54,7 +72,14 @@
+     if ((o.lapel || 'notch') === 'notch') {
+       const lap = s => `M${s * 46},-1182 L${s * 96},-1156 L${s * 106},-1120 L${s * 90},-1110 L${s * 114},-1084 L${s * 14},-1002 L${s * 22},-1044Z`;
+       g += [-1, 1].map(s => `<path d="M${s * 114},-1082 L${s * 16},-998" stroke="${shade(col, -0.65)}" stroke-width="12" opacity="0.16" filter="url(#b4)" transform="translate(${s * 5},7)"/>`).join('');
+-      g += [-1, 1].map(s => `<path d="${lap(s)}" fill="${shade(col, s < 0 ? -0.03 : 0.02)}" ${E2}/><path d="M${s * 50},-1176 L${s * 24},-1050" stroke="#ffffff" stroke-width="2.2" opacity="0.75"/>`).join('');
++      g += [-1, 1].map(s => `<path d="${lap(s)}" fill="${shade(col, s < 0 ? -0.03 : 0.02)}" ${E2}/>`).join('');
++      // the cloth's weave on the lapels too (o.weave: the rig lays the same pattern on the coat's body and sleeves)
++      if (o.weave && WV[o.weave]) { const jid = 'tlJ' + (nid++); g += `<defs>${WV[o.weave]}<clipPath id="${jid}"><path d="${lap(-1)} ${lap(1)}"/></clipPath></defs><rect x="-130" y="-1200" width="260" height="220" fill="url(#rgWv${o.weave === 'twill' ? 'Twill' : 'Linen'})" opacity="${o.weaveOp ?? 0.16}" clip-path="url(#${jid})"/>`; }
++      // (o.velvet: a frock coat's upper collar a shade darker, velvet, with its gorge seam and a soft sheen) pick-stitching
++      // along each lapel's edge; the lit roll line; a buttonhole in the left lapel
++      if (o.velvet) g += [-1, 1].map(s => `<path d="M${s * 46},-1182 L${s * 96},-1156 L${s * 106},-1120 L${s * 90},-1110 L${s * 38},-1136Z" fill="${shade(col, -0.2)}" ${E2}/><path d="M${s * 90},-1110 L${s * 38},-1136" stroke="${shade(col, -0.62)}" stroke-width="1.6"/><path d="M${s * 54},-1175 L${s * 94},-1151" stroke="#ffffff" stroke-width="1.6" opacity="0.28"/>`).join('');
++      g += [-1, 1].map(s => `<path d="M${f(s * 112 - s * 3.8)},${f(-1083 - 4.6)} L${f(s * 16 - s * 3.8)},${f(-1003 - 4.6)}" stroke="${shade(col, 0.45)}" stroke-width="1.1" stroke-dasharray="2.6 2.6" opacity="0.6"/><path d="M${s * 50},-1176 L${s * 24},-1050" stroke="#ffffff" stroke-width="2.2" opacity="0.75"/>`).join('');
++      g += `<path d="M64,-1090 L81,-1078" stroke="${shade(col, -0.65)}" stroke-width="2.4" stroke-linecap="round"/><path d="M64,-1093 L81,-1081" stroke="${shade(col, 0.4)}" stroke-width="1" opacity="0.6"/>`;
+     }
+     if (o.edge !== false) g += `<path d="M14,-1002 C17,-900 19,-700 21,-470" fill="none" stroke="${shade(col, -0.36)}" stroke-width="1.6"/><path d="M19,-1000 C22,-900 24,-700 26,-470" fill="none" stroke="#ffffff" stroke-width="2.4" opacity="0.65"/>`;
+     for (const y of (o.buttons || [-986, -910, -834])) g += T.button(0, y, o.bkind || 'cloth', 8.5, shade(col, 0.05));
+@@ -65,6 +90,20 @@
+     return g;
+   };
+ 
++  // ---------------- a waistcoat seen in a jacket's opening (after T.shirt, before T.collar and T.jacket): its fronts fill
++  // the V below a smaller V of shirt and tie; silk with a fine woven figure, lit edges, three small buttons, a watch chain
++  T.vest = (o = {}) => {
++    const col = o.col || '#5a1e1e', id = 'tlV' + (nid++);
++    const d = 'M-46,-1182 L-30,-1182 L0,-1094 L30,-1182 L46,-1182 L20,-1036 L0,-1000 L-20,-1036Z';
++    let g = `<defs><linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="-46" y1="0" x2="46" y2="0"><stop offset="0" stop-color="${shade(col, -0.35)}"/><stop offset="0.45" stop-color="${shade(col, 0.12)}"/><stop offset="0.62" stop-color="${col}"/><stop offset="1" stop-color="${shade(col, -0.4)}"/></linearGradient><clipPath id="${id}c"><path d="${d}"/></clipPath></defs>`;
++    g += `<path d="${d}" fill="url(#${id}g)" ${OUTL}/>`;
++    if (o.figure !== false) { let fig = ''; for (let y = -1178, r = 0; y < -998; y += 8, r++) for (let x = -46 + (r % 2 ? 4 : 0); x < 48; x += 8) fig += `<path d="M${x},${y - 1.6} L${x + 1.6},${y} L${x},${y + 1.6} L${x - 1.6},${y}Z" fill="${shade(col, 0.4)}"/>`; g += `<g clip-path="url(#${id}c)" opacity="0.4">${fig}</g>`; }
++    g += `<path d="M-30,-1182 L0,-1094 L30,-1182" fill="none" stroke="${shade(col, 0.45)}" stroke-width="1.6" opacity="0.7"/><path d="M0,-1094 L0,-1000" stroke="${shade(col, -0.6)}" stroke-width="1.4" opacity="0.8"/>`;
++    g += T.button(0, -1074, 'horn', 6.5) + T.button(0, -1046, 'horn', 6.5) + T.button(0, -1018, 'horn', 6.5);
++    if (o.chain) g += T.brassDefs() + `<path d="M2,-1046 Q-14,-1026 -34,-1034" stroke="#3a2608" stroke-width="4.2" fill="none"/><path d="M2,-1046 Q-14,-1026 -34,-1034" stroke="${o.chain}" stroke-width="2.6" fill="none" stroke-dasharray="3 2"/>`;
++    return g;
++  };
++
+   // ---------------- a waistcoat over the shirt: two fronts to the torso's edges (a light shirt's shaded sides never
+   // show beside the dark wool), a pinstripe, lit edges, a soft fold under the chest, welt pockets, horn buttons, a
+   // gold watch chain from a buttonhole to the left pocket
+diff -ruN old/_render/video/castT1.js new/_render/video/castT1.js
+--- old/_render/video/castT1.js	1970-01-01 00:00:00.000000000 +0000
++++ new/_render/video/castT1.js	2026-11-08 12:35:21.269447856 +0000
+@@ -0,0 +1,95 @@
++// Test cast (an any-topic test of the skill, 2026-11-08): Vienna General Hospital, the First Obstetric Clinic, 1847.
++// The clean rig (G.RIG_CRISP), every garment dressed with tailor.js and woven (o.weave), the hair built with hairkit.js
++// (layered locks, a sheen, a soft hairline), every face new and different, one main colour per character: you, Ignaz
++// Semmelweis, a young doctor (bottle-green frock coat); a mother in the ward with childbed fever (cream linen
++// nightgown); Professor Johann Klein, your chief (black frock coat).
++(function (G) {
++  const { person, shade } = G.RIG, K0 = G.CAST, T = G.TAILOR, HK = G.HAIRKIT;
++  const Q = {};
++  const face = (base, p) => Object.assign({}, base, p.face || {}, p.blink ? { lid: Math.max((p.face && p.face.lid) ?? base.lid ?? 0.2, p.blink) } : {});
++  const mk = (base, faceBase) => p => person(Object.assign({}, base, p, { fx: Object.assign({}, base.fx, p.fx || {}), face: face(faceBase, p) }));
++  Q.blink = K0.blink; Q.talk = K0.talk; Q.breath = K0.breath;
++
++  // head-local art drawn exactly where the rig puts the head (from cast14.js): back pieces behind the body, front over it
++  Q.headArt = (P, o, svg) => {
++    const s = o.s || 1, b = o.breath || 0, sx = Math.round(s * (1 - b * 0.0015) * 1e5) / 1e5, sy = Math.round(s * (1 + b * 0.004) * 1e5) / 1e5, hsc = o.headScale ?? 1;
++    return `<g transform="translate(${o.x || 0},${o.y || 0}) rotate(${o.sway || 0}) scale(${sx},${sy})"><g transform="translate(0,${P.D.headY + (1 - hsc) * 110}) rotate(${o.tilt || 0}) scale(${hsc})">${svg}</g></g>`;
++  };
++  Q.withArt = (P, o, art, body) => (art && art.back ? Q.headArt(P, o, art.back) : '') + body + (art && art.front ? Q.headArt(P, o, art.front) : '');
++  // the figure lit TOGETHER with its hair (back art + body + front art, then extra - a held prop and its detached fist -
++  // through ONE light pass), so the hair takes the same key, rim and face light as the head; hair drawn outside the
++  // pass read as a cut-out laid on top ("not matching", 2026-11-08). The light's box takes in the hair's volume.
++  Q.litHair = (P, o, art, L, extra = '', ext = null) => {
++    const s = o.s || 1, E = [o.x - 340 * s, o.y - 1520 * s, o.x + 340 * s, o.y + 20 * s];
++    const e2 = ext ? [Math.min(E[0], ext[0]), Math.min(E[1], ext[1]), Math.max(E[2], ext[2]), Math.max(E[3], ext[3])] : E;
++    return G.STAGE.litWith(P, L, (art && art.back ? Q.headArt(P, o, art.back) : '') + P.svg + (art && art.front ? Q.headArt(P, o, art.front) : '') + extra, e2);
++  };
++
++  // ======================================================= YOU: Ignaz Semmelweis at twenty-nine. A round open face, full
++  // cheeks, a soft square chin, warm brown eyes under straight brows, a straight nose, a full moustache; brown hair
++  // parted on the left and swept across in a wave, trimmed sideburns. A bottle-green frock coat in a wool twill (velvet
++  // collar, pick-stitched lapels, horn buttons), a burgundy silk waistcoat, a pleated shirt, the standing collar and a
++  // black silk bow.
++  const SFX = { w: 1.06, len: 0.96, cheek: 1.12, jaw: 1.04, chinW: 1.05, chin: 0.96, eyeS: 1.0, eyeW: 1.0, eyeTilt: 1, hooded: 0.15, crow: 0.2, nose: 'std', noseS: 1.04, noseL: 0.98, lipT: 1.05, mouthW: 0.98, browT: 1.2, browArch: 0, earS: 1.0 };
++  const SHAIR = '#5e4026';
++  Q.semm = mk({ kind: 'man', dims: { shX: 156, wX: 126, hemX: 148, sw: 76, hand: 112 }, skin: '#e8bf9e', tunic: '#30402c', sleeve: '#2d3c29', legs: '#22201c', feet: '#141010', belt: false, tailored: true,
++    weave: { kind: 'twill', op: 0.12 },
++    hair: SHAIR, hairStyle: 'bald', hairSeed: 3101, brow: '#4a301a', mustache: '#4e331c', stubble: 0.35, lightX: 1,
++    costume: T.shirt({ col: '#f3efe6', placket: true, pleats: true }) + T.vest({ col: '#5c2622' }) + T.collar({ type: 'stand', tieCol: '#141210' }) + T.jacket({ col: '#30402c', pocket: 'plain', bkind: 'horn', weave: 'twill', weaveOp: 0.12, velvet: true }),
++    fx: SFX },
++  { expr: 'anxious', iris: '#5a4028', lid: 0.2 });
++  Q.semmArt = () => HK.sidePart({ fx: SFX, col: SHAIR, id: 'shr', light: 1, part: 28 });
++
++  // ======================================================= THE MOTHER: twenty, an oval face, a narrow chin, wide-set
++  // hazel-green eyes, a small straight nose, full lips, freckles; dark chestnut hair parted in the middle and smoothed
++  // over her ears, gathered into a night plait over her left shoulder. A linen nightgown: a pin-tucked yoke with a
++  // stitched seam, the cloth gathered softly below it, a lace-edged frill at the neck, a drawstring tied in a faded silk
++  // ribbon, a short placket with linen buttons.
++  const GOWN = col => {
++    const dk = shade(col, -0.32), lt = shade(col, 0.3);
++    let g = '';
++    // gathers falling from the yoke seam
++    for (let x = -120; x <= 120; x += 20) g += `<path d="M${x},-1044 Q${x * 1.04},-980 ${x * 1.12},-880" stroke="${dk}" stroke-width="3.2" fill="none" opacity="0.22" filter="url(#b2)"/><path d="M${x + 7},-1044 Q${(x + 7) * 1.04},-984 ${(x + 7) * 1.1},-896" stroke="${lt}" stroke-width="2" fill="none" opacity="0.35"/>`;
++    // the yoke: pin tucks in pairs either side of the placket, and its seam with a line of stitching under it
++    for (const s of [-1, 1]) for (const x of [16, 26, 36, 46, 56]) g += `<path d="M${s * x},-1130 L${s * x},-1050" stroke="${dk}" stroke-width="1.1" opacity="0.45"/><path d="M${s * (x + 2.2)},-1130 L${s * (x + 2.2)},-1050" stroke="${lt}" stroke-width="1.2" opacity="0.6"/>`;
++    g += `<path d="M-140,-1050 Q0,-1036 140,-1050" stroke="${dk}" stroke-width="1.6" fill="none" opacity="0.6"/><path d="M-140,-1043 Q0,-1029 140,-1043" stroke="${dk}" stroke-width="0.9" fill="none" stroke-dasharray="2.4 2" opacity="0.5"/><path d="M-140,-1053 Q0,-1039 140,-1053" stroke="${lt}" stroke-width="1.2" fill="none" opacity="0.5"/>`;
++    // the placket and its buttons
++    g += `<path d="M-6,-1132 L-6,-1052 M6,-1132 L6,-1052" stroke="${dk}" stroke-width="1.2" opacity="0.6"/>` + [-1112, -1086, -1060].map(y => T.button(0, y, 'cloth', 4.6, shade(col, 0.12))).join('');
++    // the neck frill, edged with lace: scallops, each pierced with a small eyelet, a fine line of stitching above
++    let d = 'M-60,-1152'; for (let i = 0; i < 10; i++) { const x0 = -60 + i * 12, x1 = x0 + 12; d += ` Q${(x0 + x1) / 2},-1126 ${x1},-1152`; }
++    g += `<path d="${d} L60,-1162 L-60,-1162Z" fill="${shade(col, 0.16)}" stroke="${dk}" stroke-width="1"/>`;
++    for (let i = 0; i < 10; i++) g += `<circle cx="${-54 + i * 12}" cy="-1141" r="1.6" fill="${dk}" opacity="0.55"/>`;
++    g += `<path d="M-58,-1156 L58,-1156" stroke="${dk}" stroke-width="0.8" stroke-dasharray="2 1.6" opacity="0.55"/>`;
++    // the drawstring bow: faded rose silk with a sheen, its two ends hanging
++    const rb = '#b8867a';
++    g += `<path d="M0,-1146 L-17,-1156 Q-22,-1146 -17,-1136Z M0,-1146 L17,-1156 Q22,-1146 17,-1136Z" fill="${rb}" stroke="${shade(rb, -0.45)}" stroke-width="1"/><path d="M-15,-1153 L-5,-1148 M15,-1153 L5,-1148" stroke="${shade(rb, 0.5)}" stroke-width="1.2" opacity="0.7"/>`;
++    g += `<path d="M-2,-1144 C-6,-1130 -10,-1118 -8,-1104 M2,-1144 C6,-1128 10,-1116 9,-1100" stroke="${rb}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="0" cy="-1146" r="3.4" fill="${shade(rb, -0.1)}" stroke="${shade(rb, -0.45)}" stroke-width="0.9"/>`;
++    return g;
++  };
++  const MFX = { w: 0.97, len: 1.03, cheek: 1.04, jaw: 0.9, chinW: 0.88, chin: 1.0, eyeS: 1.0, eyeW: 1.02, eyeX: 1.04, eyeTilt: 0, hooded: 0.08, crow: 0, nose: 'std', noseS: 0.92, noseL: 0.96, lipT: 1.1, mouthW: 0.96, browT: 0.9, browArch: 1.5, earS: 0.96, freckles: 0.3 };
++  const MHAIR = '#4a2814', GCOL = '#d9d3c5';
++  Q.mother = mk({ kind: 'woman', skin: '#ecc8ac', tunic: GCOL, sleeve: '#d3cdbf', belt: false, tailored: true,
++    weave: { kind: 'linen', op: 0.14 },
++    hair: MHAIR, hairStyle: 'bald', hairSeed: 3201, brow: '#3a1e0e', lightX: 1, costume: GOWN(GCOL),
++    fx: MFX },
++  { expr: 'fear', iris: '#5a6a3c', lid: 0.12 });
++  Q.motherArt = () => HK.centrePart({ fx: MFX, col: MHAIR, id: 'mhr', light: 1, braid: 1, ribbon: '#b8867a' });
++
++  // ======================================================= PROFESSOR JOHANN KLEIN: sixty, heavy. A broad fleshy face with
++  // jowls and a double chin, small pale grey eyes under heavy hooded lids and thick brows, a big hooked nose, thin lips,
++  // a mole on the cheek; bald, soft white hair round the sides and back, short white side-whiskers. A black frock coat in
++  // a fine twill (velvet collar, pick-stitched lapels), a charcoal silk waistcoat with his gold watch chain, a pleated
++  // shirt front, the standing collar and a black stock.
++  const KFX = { w: 1.1, len: 1.05, cheek: 1.16, jaw: 1.18, chinW: 1.14, chin: 0.96, eyeS: 0.86, eyeW: 0.95, eyeTilt: -2, hooded: 0.55, crow: 1, lidAdd: 0.04, nose: 'hook', noseS: 1.12, noseL: 1.08, lipT: 0.75, mouthW: 1.02, browT: 1.45, browArch: -1, browOut: 3, earS: 1.12, dbl: 0.8, mole: [-50, 40], age: 0.8 };
++  Q.klein = mk({ kind: 'man', dims: { shX: 178, wX: 158, hemX: 178, sw: 88, hand: 120 }, skin: '#dcae92', tunic: '#1f1d1c', sleeve: '#1d1b1a', legs: '#1a1818', feet: '#0e0c0c', belt: false, tailored: true,
++    weave: { kind: 'twill', op: 0.12 },
++    hair: '#cfc9be', hairStyle: 'bald', hairSeed: 3301, brow: '#a8a298', stubble: 0.12, lightX: 1,
++    costume: T.shirt({ col: '#efebe0', pleats: true }) + T.vest({ col: '#3e3a36', chain: '#e0b450' }) + T.collar({ type: 'stand', tieCol: '#0c0a0a' }) + T.jacket({ col: '#1f1d1c', pocket: null, buttons: [-930, -852], bkind: 'horn', weave: 'twill', weaveOp: 0.13, velvet: true }),
++    fx: KFX },
++  { expr: 'stern', iris: '#5e646a', lid: 0.34, age: true });
++  Q.kleinArt = () => HK.baldFringe({ fx: KFX, col: '#b8b2a8', id: 'khr', light: 1 });
++
++  // grip maths needs each rig's hand size
++  Q.HAND = { semm: 112, mother: 104, klein: 120 };
++  G.QCAST = Q;
++})(window);
+diff -ruN old/_render/video/lookT1.html new/_render/video/lookT1.html
+--- old/_render/video/lookT1.html	1970-01-01 00:00:00.000000000 +0000
++++ new/_render/video/lookT1.html	2026-11-08 12:35:21.289375696 +0000
+@@ -0,0 +1,22 @@
++<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}#root svg{height:100vh;width:auto;margin:0 auto}</style>
++<script>window.VIDEO_FRAMES = 180; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
++<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script><script src="../lib/hairkit.js"></script>
++<script src="cast.js"></script><script src="castT1.js"></script>
++<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
++<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script><script src="setsT1.js"></script>
++<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script><script src="shotsT1.js"></script></head>
++<body><div id="root"></div>
++<script>
++// Test stills (any topic): Vienna 1847, Semmelweis. WARD 0-1 s, BASIN 1-2 s, KLEIN 2-3 s. Render frames 30, 90, 150.
++const root = document.getElementById('root'), X = ENG;
++const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
++window.renderFrame = async n => {
++  if (window.__E && window.__E.length) throw new Error('PAGE ERR: ' + window.__E.join(' | '));
++  root.innerHTML = X.svgFrame(n);
++  for (let i = 0; i < 4; i++) await nextFrame();
++  await new Promise(r => setTimeout(r, 150));
++  return true;
++};
++window.READY = true;
++window.renderFrame(+(new URLSearchParams(location.search).get('f') || 30));
++</script></body></html>
+diff -ruN old/_render/video/rigT1.html new/_render/video/rigT1.html
+--- old/_render/video/rigT1.html	1970-01-01 00:00:00.000000000 +0000
++++ new/_render/video/rigT1.html	2026-11-08 12:35:21.294986602 +0000
+@@ -0,0 +1,53 @@
++<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}#root svg{height:100vh;width:auto;margin:0 auto}</style>
++<script>window.VIDEO_FRAMES = 60; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
++<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script><script src="../lib/hairkit.js"></script>
++<script src="cast.js"></script><script src="castT1.js"></script>
++<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
++<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script>
++<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script>
++<script>
++// Rig sheet for the test cast (castT1.js), copied from rig20.html: the cast full length in a warm studio, lit from the
++// upper left; the fourth cell is a waist-up close-up of the mother. Render frame 30.
++(function (G) {
++  const X = G.ENG, Q = G.QCAST, R = G.RIG, C = G.CINE, ST = G.STAGE, S = G.SETS;
++  const L = { from: [-0.8, -0.5], shadow: '#2a1a10', shadowOp: 0.5, floor: '#3a2a1a', floorOp: 0.4, contactOp: 0.5, key: '#fff0dc', keyAdd: 0.08, rims: [{ from: [1, -0.3], col: '#ffe0b0', w: 5, op: 0.35 }], face: { col: '#fff0e0', op: 0.14 } };
++  const CELLS = [
++    { who: 'semm', kind: 'man', x: 270, y: 905, name: 'YOU · IGNAZ SEMMELWEIS', face: { expr: 'anxious', look: [0.2, 0], lid: 0.2 } },
++    { who: 'klein', kind: 'man', x: 810, y: 905, name: 'PROFESSOR KLEIN', face: { expr: 'stern', look: [-0.2, 0.05], lid: 0.34, age: true } },
++    { who: 'mother', kind: 'woman', x: 270, y: 1865, name: 'THE MOTHER', face: { expr: 'fear', look: [0.25, 0], lid: 0.12, sweat: 0.18, blush: 0.4, bags: 0.4 } }];
++  X.shot('SHEET', 0, 1, t => {
++    const cam = [540, 960, 1, 0]; X.CAM = cam;
++    let g = S.lg('rsBg', [[0, '#3a2e24'], [0.5, '#2c2219'], [1, '#1e1610']]) + `<rect x="-100" y="-100" width="1280" height="2120" fill="url(#rsBg)"/>`;
++    g += `<path d="M-100,958 L1180,958" stroke="#000" stroke-width="2" opacity="0.4"/><path d="M540,958 L540,2020" stroke="#000" stroke-width="2" opacity="0.4"/>`;
++    for (const c of CELLS) {
++      g += C.radial(c.x - 40, c.y - 520, 520, '#ffe0b0', 0.16) + `<ellipse cx="${c.x}" cy="${c.y}" rx="230" ry="34" fill="#140e0a" opacity="0.35" filter="url(#b8)"/>`;
++      const o = ST.still(c.x, c.y, 0.56);
++      const P = Q[c.who](Object.assign(o, { face: c.face,
++        armR: { hand: R.restHand(c.kind, 'R'), dir: [0.02, 1], pose: 'relaxed', facing: 'back' },
++        armL: { hand: R.restHand(c.kind, 'L'), dir: [-0.02, 1], pose: 'relaxed', facing: 'back' } }));
++      const art = { mother: Q.motherArt, semm: Q.semmArt, klein: Q.kleinArt }[c.who]();
++      g += Q.litHair(P, o, art, L) + S.TXT(c.x, c.y + 46, 19, '#d8c8a8', c.name, { ls: 3, w: 'bold' });
++    }
++    // the mother waist-up at full scale (cell 4): the face, the hair, the nightgown's neck
++    const o = ST.still(810, 2560, 0.98);
++    const P = ST.up(Q.mother(Object.assign(o, { noLegs: true, face: { expr: 'fear', look: [-0.3, 0.05], lid: 0.12, sweat: 0.18, blush: 0.4, bags: 0.4 },
++      armR: { hand: [-150, -700], dir: [0.1, 1], pose: 'relaxed', facing: 'back' }, armL: { hand: [150, -700], dir: [-0.1, 1], pose: 'relaxed', facing: 'back' } })), o);
++    g += `<defs><clipPath id="c4"><rect x="545" y="963" width="540" height="960"/></clipPath></defs><g clip-path="url(#c4)">${C.radial(760, 1300, 520, '#ffe0b0', 0.16)}${Q.litHair(P, o, Q.motherArt(), L)}</g>`;
++    return X.compose([{ p: 1, svg: g }], cam) + C.vignette(0.35, '#060302', 0.5);
++  }, { grade: 'gHall' });
++})(window);
++</script></head>
++<body><div id="root"></div>
++<script>
++const root = document.getElementById('root'), X = ENG;
++const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
++window.renderFrame = async n => {
++  if (window.__E && window.__E.length) throw new Error('PAGE ERR: ' + window.__E.join(' | '));
++  root.innerHTML = X.svgFrame(n);
++  for (let i = 0; i < 4; i++) await nextFrame();
++  await new Promise(r => setTimeout(r, 150));
++  return true;
++};
++window.READY = true;
++window.renderFrame(+(new URLSearchParams(location.search).get('f') || 30));
++</script></body></html>
+diff -ruN old/_render/video/setsT1.js new/_render/video/setsT1.js
+--- old/_render/video/setsT1.js	1970-01-01 00:00:00.000000000 +0000
++++ new/_render/video/setsT1.js	2026-11-08 12:35:21.276057563 +0000
+@@ -0,0 +1,285 @@
++// Sets for the test (any topic): the First Obstetric Clinic, Vienna General Hospital, a winter night in 1847.
++// WARD: a mother sitting up in her bed by the light of one candle; the long ward behind her falls into the dark, snow
++// at the tall window, the sleeping woman in the next bed, the crucifix and the fever chart. BASIN: the washstand by the
++// ward door under a tin lantern; the bowl of chlorine water, the ewer, the crock of chlorinated lime, the order nailed
++// to the wall. 2.5D layers, one light source per set, detail richest where the light falls.
++(function (G) {
++  const S = G.SETS, PR = G.PROPS, { f, mix, rng, ol, shade } = G.RIG, C = G.CINE;
++  const lg = S.lg, TXT = S.TXT;
++  const fl = (t, seed) => 0.88 + 0.07 * Math.sin(t * 9 + seed) + 0.05 * Math.sin(t * 23 + seed * 2);
++
++  // ======================================================= shared pieces
++  // old plaster: the texture filter, damp stains and hairline cracks (seeded, fixed in the world)
++  const plasterWall = (x0, y0, x1, y1, col, seed) => {
++    const r = rng(seed);
++    let g = `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="${col}" filter="url(#plaster)"/>`;
++    for (let i = 0; i < 9; i++) { const x = x0 + r() * (x1 - x0), y = y0 + r() * (y1 - y0), rx = 80 + r() * 220, ry = 60 + r() * 200; g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(rx)}" ry="${f(ry)}" fill="${shade(col, -0.35)}" opacity="${f(0.12 + r() * 0.14)}" filter="url(#b14)"/>`; }
++    for (let i = 0; i < 6; i++) { let x = x0 + r() * (x1 - x0), y = y0 + r() * (y1 - y0), d = `M${f(x)},${f(y)}`; for (let k = 0; k < 5; k++) { x += (r() - 0.5) * 50; y += 16 + r() * 34; d += ` L${f(x)},${f(y)}`; } g += `<path d="${d}" stroke="${shade(col, -0.5)}" stroke-width="1.3" fill="none" opacity="0.45"/>`; }
++    return g;
++  };
++  // wainscot: dark oak panelling with a moulded rail and fielded panels
++  const wainscot = (x0, x1, y0, y1, w = 230) => {
++    let g = `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#2a1a0e" filter="url(#woodV)"/>`;
++    g += `<rect x="${x0}" y="${y0 - 26}" width="${x1 - x0}" height="30" fill="#3a2414" ${ol(1.3)}/><rect x="${x0}" y="${y0 - 26}" width="${x1 - x0}" height="5" fill="#c8945a" opacity="0.3"/><rect x="${x0}" y="${y0 + 4}" width="${x1 - x0}" height="14" fill="#000" opacity="0.35" filter="url(#b4)"/>`;
++    for (let x = x0 + 30; x < x1 - 60; x += w) g += `<rect x="${x}" y="${y0 + 40}" width="${w - 40}" height="${y1 - y0 - 80}" rx="4" fill="#2e1d10" stroke="#120a04" stroke-width="2"/><path d="M${x + 4},${y1 - 44} L${x + 4},${y0 + 44} L${x + w - 44},${y0 + 44}" stroke="#b07a48" stroke-width="2" fill="none" opacity="0.35"/>`;
++    return g;
++  };
++  // a candle in a pewter chamberstick (x, y = the foot on the table); h = the candle's height
++  const chamberstick = (x, y, t, h = 150) => {
++    let g = `<ellipse cx="${x}" cy="${y + 2}" rx="76" ry="15" fill="#000" opacity="0.5" filter="url(#b4)"/>`;
++    g += `<path d="M${x + 58},${y - 12} C${x + 92},${y - 18} ${x + 96},${y + 10} ${x + 66},${y + 8}" stroke="#4a463c" stroke-width="9" fill="none"/><path d="M${x + 58},${y - 12} C${x + 92},${y - 18} ${x + 96},${y + 10} ${x + 66},${y + 8}" stroke="#a8a496" stroke-width="4" fill="none"/>`;
++    g += `<ellipse cx="${x}" cy="${y - 6}" rx="66" ry="15" fill="#6e6a5e" ${ol(1.3)}/><ellipse cx="${x}" cy="${y - 9}" rx="56" ry="11" fill="#9a968a"/><path d="M${x - 50},${y - 12} Q${x},${y - 20} ${x + 50},${y - 12}" stroke="#e8e4d4" stroke-width="2.5" fill="none" opacity="0.6"/>`;
++    g += `<path d="M${x - 17},${y - 10} L${x - 15},${y - 44} L${x + 15},${y - 44} L${x + 17},${y - 10}Z" fill="#8a867a" ${ol(1.2)}/><ellipse cx="${x}" cy="${y - 44}" rx="22" ry="6" fill="#b8b4a6" ${ol(1)}/><path d="M${x + 6},${y - 40} L${x + 8},${y - 14}" stroke="#f4f0e0" stroke-width="2.5" opacity="0.7"/>`;
++    const top = y - 46 - h;
++    g += lg('t1cdl', [[0, '#c8b898'], [0.55, '#f2e8d0'], [1, '#fffaf0']], 0, 0, 1, 0) + `<rect x="${x - 13}" y="${top}" width="26" height="${h}" fill="url(#t1cdl)" ${ol(1.1)}/>`;
++    g += `<path d="M${x + 13},${top + 4} q5,20 0,46 q-4,-10 -3,-46Z M${x - 13},${top + 2} q-3,12 0,24 q3,-6 2,-24Z" fill="#f6eedc" ${ol(0.8)}/><ellipse cx="${x}" cy="${top + 1}" rx="13" ry="4" fill="#e8dcc0"/><path d="M${x},${top} L${x},${top - 8}" stroke="#1a1008" stroke-width="2.4"/>`;
++    g += PR.flame(x, top - 6, 0.9, t);
++    return g;
++  };
++  // a tin lantern on a wrought-iron wall bracket (hx, hy = the hook; the lantern hangs below it)
++  const lantern = (hx, hy, t, wallX) => {
++    const k = fl(t, 5);
++    let g = `<path d="M${wallX},${hy - 40} L${hx},${hy - 40} M${wallX},${hy + 50} Q${(wallX + hx) / 2},${hy - 4} ${hx},${hy - 40}" stroke="#14100c" stroke-width="9" fill="none" stroke-linecap="round"/><rect x="${wallX - 6}" y="${hy - 64}" width="14" height="138" rx="4" fill="#1a1410" ${ol(1)}/><circle cx="${hx + 10}" cy="${hy - 44}" r="10" fill="none" stroke="#14100c" stroke-width="6"/>`;
++    g += `<path d="M${hx},${hy - 40} L${hx},${hy}" stroke="#14100c" stroke-width="5"/><circle cx="${hx}" cy="${hy + 6}" r="11" fill="none" stroke="#2a2420" stroke-width="5"/>`;
++    const x = hx, y = hy + 18;
++    g += `<path d="M${x - 46},${y + 60} L${x},${y + 14} L${x + 46},${y + 60}Z" fill="#3a342c" ${ol(1.3)}/><path d="M${x - 30},${y + 44} L${x - 4},${y + 22}" stroke="#a89c84" stroke-width="2" opacity="0.6"/>`;
++    for (let i = 0; i < 6; i++) g += `<circle cx="${f(x - 26 + i * 10.4)}" cy="${y + 48 - Math.abs(i - 2.5) * 5}" r="2.4" fill="#ffd890" opacity="${f(0.7 * k)}"/>`;
++    g += `<rect x="${x - 46}" y="${y + 60}" width="92" height="12" fill="#2a2620" ${ol(1.2)}/>`;
++    g += `<rect x="${x - 42}" y="${y + 72}" width="84" height="150" fill="#ffd28a" opacity="${f(0.9 * k)}"/>`;
++    g += lg('t1lnG', [[0, '#fff2c8'], [0.5, '#ffc870'], [1, '#c8782a']]) + `<rect x="${x - 38}" y="${y + 76}" width="76" height="142" fill="url(#t1lnG)" opacity="${f(0.85 * k)}"/>`;
++    g += `<rect x="${x - 9}" y="${y + 150}" width="18" height="62" fill="#efe4c8" ${ol(1)}/>` + PR.flame(x, y + 146, 0.7, t);
++    for (const xx of [x - 44, x - 2, x + 40]) g += `<rect x="${xx}" y="${y + 70}" width="5" height="154" fill="#2a2620"/>`;
++    g += `<path d="M${x - 42},${y + 120} L${x + 42},${y + 120}" stroke="#2a2620" stroke-width="3" opacity="0.8"/><rect x="${x - 50}" y="${y + 222}" width="100" height="16" fill="#2a2620" ${ol(1.2)}/><path d="M${x - 34},${y + 238} L${x - 30},${y + 252} L${x + 30},${y + 252} L${x + 34},${y + 238}" fill="#1e1a16" ${ol(1)}/>`;
++    g += `<path d="M${x - 36},${y + 80} L${x - 36},${y + 210}" stroke="#fff" stroke-width="4" opacity="0.3"/>`;
++    g += C.bloom(x, y + 140, 130 * k, '#ffc060', 0.5) + C.radial(x, y + 140, 330, '#ffa040', 0.3 * k);
++    return g;
++  };
++
++  // ======================================================= WARD: the mother's bed by candlelight
++  // world: her headboard x 300..940 (top rail y 1010), the pillows behind her back, the quilt from y ~1305 to the
++  // bottom of the frame; the bedside table at the right (top y 1240..1268) with the candle; the tall window at the left
++  S.T1W = { CANDLE: [928, 1262], QTOP: 1308, TABLE: [835, 1150, 1240, 1268] };
++  const nightWindow = (x0, y0, x1, y1, t) => {
++    const w = x1 - x0, ar = w / 2, cx = (x0 + x1) / 2, r = rng(17);
++    const shape = `M${x0},${y1} L${x0},${y0 + ar} A${ar},${ar} 0 0 1 ${x1},${y0 + ar} L${x1},${y1}Z`;
++    let g = `<path d="M${x0 - 34},${y1 + 30} L${x0 - 34},${y0 + ar} A${ar + 34},${ar + 34} 0 0 1 ${x1 + 34},${y0 + ar} L${x1 + 34},${y1 + 30}Z" fill="#20160e" ${ol(1.5)}/>`;
++    g += `<defs><clipPath id="t1win"><path d="${shape}"/></clipPath></defs><g clip-path="url(#t1win)">`;
++    g += lg('t1sky', [[0, '#121418'], [0.55, '#1c1e22'], [1, '#2a2826']]) + `<rect x="${x0}" y="${y0}" width="${w}" height="${y1 - y0}" fill="url(#t1sky)"/>`;
++    // the hospital's far wing across the court: a dark roofline with three lit windows, snow on the ledges
++    g += `<path d="M${x0},${y0 + (y1 - y0) * 0.62} L${x0 + w * 0.3},${y0 + (y1 - y0) * 0.55} L${x1},${y0 + (y1 - y0) * 0.58} L${x1},${y1} L${x0},${y1}Z" fill="#0e0f11"/>`;
++    for (const [a, b] of [[0.18, 0.7], [0.5, 0.68], [0.78, 0.7]]) g += `<rect x="${f(x0 + w * a)}" y="${f(y0 + (y1 - y0) * b)}" width="${f(w * 0.08)}" height="${f((y1 - y0) * 0.06)}" fill="#c88a40" opacity="0.55"/><rect x="${f(x0 + w * a - 4)}" y="${f(y0 + (y1 - y0) * b - 3)}" width="${f(w * 0.08 + 8)}" height="4" fill="#d8dcdc" opacity="0.5"/>`;
++    for (let i = 0; i < 60; i++) { const sx = x0 + r() * w, sy = y0 + ((r() * (y1 - y0) + t * (60 + r() * 50)) % (y1 - y0)), rr = 1.2 + r() * 2.2; g += `<circle cx="${f(sx + Math.sin(t * 1.3 + i) * 6)}" cy="${f(sy)}" r="${f(rr)}" fill="#e8ecec" opacity="${f(0.35 + r() * 0.4)}"/>`; }
++    g += `<ellipse cx="${x0 + 30}" cy="${y1 - 20}" rx="90" ry="70" fill="#dfe4e6" opacity="0.16" filter="url(#b14)"/><ellipse cx="${x1 - 20}" cy="${y1 - 30}" rx="70" ry="60" fill="#dfe4e6" opacity="0.12" filter="url(#b14)"/>`;
++    g += `</g>`;
++    // the leading: a centre mullion, glazing bars, the arch's tracery
++    g += `<path d="M${cx},${y0} L${cx},${y1}" stroke="#20160e" stroke-width="16"/>`;
++    for (let y = y0 + ar + 60; y < y1 - 20; y += 150) g += `<path d="M${x0},${y} L${x1},${y}" stroke="#20160e" stroke-width="9"/>`;
++    g += `<path d="M${x0 + 8},${y0 + ar} A${ar - 8},${ar - 8} 0 0 1 ${x1 - 8},${y0 + ar}" stroke="#20160e" stroke-width="7" fill="none"/>`;
++    g += `<path d="M${x0 + 16},${y0 + ar + 20} L${x0 + 16},${y1 - 20}" stroke="#c8d0d4" stroke-width="3" opacity="0.18"/>`;
++    // the stone sill, a little snow-light on it
++    g += `<rect x="${x0 - 50}" y="${y1 + 20}" width="${w + 100}" height="34" fill="#4a3e32" ${ol(1.3)}/><rect x="${x0 - 50}" y="${y1 + 20}" width="${w + 100}" height="5" fill="#c8ccc8" opacity="0.25"/>`;
++    return g;
++  };
++  const crucifix = (x, y, s) => `<g transform="translate(${x},${y}) scale(${s})">` +
++    `<path d="M-60,10 C-80,-10 -70,-40 -50,-50 M-56,0 C-90,10 -96,40 -80,60" stroke="#4a4a26" stroke-width="5" fill="none" opacity="0.7"/>` +
++    `<rect x="-11" y="-100" width="22" height="210" fill="#2a1a0c" ${ol(1.3)}/><rect x="-62" y="-60" width="124" height="20" fill="#2a1a0c" ${ol(1.3)}/><rect x="-9" y="-98" width="5" height="200" fill="#8a5a30" opacity="0.5"/>` +
++    `<path d="M0,-78 C-6,-60 -8,-40 -6,-12 L-4,50 L4,50 L6,-12 C8,-40 6,-60 0,-78Z" fill="#d8ccb0" ${ol(1)}/><path d="M-6,-52 L-52,-54 M6,-52 L52,-54" stroke="#d8ccb0" stroke-width="6" stroke-linecap="round"/><circle cx="0" cy="-84" r="8" fill="#d8ccb0" ${ol(1)}/>` + `</g>`;
++  // the sleeping woman in the next bed: a pillow, dark hair, a body under a grey blanket (no face: she has turned away)
++  const sleeper = (x, y) => {
++    let g = `<rect x="${x - 40}" y="${y - 300}" width="460" height="300" fill="#2e1c10" ${ol(1.3)}/><rect x="${x - 50}" y="${y - 330}" width="40" height="420" fill="#24160c" ${ol(1.2)}/><circle cx="${x - 30}" cy="${y - 336}" r="22" fill="#2e1c10" ${ol(1)}/>`;
++    g += `<path d="M${x - 10},${y - 170} C${x - 14},${y - 250} ${x + 200},${y - 260} ${x + 230},${y - 170} C${x + 230},${y - 120} ${x},${y - 110} ${x - 10},${y - 170}Z" fill="#cfcabd" ${ol(1.2)}/>`;
++    g += `<path d="M${x + 40},${y - 200} C${x + 60},${y - 250} ${x + 150},${y - 250} ${x + 160},${y - 190} C${x + 150},${y - 160} ${x + 60},${y - 160} ${x + 40},${y - 200}Z" fill="#2a1810"/>`;
++    g += `<path d="M${x - 30},${y - 120} C${x + 60},${y - 200} ${x + 300},${y - 210} ${x + 430},${y - 140} L${x + 440},${y + 300} L${x - 40},${y + 300}Z" fill="#5a5048" ${ol(1.3)}/><path d="M${x - 30},${y - 120} C${x + 60},${y - 200} ${x + 300},${y - 210} ${x + 430},${y - 140}" stroke="#d8d2c6" stroke-width="22" fill="none"/><path d="M${x + 30},${y - 60} C${x + 120},${y - 90} ${x + 260},${y - 90} ${x + 400},${y - 50}" stroke="#3a322c" stroke-width="10" fill="none" opacity="0.6"/>`;
++    return g;
++  };
++  S.t1Ward = (t) => {
++    const L = [], [cx, cy] = S.T1W.CANDLE, k = fl(t, 3), r = rng(301);
++    let w = plasterWall(-900, -500, 2000, 2100, '#45362a', 311);
++    w += wainscot(-900, 2000, 1190, 2100);
++    w += nightWindow(50, 210, 330, 1040, t);
++    // a cool spill of snow-light under the window, very faint (the only other light)
++    w += `<path d="M40,1080 L340,1080 L460,1700 L-80,1700Z" fill="#b8c0c4" opacity="0.06" filter="url(#b14)"/>`;
++    w += crucifix(655, 520, 0.95);
++    // the bed's number board
++    w += `<rect x="770" y="690" width="96" height="62" rx="4" fill="#1e140c" ${ol(1.2)}/><rect x="776" y="696" width="84" height="50" rx="3" fill="#2a2016"/>` + TXT(818, 734, 30, '#d8ccb0', '17', { w: 'bold' });
++    // a coat hook with a grey shawl by the window, a shelf with a basin and folded linen
++    w += `<path d="M420,900 L420,930" stroke="#14100c" stroke-width="8"/><path d="M380,930 C380,1000 400,1110 390,1180 L470,1180 C462,1110 470,1000 460,930Z" fill="#5a5450" ${ol(1.2)}/><path d="M400,950 C404,1040 410,1110 404,1170" stroke="#3e3834" stroke-width="6" fill="none" opacity="0.7"/>`;
++    // the candle's light on the wall and the dark the ward falls into away from it
++    w += C.radial(cx - 40, cy - 330, 900, '#ffb460', 0.3 * k);
++    w += lg('t1wFall', [[0, '#000', 0.62], [0.45, '#000', 0.3], [0.8, '#000', 0], [1, '#000', 0]], 0, 0, 1, 0) + `<rect x="-900" y="-500" width="2900" height="2600" fill="url(#t1wFall)"/>`;
++    w += lg('t1wTop', [[0, '#000', 0.55], [0.3, '#000', 0], [1, '#000', 0]]) + `<rect x="-900" y="-500" width="2900" height="2600" fill="url(#t1wTop)"/>`;
++    L.push({ p: 0.78, svg: `<g filter="url(#dof1)">${w}</g>` });
++    // the next bed, a little nearer: the woman asleep with her back to us, in the dark
++    L.push({ p: 0.9, svg: `<g filter="url(#dof1)" opacity="0.92">${sleeper(-150, 1500)}<rect x="-300" y="1000" width="760" height="900" fill="#0a0604" opacity="0.45"/></g>` });
++    return L;
++  };
++  // her bed behind her: the headboard, the fever chart on its post, the pillows propping her up; the bedside table
++  S.t1WardBed = (t) => {
++    const [x0, x1, ty0, ty1] = S.T1W.TABLE;
++    let g = `<rect x="300" y="1010" width="640" height="500" fill="#3a2414" filter="url(#woodV)" ${ol(1.5)}/><rect x="300" y="1010" width="640" height="26" fill="#4a2e18" ${ol(1.2)}/><rect x="300" y="1010" width="640" height="5" fill="#d8a068" opacity="0.35"/>`;
++    for (const x of [300, 940]) g += `<rect x="${x - 22}" y="985" width="44" height="560" fill="#2e1c10" ${ol(1.4)}/><circle cx="${x}" cy="975" r="26" fill="#3a2414" ${ol(1.3)}/><circle cx="${x + 7}" cy="967" r="8" fill="#e8b070" opacity="${x > 600 ? 0.6 : 0.2}"/>`;
++    // the fever chart on the right post: paper on a board, the temperature climbing for three days
++    g += `<rect x="900" y="1040" width="88" height="120" fill="#2a1a0c" ${ol(1.2)}/><rect x="906" y="1046" width="76" height="108" fill="#e6dcc4"/>`;
++    for (let i = 0; i < 5; i++) g += `<path d="M910,${1062 + i * 20} L978,${1062 + i * 20}" stroke="#9a8a70" stroke-width="0.8"/>`;
++    g += `<path d="M912,1140 L926,1130 L938,1118 L950,1096 L962,1084 L974,1060" stroke="#8a1a12" stroke-width="2.6" fill="none"/><path d="M944,1030 L944,1046" stroke="#14100c" stroke-width="3"/>`;
++    // the pillows: plump linen, the near one creased where she lies against it
++    g += lg('t1pil', [[0, '#d8d0c0'], [0.6, '#b8b0a0'], [1, '#857c6e']]);
++    g += `<path d="M330,1170 C320,1060 420,1040 620,1050 C820,1040 920,1060 910,1170 C918,1250 820,1270 620,1262 C420,1270 322,1250 330,1170Z" fill="url(#t1pil)" ${ol(1.4)}/>`;
++    g += `<path d="M310,1290 C296,1170 400,1150 620,1160 C840,1150 942,1170 930,1290 C940,1360 840,1380 620,1372 C400,1380 300,1360 310,1290Z" fill="url(#t1pil)" ${ol(1.4)}/>`;
++    g += `<path d="M380,1200 C470,1176 560,1190 620,1214 M700,1196 C760,1176 840,1180 880,1206" stroke="#7a7262" stroke-width="5" fill="none" opacity="0.55"/><path d="M800,1090 C840,1086 880,1100 892,1130" stroke="#ffe8c8" stroke-width="6" fill="none" opacity="0.35"/><path d="M820,1186 C870,1184 912,1200 922,1240" stroke="#ffe8c8" stroke-width="6" fill="none" opacity="0.35"/>`;
++    g += lg('t1pilD', [[0, '#000', 0.55], [0.5, '#000', 0.25], [1, '#000', 0]], 0, 0, 1, 0) + `<path d="M310,1290 C296,1170 400,1150 620,1160 C840,1150 942,1170 930,1290 C940,1360 840,1380 620,1372 C400,1380 300,1360 310,1290Z M330,1170 C320,1060 420,1040 620,1050 C820,1040 920,1060 910,1170 C918,1250 820,1270 620,1262 C420,1270 322,1250 330,1170Z" fill="url(#t1pilD)"/>`;
++    // the bedside table: oak, a cloth over it; on it the candle, a tin cup, the brown bottle of laudanum, a folded towel
++    g += `<path d="M${x0},${ty0} L${x1},${ty0} L${x1 + 20},${ty1} L${x0 - 20},${ty1}Z" fill="#4a2e18" ${ol(1.3)}/><rect x="${x0 - 20}" y="${ty1}" width="${x1 - x0 + 40}" height="22" fill="#3a2212" ${ol(1.2)}/><rect x="${x0 - 20}" y="${ty1}" width="${x1 - x0 + 40}" height="4" fill="#e8b878" opacity="0.4"/>`;
++    g += `<rect x="${x0}" y="${ty1 + 22}" width="${x1 - x0}" height="700" fill="#24160c" filter="url(#woodV)"/><rect x="${x0 + 30}" y="${ty1 + 50}" width="${x1 - x0 - 60}" height="130" rx="4" fill="#2e1d10" ${ol(1.2)}/><circle cx="${(x0 + x1) / 2}" cy="${ty1 + 115}" r="9" fill="#b8863a" ${ol(1)}/>`;
++    g += lg('t1tbF', [[0, '#000', 0.1], [1, '#000', 0.75]]) + `<rect x="${x0}" y="${ty1 + 22}" width="${x1 - x0}" height="700" fill="url(#t1tbF)"/>`;
++    g += `<path d="M1040,${ty0 + 14} l70,0 l6,14 l-82,0Z" fill="#e2dccf" ${ol(1.1)}/><path d="M1036,${ty0 + 6} l78,0 l4,10 l-86,0Z" fill="#ece6da" ${ol(1)}/>`;
++    g += S.bottle(866, ty0 + 18, 92, 'round', '#4a2208', rng(7), 0.95);
++    g += `<path d="M1000,${ty0 + 20} L996,${ty0 - 44} L1050,${ty0 - 44} L1046,${ty0 + 20}Z" fill="#8a8a84" ${ol(1.2)}/><ellipse cx="1023" cy="${ty0 - 44}" rx="27" ry="7" fill="#5a5a54" ${ol(1)}/><path d="M1048,${ty0 - 30} q20,4 18,22 q-2,12 -20,10" stroke="#6a6a64" stroke-width="5" fill="none"/><path d="M1004,${ty0 - 36} L1006,${ty0 + 12}" stroke="#e8e4d8" stroke-width="3" opacity="0.6"/>`;
++    g += chamberstick(S.T1W.CANDLE[0], S.T1W.CANDLE[1] - 4, t, 160);
++    return g;
++  };
++  // the quilt over her lap (drawn over her body): grey wool with two dark woven stripes, the sheet turned down over it
++  S.t1Quilt = (t) => {
++    const q = S.T1W.QTOP;
++    const top = `M190,${q + 46} C290,${q + 10} 380,${q - 6} 500,${q - 8} C620,${q - 10} 760,${q} 1010,${q + 40}`;
++    const body = `${top} L1080,2000 L120,2000Z`;
++    let g = `<defs><clipPath id="t1q"><path d="${body}"/></clipPath></defs><path d="${body}" fill="#6c6156" filter="url(#cloth)" ${ol(1.6)}/>`;
++    let pt = '';
++    for (const [dy, w2] of [[120, 26], [168, 12]]) pt += `<path d="M120,${q + dy} C400,${q + dy - 40} 700,${q + dy - 30} 1080,${q + dy + 30}" stroke="#3e352e" stroke-width="${w2}" fill="none" opacity="0.8"/>`;
++    // her legs under the blanket, running toward us from her hips: a ridge over each, lit on the candle side, the
++    // hollow between them and the wool falling away at the sides in long folds
++    for (const [x0, x1] of [[440, 330], [585, 735]]) pt += `<path d="M${x0 - 34},${q + 40} C${x0 - 50},${q + 260} ${x1 - 60},${q + 460} ${x1 - 70},${q + 700}" stroke="#1a120c" stroke-width="54" fill="none" opacity="0.36" filter="url(#b8)"/><path d="M${x0 + 18},${q + 40} C${x0 + 14},${q + 260} ${x1 + 30},${q + 460} ${x1 + 40},${q + 700}" stroke="#e0ccb0" stroke-width="26" fill="none" opacity="0.2" filter="url(#b8)"/>`;
++    pt += `<path d="M512,${q + 60} C500,${q + 300} 520,${q + 480} 530,${q + 700}" stroke="#120a06" stroke-width="30" fill="none" opacity="0.3" filter="url(#b8)"/><path d="M250,${q + 60} C200,${q + 300} 180,${q + 500} 150,${q + 700} M860,${q + 60} C900,${q + 300} 940,${q + 500} 990,${q + 700}" stroke="#1a120c" stroke-width="36" fill="none" opacity="0.3" filter="url(#b8)"/>`;
++    pt += lg('t1qL', [[0, '#000', 0.45], [0.55, '#000', 0.05], [1, '#ffb060', 0.12]], 0, 0, 1, 0) + `<rect x="100" y="${q - 40}" width="1000" height="800" fill="url(#t1qL)"/>`;
++    pt += lg('t1qD', [[0, '#000', 0], [1, '#000', 0.6]]) + `<rect x="100" y="${q}" width="1000" height="700" fill="url(#t1qD)"/>`;
++    g += `<g clip-path="url(#t1q)">${pt}</g>`;
++    // the sheet turned down over the blanket's edge, with its hem and a shadow under it
++    g += `<path d="${top}" stroke="#000" stroke-width="40" fill="none" opacity="0.28" filter="url(#b4)" transform="translate(0,22)"/>`;
++    g += lg('t1sh', [[0, '#7e776a'], [0.5, '#b4ac9c'], [1, '#d4ccbc']], 0, 0, 1, 0, 'userSpaceOnUse').replace('x1="0" y1="0" x2="1" y2="0"', 'x1="190" y1="0" x2="1010" y2="0"');
++    g += `<path d="${top}" stroke="url(#t1sh)" stroke-width="44" fill="none"/><path d="${top}" stroke="#8a8272" stroke-width="3" fill="none" transform="translate(0,18)"/><path d="${top}" stroke="#fff0d8" stroke-width="5" fill="none" opacity="0.3" transform="translate(0,-12)"/>`;
++    return g;
++  };
++  S.t1WardLight = (t) => {
++    const [cx, cy] = S.T1W.CANDLE, k = fl(t, 3), r = rng(91);
++    let g = C.radial(cx - 60, cy - 260, 820, '#ffb060', 0.16 * k);
++    for (let i = 0; i < 40; i++) { const x = cx - 640 + r() * 760, y = cy - 860 + r() * 820 - t * 14; g += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(1 + r() * 1.8)}" fill="#ffe0b0" opacity="${f(0.15 + r() * 0.35)}"/>`; }
++    return g;
++  };
++  // the bed curtain at the right edge, close to the lens and soft
++  S.t1WardFg = (t) => `<g filter="url(#dof2)"><path d="M1010,-200 C1030,400 1000,1100 1040,2100 L1300,2100 L1300,-200Z" fill="#3a2a1e"/><path d="M1060,-200 C1080,500 1050,1200 1090,2100" stroke="#1a100a" stroke-width="30" fill="none" opacity="0.6"/><path d="M1030,-200 C1050,500 1020,1200 1060,2100" stroke="#a8784a" stroke-width="10" fill="none" opacity="0.35"/></g>`;
++
++  // ======================================================= BASIN: the washstand by the ward door, under the lantern
++  // world: the stand's marble top from y 1480 (back) to 1556 (front); the bowl's rim centred at (540, 1400); the
++  // lantern's hook at (905, 520) on a bracket from the wall; the open door at the left
++  S.T1B = { TOP: 1480, NEAR: 1556, BOWL: [540, 1400, 232, 52], LANTERN: [905, 520] };
++  S.t1Door = (t, opts = {}) => {
++    const L = [], [lx, ly] = S.T1B.LANTERN, k = fl(t, 5), r = rng(401);
++    let w = plasterWall(-900, -500, 2000, 2400, '#43352a', 411);
++    w += wainscot(-900, 2000, 1240, 2400, 250);
++    // the open door: a deep oak frame, the dark corridor beyond with a lamp far down it, the door leaf swung toward us
++    w += `<rect x="20" y="170" width="330" height="1360" fill="#2a1a0e" filter="url(#woodV)" ${ol(1.6)}/><rect x="56" y="214" width="258" height="1316" fill="#070504"/>`;
++    w += lg('t1cor', [[0, '#0c0806'], [0.5, '#1a120c'], [1, '#0a0705']]) + `<path d="M56,214 L314,214 L240,520 L130,520Z" fill="#0c0907"/><rect x="130" y="520" width="110" height="420" fill="url(#t1cor)"/><path d="M56,1530 L314,1530 L240,940 L130,940Z" fill="#120c08"/>`;
++    w += `<rect x="172" y="640" width="26" height="34" fill="#ffb860" opacity="0.7"/>` + C.radial(185, 660, 120, '#ff9a40', 0.3) + `<path d="M150,940 L220,940 L300,1530 L70,1530Z" fill="#ffb060" opacity="0.06"/>`;
++    w += `<path d="M20,170 L-80,120 L-80,1600 L20,1530Z" fill="#24160c" ${ol(1.5)}/><path d="M-40,300 L0,310 L0,780 L-40,790Z M-40,900 L0,904 L0,1400 L-40,1420Z" fill="#2e1c10" stroke="#120a04" stroke-width="2"/>`;
++    w += `<rect x="30" y="180" width="310" height="22" fill="#3a2414" ${ol(1)}/><path d="M352,170 L352,1530" stroke="#c8945a" stroke-width="3" opacity="0.25"/>`;
++    // the order nailed to the wall under the lantern: VERORDNUNG, a red seal, close handwriting, a signature
++    w += `<g transform="translate(690,860) rotate(1.5)"><rect x="0" y="0" width="190" height="250" fill="#e6dcc2" ${ol(1.2)}/><rect x="0" y="0" width="190" height="250" fill="#5a4020" opacity="0.08" filter="url(#tex)"/>` + TXT(95, 34, 19, '#2a1a0e', 'VERORDNUNG', { w: 'bold', len: 150 }) + `<path d="M30,46 L160,46" stroke="#2a1a0e" stroke-width="1.2"/>`;
++    for (let i = 0; i < 9; i++) { const yy = 66 + i * 17, ww = 140 - (i === 8 ? 70 : r() * 20); w += `<path d="M24,${yy} q${f(ww * 0.25)},-4 ${f(ww * 0.5)},0 t${f(ww * 0.5)},0" stroke="#3a2a1a" stroke-width="1.5" fill="none" opacity="0.8"/>`; }
++    w += `<path d="M96,226 q12,-14 22,-2 q8,10 18,-6 q6,-8 14,2" stroke="#2a1a0e" stroke-width="1.6" fill="none"/><circle cx="46" cy="222" r="16" fill="#8a1a12" ${ol(1)}/><circle cx="43" cy="219" r="5" fill="#c84a3a" opacity="0.6"/><circle cx="95" cy="8" r="4" fill="#3a2a1a"/></g>`;
++    // the lantern's light on the wall; the dark away from it
++    w += C.radial(lx - 30, ly + 170, 1000, '#ffb460', 0.3 * k);
++    w += lg('t1bFall', [[0, '#000', 0.55], [0.35, '#000', 0.32], [0.75, '#000', 0.04], [1, '#000', 0]], 0, 0, 1, 0) + `<rect x="-900" y="-500" width="2900" height="2900" fill="url(#t1bFall)"/>`;
++    w += lg('t1bTop', [[0, '#000', 0.6], [0.28, '#000', 0], [1, '#000', 0]]) + `<rect x="-900" y="-500" width="2900" height="2900" fill="url(#t1bTop)"/>`;
++    L.push({ p: 0.8, svg: `<g filter="url(#dof1)">${w}</g>` });
++    // the lantern itself, sharp and nearer
++    if (!opts.noLantern) L.push({ p: 0.88, svg: lantern(lx, ly, t, 1090) });
++    return L;
++  };
++  // the washstand's marble top and cabinet (drawn before the bowl and the hands)
++  S.t1Stand = (t) => {
++    const { TOP, NEAR } = S.T1B, r = rng(421);
++    let g = `<defs><filter id="t1Marble" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.03" numOctaves="4" seed="11"/><feColorMatrix values="0 0 0 0 0.5  0 0 0 0 0.48  0 0 0 0 0.45  0 0 0 -2.6 1.5"/></filter></defs>`;
++    const top = `M-140,${TOP} L1220,${TOP} L1260,${NEAR} L-180,${NEAR}Z`;
++    g += `<path d="${top}" fill="#d8d2c6"/><path d="${top}" fill="#000" filter="url(#t1Marble)" opacity="0.45"/>`;
++    for (let i = 0; i < 6; i++) { const x0 = -100 + r() * 1200, y0 = TOP + 8 + r() * 60; g += `<path d="M${f(x0)},${f(y0)} q${f(40 + r() * 80)},${f(6 + r() * 10)} ${f(140 + r() * 160)},${f(-4 + r() * 16)}" stroke="#8a8478" stroke-width="${f(1 + r() * 1.4)}" fill="none" opacity="0.4"/>`; }
++    g += lg('t1stL', [[0, '#000', 0.45], [0.55, '#000', 0.05], [1, '#fff4e0', 0.2]], 0, 0, 1, 0) + `<path d="${top}" fill="url(#t1stL)"/>`;
++    g += `<rect x="-180" y="${NEAR}" width="1440" height="26" fill="#cfc8ba" ${ol(1.3)}/><rect x="-180" y="${NEAR}" width="1440" height="5" fill="#fff" opacity="0.45"/>`;
++    g += `<rect x="-180" y="${NEAR + 26}" width="1440" height="900" fill="#2e1c0e" filter="url(#woodV)"/>`;
++    for (const dx of [-60, 410, 880]) g += `<rect x="${dx}" y="${NEAR + 60}" width="400" height="190" rx="5" fill="#3a2414" ${ol(1.3)}/><rect x="${dx + 16}" y="${NEAR + 76}" width="368" height="158" rx="4" fill="none" stroke="#7a4a26" stroke-width="3" opacity="0.5"/><rect x="${dx + 170}" y="${NEAR + 140}" width="60" height="16" rx="7" fill="#b8863a" ${ol(1)}/>`;
++    g += lg('t1stF', [[0, '#000', 0.15], [1, '#000', 0.8]]) + `<rect x="-180" y="${NEAR + 26}" width="1440" height="900" fill="url(#t1stF)"/>`;
++    return g;
++  };
++  // the bowl: its inside and back rim (behind the hands) ...
++  S.t1BowlBack = () => {
++    const [cx, cy, rx, ry] = S.T1B.BOWL;
++    let g = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#e2dccf" ${ol(1.6)}/>`;
++    g += lg('t1bin', [[0, '#5e584e'], [0.6, '#a8a294'], [1, '#c8c2b4']]) + `<ellipse cx="${cx}" cy="${cy + 3}" rx="${rx - 14}" ry="${ry - 9}" fill="url(#t1bin)"/>`;
++    return g;
++  };
++  // ... the chlorine water, in two halves split at the line where the forearms go in (S.T1B.WET): the far half is
++  // drawn before the arms, the near half after them, nearly opaque and milky, so each forearm ends cleanly at the
++  // waterline with rings round it and the hands are only a shadow under the surface
++  S.T1B.WET = 1404;
++  S.t1Water = (t, wrists = [], part = 'back') => {
++    // (filled to the brim: the surface is the bowl's inner rim, so no gap between the water's edge and the rim shows
++    // the forearms behind it)
++    const [cx, cy, rx, ry] = S.T1B.BOWL, wy = cy + 3, wrx = rx - 14, wry = ry - 9, ye = S.T1B.WET, id = 't1wat' + part;
++    const ring = (x, rr, op, w2, half) => half ? `<path d="M${f(x - rr)},${ye} A${f(rr)},${f(rr * 0.22)} 0 0 0 ${f(x + rr)},${ye}" fill="none" stroke="#f8f4e8" stroke-width="${f(w2)}" opacity="${f(op)}"/>` : `<ellipse cx="${f(x)}" cy="${ye}" rx="${f(rr)}" ry="${f(rr * 0.22)}" fill="none" stroke="#f8f4e8" stroke-width="${f(w2)}" opacity="${f(op)}"/>`;
++    let g = `<defs><clipPath id="${id}"><ellipse cx="${cx}" cy="${wy}" rx="${wrx}" ry="${wry}"/></clipPath><clipPath id="${id}h"><rect x="${cx - rx}" y="${part === 'back' ? cy - ry - 10 : ye}" width="${rx * 2}" height="${part === 'back' ? ye - (cy - ry - 10) : 200}"/></clipPath></defs>`;
++    g += `<g clip-path="url(#${id}h)"><g clip-path="url(#${id})">`;
++    if (part === 'back') {
++      g += `<rect x="${cx - rx}" y="${cy - ry}" width="${rx * 2}" height="${ry * 2}" fill="#9a9c90" opacity="0.92"/>`;
++      for (const [x, ph] of wrists) for (let i = 0; i < 3; i++) { const rr = 30 + i * 20 + ((t * 30 + ph) % 20); g += ring(x, rr, 0.5 - i * 0.14, 2 - i * 0.5, false); }
++    } else {
++      // milky and opaque: the hands under it are only a soft shadow (seen through, their edges read as odd wedges)
++      g += lg('t1wG', [[0, '#a8aa9e'], [0.6, '#bfc0b4'], [1, '#d2d2c6']]) + `<rect x="${cx - rx}" y="${ye}" width="${rx * 2}" height="${ry * 2}" fill="url(#t1wG)"/>`;
++      g += `<ellipse cx="${cx + 120}" cy="${ye + 10}" rx="74" ry="10" fill="#ffd890" opacity="0.5" filter="url(#b4)"/><path d="M${cx + 66},${ye + 9} q30,-4 60,0 t50,0" stroke="#fff4d8" stroke-width="2.5" fill="none" opacity="0.7"/>`;
++      for (const [x, ph] of wrists) { g += `<ellipse cx="${f(x)}" cy="${ye + 16}" rx="44" ry="15" fill="#5a5040" opacity="0.26" filter="url(#b8)"/>`; for (let i = 0; i < 3; i++) { const rr = 30 + i * 20 + ((t * 30 + ph) % 20); g += ring(x, rr, 0.7 - i * 0.18, 2.4 - i * 0.6, true); } }
++    }
++    g += `</g></g>`;
++    return g;
++  };
++  // ... and its outer wall in front (over the hands): white glaze, a gilt band, the lantern's light on the right
++  S.t1BowlFront = () => {
++    const [cx, cy, rx, ry] = S.T1B.BOWL;
++    // the near half of the rim's lip (between the outer and the inner rim) is in front of the forearms too
++    let g = `<path d="M${cx - rx},${cy} A${rx},${ry} 0 0 0 ${cx + rx},${cy} L${cx + rx - 14},${cy + 3} A${rx - 14},${ry - 9} 0 0 1 ${cx - rx + 14},${cy + 3}Z" fill="#e2dccf"/>`;
++    g += lg('t1bF', [[0, '#5e584e'], [0.32, '#a8a294'], [0.74, '#e2dccf'], [1, '#aaa292']], 0, 0, 1, 0);
++    g += `<path d="M${cx - rx},${cy} A${rx},${ry} 0 0 0 ${cx + rx},${cy} C${cx + rx - 6},${cy + 70} ${cx + 150},${cy + 104} ${cx + 110},${cy + 112} L${cx - 110},${cy + 112} C${cx - 150},${cy + 104} ${cx - rx + 6},${cy + 70} ${cx - rx},${cy}Z" fill="url(#t1bF)" ${ol(1.6)}/>`;
++    g += `<path d="M${cx - rx + 14},${cy + 26} Q${cx},${cy + 92} ${cx + rx - 14},${cy + 26}" stroke="#b8902e" stroke-width="5" fill="none" opacity="0.85"/><path d="M${cx - rx + 22},${cy + 36} Q${cx},${cy + 100} ${cx + rx - 22},${cy + 36}" stroke="#b8902e" stroke-width="1.6" fill="none" opacity="0.7"/>`;
++    g += `<path d="M${cx + 120},${cy + 40} C${cx + 160},${cy + 60} ${cx + 176},${cy + 80} ${cx + 150},${cy + 100}" stroke="#fff" stroke-width="10" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M${cx - rx},${cy} A${rx},${ry} 0 0 0 ${cx + rx},${cy}" stroke="#fff" stroke-width="3.5" fill="none" opacity="0.65"/>`;
++    g += `<path d="M${cx - 100},${cy + 112} L${cx + 100},${cy + 112} L${cx + 112},${cy + 126} L${cx - 112},${cy + 126}Z" fill="#d8d2c6" ${ol(1.3)}/><ellipse cx="${cx}" cy="${cy + 128}" rx="130" ry="10" fill="#000" opacity="0.45" filter="url(#b4)"/>`;
++    return g;
++  };
++  // the ewer (left), the crock of chlorinated lime (right) and the towel over the stand's end
++  S.t1StandProps = (t) => {
++    const { TOP } = S.T1B;
++    let g = '';
++    // ewer: a tall white jug with a lip and a loop handle, the same gilt band
++    const ex = 200, ey = TOP + 40;
++    g += `<ellipse cx="${ex}" cy="${ey + 4}" rx="86" ry="14" fill="#000" opacity="0.45" filter="url(#b4)"/>`;
++    g += lg('t1ew', [[0, '#4e4840'], [0.35, '#9c9688'], [0.75, '#d6d0c2'], [1, '#9a9282']], 0, 0, 1, 0);
++    g += `<path d="M${ex - 64},${ey} C${ex - 84},${ey - 80} ${ex - 92},${ey - 170} ${ex - 52},${ey - 230} C${ex - 40},${ey - 262} ${ex - 46},${ey - 282} ${ex - 58},${ey - 300} L${ex + 34},${ey - 304} C${ex + 56},${ey - 316} ${ex + 80},${ey - 330} ${ex + 96},${ey - 334} C${ex + 70},${ey - 300} ${ex + 48},${ey - 270} ${ex + 50},${ey - 232} C${ex + 92},${ey - 170} ${ex + 84},${ey - 80} ${ex + 64},${ey}Z" fill="url(#t1ew)" ${ol(1.5)}/>`;
++    g += `<path d="M${ex - 76},${ey - 150} Q${ex},${ey - 128} ${ex + 78},${ey - 150}" stroke="#b8902e" stroke-width="5" fill="none" opacity="0.85"/><path d="M${ex - 58},${ey - 296} L${ex + 36},${ey - 300}" stroke="#fff" stroke-width="3" opacity="0.6"/>`;
++    g += `<path d="M${ex - 60},${ey - 260} C${ex - 130},${ey - 250} ${ex - 130},${ey - 120} ${ex - 74},${ey - 100}" stroke="#20140c" stroke-width="22" fill="none"/><path d="M${ex - 60},${ey - 260} C${ex - 130},${ey - 250} ${ex - 130},${ey - 120} ${ex - 74},${ey - 100}" stroke="#e8e2d6" stroke-width="16" fill="none"/>`;
++    g += `<path d="M${ex + 40},${ey - 210} C${ex + 70},${ey - 150} ${ex + 72},${ey - 80} ${ex + 50},${ey - 20}" stroke="#fff" stroke-width="9" fill="none" opacity="0.55" stroke-linecap="round"/>`;
++    // the crock: brown salt-glazed stoneware, a wooden lid, a paper label: CHLORKALK (chlorinated lime)
++    const jx = 860, jy = TOP + 34;
++    g += `<ellipse cx="${jx}" cy="${jy + 4}" rx="84" ry="13" fill="#000" opacity="0.45" filter="url(#b4)"/>`;
++    g += lg('t1jar', [[0, '#3a2210'], [0.4, '#7a4e26'], [0.7, '#a8703a'], [1, '#4a2c12']], 0, 0, 1, 0);
++    g += `<path d="M${jx - 70},${jy} C${jx - 82},${jy - 60} ${jx - 82},${jy - 130} ${jx - 64},${jy - 168} L${jx + 64},${jy - 168} C${jx + 82},${jy - 130} ${jx + 82},${jy - 60} ${jx + 70},${jy}Z" fill="url(#t1jar)" ${ol(1.5)}/>`;
++    g += `<rect x="${jx - 70}" y="${jy - 186}" width="140" height="22" rx="6" fill="#6a4a26" ${ol(1.3)}/><circle cx="${jx}" cy="${jy - 194}" r="12" fill="#5a3a1e" ${ol(1.1)}/><path d="M${jx + 30},${jy - 160} C${jx + 58},${jy - 120} ${jx + 60},${jy - 60} ${jx + 46},${jy - 14}" stroke="#ffd8a0" stroke-width="7" fill="none" opacity="0.4"/>`;
++    g += `<rect x="${jx - 50}" y="${jy - 128}" width="100" height="70" fill="#e6dcc0" ${ol(1.1)}/><rect x="${jx - 46}" y="${jy - 124}" width="92" height="62" fill="none" stroke="#5a1a10" stroke-width="1.4"/>` + TXT(jx, jy - 96, 14, '#1a1008', 'CHLORKALK', { w: 'bold', len: 82 }) + `<path d="M${jx - 30},${jy - 88} L${jx + 30},${jy - 88}" stroke="#5a1a10" stroke-width="1"/>` + TXT(jx, jy - 72, 9, '#3a2a1a', 'Calcar. chlorin.', { it: true, len: 70 });
++    return g;
++  };
++  // the towel over the stand's right end (in front of the cabinet), drawn after the stand
++  S.t1Towel = () => `<path d="M1000,${S.T1B.NEAR - 6} L1150,${S.T1B.NEAR - 6} L1160,1880 C1120,1900 1040,1900 1000,1880Z" fill="#a49c8e" filter="url(#cloth)" ${ol(1.4)}/><path d="M1000,1800 L1160,1800 M1000,1824 L1160,1824" stroke="#8a3a2a" stroke-width="9" opacity="0.8"/><path d="M1030,${S.T1B.NEAR + 20} C1036,1700 1028,1800 1034,1880" stroke="#a8a090" stroke-width="10" fill="none" opacity="0.4" filter="url(#b4)"/><rect x="990" y="${S.T1B.NEAR - 14}" width="180" height="18" rx="6" fill="#d8d2c4" ${ol(1.2)}/>`;
++  S.t1DoorLight = (t) => {
++    const [lx, ly] = S.T1B.LANTERN, k = fl(t, 5), r = rng(491);
++    let g = C.radial(lx - 80, ly + 300, 900, '#ffb060', 0.14 * k);
++    for (let i = 0; i < 36; i++) { const x = lx - 700 + r() * 760, y = ly - 200 + r() * 1100 - t * 12; g += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(1 + r() * 1.8)}" fill="#ffe0b0" opacity="${f(0.15 + r() * 0.35)}"/>`; }
++    return g;
++  };
++  // a corner of the door's frame close to the lens at the left, soft
++  S.t1DoorFg = (t) => `<g filter="url(#dof2)"><path d="M-200,-200 L40,-200 L10,2100 L-200,2100Z" fill="#1e120a"/><path d="M40,-200 L10,2100" stroke="#a8784a" stroke-width="8" opacity="0.3"/></g>`;
++})(window);
+diff -ruN old/_render/video/shotsT1.js new/_render/video/shotsT1.js
+--- old/_render/video/shotsT1.js	1970-01-01 00:00:00.000000000 +0000
++++ new/_render/video/shotsT1.js	2026-11-08 12:35:21.282288255 +0000
+@@ -0,0 +1,92 @@
++// Test stills (an any-topic test of the skill): Vienna, 1847, Ignaz Semmelweis and the washing of hands.
++// WARD  (0-1 s): "In your ward, the mothers are dying of fever" - a young mother sits up in bed by one candle, afraid
++// BASIN (1-2 s): "so you set a bowl of chlorine water by the door, and wash" - you, your hands plunged in the bowl
++// KLEIN (2-3 s): "Your chief calls it nonsense" - Professor Klein in front, sneering; you at the bowl behind him
++// The clean rig (G.RIG_CRISP), the cast dressed with tailor.js, the shot helpers of stage.js, the rig's own hands.
++(function (G) {
++  const X = G.ENG, Q = G.QCAST, S = G.SETS, C = G.CINE, R = G.RIG, ST = G.STAGE, { f, ol } = G.RIG;
++  const { lit, up, behind, litWith, gripAt, still, clipTop } = ST;
++
++  // ======================================================= WARD: the mother, the candle at her right
++  const LW = { from: [1, 0.05], shadow: '#0a0604', shadowOp: 0.6, floor: '#140c06', floorOp: 0.5, contactOp: 0, key: '#ffd8a0', keyAdd: 0.12,
++    rims: [{ from: [1, -0.1], col: '#ffb060', w: 6, op: 0.5 }, { from: [-0.8, -0.6], col: '#b0b2b0', w: 4, op: 0.12 }], face: { col: '#ffd0a0', op: 0.2 } };
++  X.shot('WARD', 0, 1, t => {
++    const cam = [540, 960, 1, 0]; X.CAM = cam;
++    // sitting up against the pillows, the blanket to her waist, both hands resting on the turned-down sheet, the fingers
++    // over its fold; her eyes on the door at the right, where the doctors come in
++    const o = still(500, 2330, 1.2, { tilt: 4, breath: 0.5 });
++    const hR = [-70, -836], hL = [92, -846], dR = [0.22, 0.97], dL = [-0.18, 0.98];
++    const P = up(Q.mother(Object.assign(o, { noLegs: true, face: { expr: 'fear', look: [0.55, -0.04], lid: 0.12, brows: [-10, -2], mouth: 'parted', open: 0.1, sweat: 0.18, blush: 0.22, bags: 0.4 },
++      armR: { hand: hR, dir: dR, pose: 'relaxed', facing: 'back' },
++      armL: { hand: hL, dir: dL, pose: 'relaxed', facing: 'back' } })), o);
++    const art = Q.motherArt();
++    // the blanket goes over her body but never over her forearms and hands (they stay in the body's one light pass);
++    // a soft contact shadow under each hand on the sheet, toward the dark side
++    const Lh = Q.HAND.mother * R.HAND_K * o.s, sh = [[hR, dR], [hL, dL]].map(([h, d]) => { const w = R.toWorld(o, h), c = [w[0] + d[0] * Lh * 0.5 - 8, w[1] + d[1] * Lh * 0.5 + 10]; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(Lh * 0.36)}" ry="${f(Lh * 0.5)}" fill="#1a0c04" opacity="0.32" filter="url(#b8)"/>`; }).join('');
++    const chars = Q.litHair(P, o, art, LW) + behind(P, 't1wq', S.t1Quilt(t) + sh);
++    const layers = S.t1Ward(t);
++    layers.push({ p: 1, svg: S.t1WardBed(t) + chars }, { p: 1.02, svg: S.t1WardLight(t) }, { p: 1.25, svg: S.t1WardFg(t) });
++    return X.compose(layers, cam) + C.vignette(0.55, '#060302', 0.4);
++  }, { grade: 'gHall' });
++
++  // ======================================================= BASIN: you at the washstand, the lantern at your left
++  const LB = { from: [1, -0.45], shadow: '#0a0604', shadowOp: 0.6, floor: '#140c06', floorOp: 0.5, contactOp: 0, key: '#ffd8a0', keyAdd: 0.12,
++    rims: [{ from: [1, -0.3], col: '#ffb868', w: 6, op: 0.5 }, { from: [-1, -0.2], col: '#c8a888', w: 4, op: 0.16 }], face: { col: '#ffd0a0', op: 0.2 } };
++  // the whole scene as layers (KLEIN draws it again, small and hazed, behind the professor)
++  const basinScene = (t, opts = {}) => {
++    // (a little lower than the first draft, so the arms reach down far enough for the cuffs to go into the water: no bare
++    // wrist between the sleeve and the waterline)
++    const o = still(540, 2380, 1.2, { tilt: -3 });
++    // both wrists under the waterline, the hands down in the chlorine water, backs to camera
++    const wR = [452, 1430], wL = [628, 1430];
++    const P = up(Q.semm(Object.assign(o, { noLegs: true, face: { expr: 'grim', look: [0.05, 0.5], lid: 0.22, brows: [7, -3], mouth: 'tight', sweat: 0.1 },
++      armR: { hand: R.toLocal(o, wR), dir: [0.12, 1], pose: 'open', facing: 'back' },
++      armL: { hand: R.toLocal(o, wL), dir: [-0.12, 1], pose: 'open', facing: 'back' } })), o);
++    const body = clipTop('t1bTop' + (opts.id || ''), S.T1B.TOP, Q.litHair(P, o, Q.semmArt(), LB));
++    // the bowl's far side and the far half of the water go over the body but never over the forearms (one light pass
++    // for the whole figure); the near half of the water and the bowl's front wall then go over the arms
++    const wr = [[wR[0] - 2, 0], [wL[0] + 2, 9]];
++    const front = S.t1Stand(t) + behind(P, 't1bb' + (opts.id || ''), S.t1BowlBack() + S.t1Water(t, wr, 'back')) + S.t1Water(t, wr, 'front') + S.t1BowlFront() + S.t1StandProps(t) + S.t1Towel();
++    const layers = S.t1Door(t, opts);
++    layers.push({ p: 1, svg: body + front }, { p: 1.02, svg: S.t1DoorLight(t) });
++    if (!opts.noFg) layers.push({ p: 1.25, svg: S.t1DoorFg(t) });
++    return layers;
++  };
++  X.shot('BASIN', 1, 2, t => {
++    const cam = [540, 960, 1, 0]; X.CAM = cam;
++    return X.compose(basinScene(t), cam) + C.vignette(0.55, '#060302', 0.4);
++  }, { grade: 'gHall' });
++
++  // ======================================================= KLEIN: the professor in front, you at the bowl behind him
++  const LK = { from: [1, -0.4], shadow: '#080402', shadowOp: 0.65, floor: '#120a06', floorOp: 0.5, contactOp: 0, key: '#ffd0a0', keyAdd: 0.12,
++    rims: [{ from: [1, -0.35], col: '#ffb060', w: 7, op: 0.6 }, { from: [-1, -0.3], col: '#c8a888', w: 4, op: 0.14 }], face: { col: '#ffc890', op: 0.22 } };
++  const HAZE = `<defs><filter id="t1Haze" filterUnits="userSpaceOnUse" x="-500" y="-500" width="2100" height="2900" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.5 0 0 0 0.06  0 0.5 0 0 0.045  0 0 0.5 0 0.03  0 0 0 1 0"/><feGaussianBlur stdDeviation="3.6"/></filter></defs>`;
++  // his cane (x = the shaft, gy = the grip): polished dark wood, a silver collar above the fist, the crook curling
++  // away from his body, the shaft down to the floor
++  const cane = (x, gy) => {
++    let g = `<path d="M${x - 9},${gy - 40} L${x - 7},2100 L${x + 7},2100 L${x + 9},${gy - 40}Z" fill="#2a1a12" ${ol(1.3)}/><path d="M${x + 4},${gy} L${x + 5},2100" stroke="#c08a58" stroke-width="2.5" opacity="0.5"/>`;
++    const crook = `M${x},${gy - 44} C${x},${gy - 96} ${x - 20},${gy - 118} ${x - 52},${gy - 118} C${x - 84},${gy - 118} ${x - 100},${gy - 96} ${x - 100},${gy - 70} C${x - 100},${gy - 60} ${x - 98},${gy - 52} ${x - 94},${gy - 46}`;
++    g += `<path d="${crook}" stroke="#120a06" stroke-width="22" fill="none" stroke-linecap="round"/><path d="${crook}" stroke="#3a2416" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M${x - 3},${gy - 60} C${x - 4},${gy - 96} ${x - 22},${gy - 112} ${x - 50},${gy - 112}" stroke="#d8a070" stroke-width="3" fill="none" opacity="0.6" stroke-linecap="round"/>`;
++    g += `<rect x="${x - 11}" y="${gy - 50}" width="22" height="14" rx="3" fill="#a8a8a2" ${ol(1.1)}/><path d="M${x + 4},${gy - 48} L${x + 4},${gy - 38}" stroke="#fff" stroke-width="2.5" opacity="0.7"/>`;
++    return g;
++  };
++  X.shot('KLEIN', 2, 3, t => {
++    const cam = [540, 960, 1, 0]; X.CAM = cam;
++    const back = `<rect x="-200" y="-200" width="1480" height="2320" fill="#120a06"/>` + HAZE +
++      `<g filter="url(#t1Haze)"><g transform="translate(-60,340) scale(0.64)">${X.compose(basinScene(t + 0.4, { noLantern: true, noFg: true, id: 'k' }), cam)}</g></g>`;
++    X.CAM = cam;
++    // heavy and at ease: his right fist on the cane in front of him, the left hand on his hip; the chin up, a smirk,
++    // his eyes on you at the bowl
++    const o = still(735, 2400, 1.3, { tilt: 3 });
++    const gC = [578, 1452];
++    const P = up(Q.klein(Object.assign(o, { noLegs: true, face: { expr: 'stern', mouth: 'closed', cd: -1.4, look: [-0.62, 0.1], lid: 0.42, brows: [10, -4], bags: 0.5 },
++      armR: gripAt(o, Q.HAND.klein, gC, [1, 0.04], { facing: 'back', detachHand: true }),
++      armL: { hand: [172, -840], dir: [-0.7, 0.7], pose: 'relaxed', facing: 'back', fs: 1, elbow: 'free' } })), o);
++    // body, hair, cane and the fist on it lit in ONE pass (a hand or hair lit on its own gets a rim round its own
++    // outline and reads as pasted on); the light's box widened to take in the crook and the shaft
++    const chars = Q.litHair(P, o, Q.kleinArt(), LK, cane(gC[0], gC[1]) + P.handR, [gC[0] - 130, gC[1] - 140, gC[0] + 40, 2100]);
++    const light = C.radial(1180, 520, 900, '#ffb060', 0.2) + `<rect x="-200" y="-200" width="1480" height="2320" fill="url(#t1kFall)"/>`;
++    const fall = S.lg('t1kFall', [[0, '#000', 0.35], [0.4, '#000', 0.12], [1, '#000', 0]], 0, 0, 1, 0);
++    return back + X.compose([{ p: 1, svg: fall + chars }, { p: 1.02, svg: light }], cam) + C.vignette(0.55, '#060302', 0.4);
++  }, { grade: 'gHall' });
++})(window);
+diff -ruN old/_tools/cdp.cjs new/_tools/cdp.cjs
+--- old/_tools/cdp.cjs	1970-01-01 00:00:00.000000000 +0000
++++ new/_tools/cdp.cjs	2026-11-08 12:35:21.255414855 +0000
+@@ -0,0 +1,66 @@
++// Linux / macOS port of cdp.ps1: headless Chromium (Playwright) renders frames of a page over the DevTools protocol,
++// one browser, many frames. The page must set window.READY = true and define async window.renderFrame(n).
++// Frames are written as <out>/f00000.jpg (or .png), exactly like cdp.ps1.
++//
++//   node _tools/cdp.cjs --page _render/video/look20.html --list 30,90,150 --out _render/smoke [--quality 98]
++//   node _tools/cdp.cjs --page _render/video/main20.html --from 0 --to 2999 --out _render/frames20a --quality 98
++//
++// Options: --from/--to/--step, --list a,b,c, --quality (jpeg, default 93), --fmt jpeg|png, --query 'a=1&b=2',
++// --w/--h (1080x1920), --stable (capture again until two captures in a row are identical), --sync (the compositor
++// finishes every raster tile before drawing). Rasterises on the CPU (--disable-gpu): the skill found CPU raster clean
++// where the GPU dropped layers in heavy transitions. One renderer at a time.
++const { chromium } = require('playwright');
++const fs = require('fs');
++const path = require('path');
++const { pathToFileURL } = require('url');
++
++const args = process.argv.slice(2), opt = {};
++for (let i = 0; i < args.length; i++) {
++  const a = args[i];
++  if (!a.startsWith('--')) continue;
++  const k = a.slice(2), nx = args[i + 1];
++  if (nx === undefined || nx.startsWith('--')) opt[k] = true; else { opt[k] = nx; i++; }
++}
++const W = +(opt.w || 1080), H = +(opt.h || 1920), fmt = opt.fmt || 'jpeg', quality = +(opt.quality || 93);
++if (!opt.page || !opt.out) { console.error('usage: node cdp.cjs --page <html> --out <dir> (--list a,b,c | --from n --to m [--step k])'); process.exit(2); }
++const frames = opt.list ? String(opt.list).split(',').map(s => parseInt(s, 10)).filter(n => Number.isFinite(n))
++  : (() => { const r = []; for (let q = +(opt.from || 0); q <= +(opt.to || 0); q += +(opt.step || 1)) r.push(q); return r; })();
++
++(async () => {
++  const launchArgs = ['--hide-scrollbars', '--force-device-scale-factor=1', `--window-size=${W},${H}`, '--allow-file-access-from-files', '--disable-gpu'];
++  if (opt.sync) launchArgs.push('--run-all-compositor-stages-before-draw', '--disable-checker-imaging');
++  const browser = await chromium.launch({ args: launchArgs });
++  const errors = [];
++  try {
++    const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
++    page.on('pageerror', e => errors.push('pageerror: ' + e.message));
++    page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
++    const url = pathToFileURL(path.resolve(opt.page)).href + (opt.query ? '?' + opt.query : '');
++    await page.goto(url, { waitUntil: 'load', timeout: 120000 });
++    let ready = false;
++    for (let k = 0; k < 600 && !ready; k++) { ready = await page.evaluate(() => window.READY === true); if (!ready) await new Promise(r => setTimeout(r, 100)); }
++    if (!ready) throw new Error('page never set window.READY');
++    if (errors.length) console.log('page errors at load:\n  ' + errors.join('\n  '));
++    const cdp = await page.context().newCDPSession(page);
++    const outDir = path.resolve(opt.out);
++    fs.mkdirSync(outDir, { recursive: true });
++    const cap = async () => (await cdp.send('Page.captureScreenshot', fmt === 'jpeg' ? { format: 'jpeg', quality, captureBeyondViewport: false } : { format: 'png', captureBeyondViewport: false })).data;
++    const t0 = Date.now(); let done = 0, unstable = 0;
++    for (const f of frames) {
++      try { await page.evaluate(async n => { await window.renderFrame(n); return true; }, f); }
++      catch (e) { throw new Error(`renderFrame(${f}) failed: ${String(e.message || e).slice(0, 600)}`); }
++      let data = await cap();
++      if (opt.stable) {
++        let k = 0;
++        for (; k < 40; k++) { await new Promise(r => setTimeout(r, +(opt.stableMs || 350))); const d2 = await cap(); if (d2 === data) break; data = d2; unstable++; }
++        if (k >= 40) console.log(`frame ${f} never settled`);
++      }
++      fs.writeFileSync(path.join(outDir, `f${String(f).padStart(5, '0')}.${fmt === 'jpeg' ? 'jpg' : 'png'}`), Buffer.from(data, 'base64'));
++      done++;
++      if (done % 25 === 1) console.log(`frame ${f} (${((Date.now() - t0) / 1000 / done).toFixed(2)}s/frame)`);
++    }
++    console.log(`rendered ${done} frames in ${((Date.now() - t0) / 1000).toFixed(1)}s` + (opt.stable ? ` (re-captures while settling: ${unstable})` : ''));
++    const late = await page.evaluate(() => (window.__E || []).slice(0, 20));
++    if (late.length) console.log('window.__E:\n  ' + late.join('\n  '));
++  } finally { await browser.close(); }
++})().catch(e => { console.error(String(e && e.stack || e)); process.exit(1); });
+diff -ruN old/_tools/sheet.py new/_tools/sheet.py
+--- old/_tools/sheet.py	1970-01-01 00:00:00.000000000 +0000
++++ new/_tools/sheet.py	2026-11-08 12:35:21.262571695 +0000
+@@ -0,0 +1,58 @@
++"""Contact sheets and crops (Linux / macOS stand-in for sheet.ps1 / sheetr.ps1).
++
++  python3 -I _tools/sheet.py --dir _render/test --out /tmp/sheet.jpg [--cols 4] [--tile 270x480] [--frames 30,90]
++  python3 -I _tools/sheet.py --crop _render/test/f00030.jpg --box 300,900,780,1500 --out /tmp/crop.jpg [--scale 1]
++
++Tiles every .jpg/.png in --dir (or only the listed frames) in name order, each labelled with its file name.
++"""
++import argparse
++import os
++import sys
++
++from PIL import Image, ImageDraw
++
++
++def sheet(a):
++    names = sorted(n for n in os.listdir(a.dir) if n.lower().endswith(('.jpg', '.png')))
++    if a.frames:
++        want = {f'f{int(x):05d}' for x in a.frames.split(',')}
++        names = [n for n in names if os.path.splitext(n)[0] in want]
++    if not names:
++        sys.exit('no frames')
++    tw, th = (int(v) for v in a.tile.split('x'))
++    cols = min(a.cols, len(names))
++    rows = (len(names) + cols - 1) // cols
++    pad = 6
++    out = Image.new('RGB', (cols * (tw + pad) + pad, rows * (th + pad + 18) + pad), (24, 20, 18))
++    d = ImageDraw.Draw(out)
++    for i, n in enumerate(names):
++        im = Image.open(os.path.join(a.dir, n)).convert('RGB').resize((tw, th), Image.LANCZOS)
++        x = pad + (i % cols) * (tw + pad)
++        y = pad + (i // cols) * (th + pad + 18)
++        out.paste(im, (x, y))
++        d.text((x + 4, y + th + 3), os.path.splitext(n)[0], fill=(220, 210, 190))
++    out.save(a.out, quality=92)
++    print(a.out, out.size)
++
++
++def crop(a):
++    im = Image.open(a.crop).convert('RGB')
++    x0, y0, x1, y1 = (int(v) for v in a.box.split(','))
++    c = im.crop((x0, y0, x1, y1))
++    if a.scale != 1:
++        c = c.resize((int(c.width * a.scale), int(c.height * a.scale)), Image.LANCZOS)
++    c.save(a.out, quality=94)
++    print(a.out, c.size)
++
++
++p = argparse.ArgumentParser()
++p.add_argument('--dir')
++p.add_argument('--out', required=True)
++p.add_argument('--cols', type=int, default=4)
++p.add_argument('--tile', default='270x480')
++p.add_argument('--frames')
++p.add_argument('--crop')
++p.add_argument('--box')
++p.add_argument('--scale', type=float, default=1.0)
++a = p.parse_args()
++crop(a) if a.crop else sheet(a)

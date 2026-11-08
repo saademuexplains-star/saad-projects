@@ -1,0 +1,53 @@
+DARK-HISTORY SHORTS - put it on another Claude account
+=====================================================
+
+Version 2026-11-08b: the Coca-Cola clean rig plus the Semmelweis-test fixes (clean hands and arms in one light pass,
+the curved wrist, woven and finished clothes, the hair kit lit with the head). To update an older install, delete the
+old dark-history-shorts folder and unzip this one in its place; in your video folder copy project\_render\lib\*.js and
+project\_tools\* over the old ones (your own production files are not touched).
+
+This zip is a Claude "skill". It holds:
+- SKILL.md: the workflow and the rules.
+- references/: the style rules, every correction you have ever given, the rig and engine manuals, and HANDOFF.md
+  (where things stand now and what to do next).
+- project/: the complete working video project. That is the character rig (the approved clean rig), the clothes kit,
+  the engine, sets, props, casts, every video so far as code, and the tools for voiceover prep, rendering, checks,
+  sound mixing and encoding.
+
+Videos bundled as code: The Messenger, The Whipping Boy, The Royal Taster, The Worm, The Leech Collector,
+The Titanic Stoker, The Blind Harpist, The Confessor, The First Vaccine, The Rabies Boy, The King's Decoy,
+The Calf's Blood, The Royal Astrologer, The Heroin Bottle, The Cells That Never Died, The Pied Piper, The Royal Fool,
+the Coca-Cola look test (the approved rig and look; the next video), and the Semmelweis test (the model for hands,
+cloth and hair since 2026-11-08; frames in references\frames_2026-11-08).
+
+WHAT YOU NEED ON THAT COMPUTER
+- Windows 10 or 11.
+- Google Chrome, installed in the normal place.
+- The Claude desktop app, using the Code tab (Claude Code). Rendering, mixing and encoding run on your computer in
+  PowerShell, so the plain chat on claude.ai cannot make the videos by itself.
+- The ElevenLabs connector added to that Claude account, for music and sound effects.
+- Your own ElevenLabs voiceover mp3 for each video. The skill does not make the voiceover.
+
+INSTALL
+1. Unzip into C:\Users\<your name>\.claude\skills\ so that this file exists:
+       C:\Users\<your name>\.claude\skills\dark-history-shorts\SKILL.md
+   The zip already contains the "dark-history-shorts" folder.
+   (Or attach the zip in a Code-tab session and paste the message below. Claude installs it for you.)
+2. Start a new session in the desktop app's Code tab, in an empty folder for your videos.
+3. Paste this as your first message:
+
+   Use my dark-history-shorts skill (if it isn't installed yet, unzip the attached dark-history-shorts zip into
+   C:\Users\<my name>\.claude\skills\ so that ...\skills\dark-history-shorts\SKILL.md exists). Read SKILL.md, then
+   references/HANDOFF.md, references/STYLE.md and all of references/FEEDBACK_LOG.md before anything else. Tell me in a
+   few lines what you understood: the house look, the clean rig, and what's next. Then wait for my voiceover for the
+   Coca-Cola video.
+
+OPTIONAL (claude.ai web)
+   Settings > Capabilities > Skills > Upload skill > choose the zip.
+   That gives the web chat the same rules (good for scripts, titles and descriptions). Making the video still needs the
+   desktop Code tab on Windows.
+
+TIPS
+- Say "no loop" when a video should end on a reveal; otherwise it loops back to the first frame.
+- Ask "give me title and description" after a video for the YouTube text.
+- Each video takes a while to build, render and check. Every frame is rendered twice and compared, so nothing glitches.
