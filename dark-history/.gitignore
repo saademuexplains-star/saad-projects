@@ -7,3 +7,7 @@ _render/*.avi
 *.mp3
 *.mp4
 *.avi
+_sfx18/urls*.txt
+_sfx18/mp3/
+_sfx18/wav/
+_sfx18/mix*/

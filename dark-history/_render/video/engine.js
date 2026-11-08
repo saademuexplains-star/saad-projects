@@ -360,6 +360,7 @@
   };
   // surface: the camera dips through a water surface. A bright wavy waterline crosses the frame;
   // dir 1 = going under (line rises, B = the underwater view below it), dir -1 = coming up (line sinks, B = the air view above it)
+  // (tint / line / core / bub: the water's colours - defaults are the old cold water; a warm drink passes its own)
   TR.surface = (T, u, A, B) => {
     const d = T.dir || 1, e = EZ.io(u), y = d > 0 ? lerp(H + 160, -160, e) : lerp(-160, H + 160, e), id = uid('sf');
     let wv = `M-40,${f(y)}`;
@@ -369,11 +370,11 @@
     const ku = d > 0 ? lerp(1.12, 1, e) : lerp(1, 1.1, e), ko = d > 0 ? lerp(1, 1.08, e) : lerp(1.08, 1, e);
     let g = `<defs><clipPath id="${id}u"><path d="${below}"/></clipPath><clipPath id="${id}o"><path d="${above}"/></clipPath></defs>`;
     g += `<g clip-path="url(#${id}o)"><g transform="${zoomAt(540, 960, ko)}">${over()}</g></g>`;
-    g += `<g clip-path="url(#${id}u)"><g transform="${zoomAt(540, 960, ku)}">${under()}</g><rect width="${W}" height="${H}" fill="#9ad8e8" opacity="${f(0.18 * Math.sin(Math.PI * u))}" style="mix-blend-mode:screen"/></g>`;
-    g += `<path d="${wv}" stroke="#d8f6ff" stroke-width="46" fill="none" opacity="0.22"/><path d="${wv}" stroke="#ffffff" stroke-width="7" fill="none" opacity="0.9"/>`;
+    g += `<g clip-path="url(#${id}u)"><g transform="${zoomAt(540, 960, ku)}">${under()}</g><rect width="${W}" height="${H}" fill="${T.tint || '#9ad8e8'}" opacity="${f(0.18 * Math.sin(Math.PI * u))}" style="mix-blend-mode:screen"/></g>`;
+    g += `<path d="${wv}" stroke="${T.line || '#d8f6ff'}" stroke-width="46" fill="none" opacity="0.22"/><path d="${wv}" stroke="${T.core || '#ffffff'}" stroke-width="7" fill="none" opacity="0.9"/>`;
     // bubbles riding the line
     const r = rng(T.seed || 21);
-    for (let i = 0; i < 26; i++) { const bx = r() * W, by = y + 20 + r() * 220 * (d > 0 ? 1 : -0.6), rr = 4 + r() * 12; g += `<circle cx="${f(bx)}" cy="${f(by - u * 120 * d)}" r="${f(rr)}" fill="none" stroke="#e8fbff" stroke-width="2" opacity="${f(0.7 * Math.sin(Math.PI * u))}"/>`; }
+    for (let i = 0; i < 26; i++) { const bx = r() * W, by = y + 20 + r() * 220 * (d > 0 ? 1 : -0.6), rr = 4 + r() * 12; g += `<circle cx="${f(bx)}" cy="${f(by - u * 120 * d)}" r="${f(rr)}" fill="none" stroke="${T.bub || '#e8fbff'}" stroke-width="2" opacity="${f(0.7 * Math.sin(Math.PI * u))}"/>`; }
     return g;
   };
   // ---- transitions for "The Rabies Boy" ----

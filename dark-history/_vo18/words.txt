@@ -1,0 +1,187 @@
+# total 47.320s; aligned by PocketSphinx (forced); chunks:
+#   0.00-  2.91 a sword slices open your chest and the doctors give you the
+#   2.99-  4.16 only painkiller they have
+#   4.46-  4.86 morphine
+#   4.95- 11.17 and it works so well that you can never stop taking it twenty years after the american civil war you're a pharmacist in atlanta
+#  11.35- 18.73 a respected man with a secret desperate to find a substitute so you start mixing medicines in your back room and you find two strange ingredients
+#  18.83- 21.81 leaves of the coca plant the same plant cocaine comes from
+#  21.89- 23.40 and a nut packed with caffeine
+#  23.48- 26.16 you blend them with wine and sell it as a cure for headaches
+#  26.26- 26.75 nerves
+#  26.85- 40.97 and even morphine addiction when the city bans alcohol you swap the wine for sweet brown syrup mix it with fizzy water and sell it as a brain tonic five cents a glass it never cures you but when you die two years later still hooked on morphine after selling your share of the business
+#  41.06- 47.31 you never find out what your drink becomes today it's sold in almost every country on earth and it's called coca cola
+a 0.000 0.060
+sword 0.060 0.460
+slices 0.460 1.030
+open 1.030 1.250
+your 1.250 1.350
+chest 1.350 1.920 ,
+and 1.920 2.040
+the 2.040 2.100
+doctors 2.100 2.520
+give 2.520 2.670
+you 2.670 2.770
+the 2.770 2.910
+only 2.990 3.300
+painkiller 3.300 3.830
+they 3.830 3.940
+have 3.940 4.160 ,
+morphine 4.460 4.860 ,
+and 4.950 5.040
+it 5.040 5.110
+works 5.110 5.470
+so 5.470 5.630
+well 5.630 6.010
+that 6.010 6.170
+you 6.170 6.280
+can 6.280 6.530
+never 6.530 6.820
+stop 6.820 7.090
+taking 7.090 7.460
+it 7.460 7.600 .
+twenty 7.660 7.940
+years 7.940 8.270
+after 8.270 8.480
+the 8.480 8.600
+american 8.600 9.020
+civil 9.020 9.350
+war 9.350 9.770 ,
+you're 9.830 9.970
+a 9.970 10.000
+pharmacist 10.000 10.660
+in 10.660 10.760
+atlanta 10.760 11.170 ,
+a 11.350 11.390
+respected 11.390 11.970
+man 11.970 12.280
+with 12.280 12.480
+a 12.480 12.510
+secret 12.510 12.990 ,
+desperate 13.050 13.510
+to 13.510 13.610
+find 13.610 13.870
+a 13.870 13.900
+substitute 13.900 14.600 .
+so 14.650 14.780
+you 14.780 14.880
+start 14.880 15.170
+mixing 15.170 15.520
+medicines 15.520 16.010
+in 16.010 16.080
+your 16.080 16.180
+back 16.180 16.500
+room 16.500 16.740 ,
+and 16.790 16.880
+you 16.880 16.940
+find 16.940 17.230
+two 17.230 17.570
+strange 17.570 18.110
+ingredients 18.110 18.730 :
+leaves 18.830 19.170
+of 19.170 19.250
+the 19.250 19.330
+coca 19.330 19.660
+plant 19.660 20.100 ,
+the 20.160 20.220
+same 20.220 20.520
+plant 20.520 20.800
+cocaine 20.800 21.240
+comes 21.240 21.530
+from 21.530 21.810 ,
+and 21.890 22.000
+a 22.000 22.050
+nut 22.050 22.420
+packed 22.420 22.820
+with 22.820 22.930
+caffeine 22.930 23.400 .
+you 23.480 23.570
+blend 23.570 23.850
+them 23.850 23.940
+with 23.940 24.120
+wine 24.120 24.480
+and 24.480 24.630
+sell 24.630 24.920
+it 24.920 24.990
+as 24.990 25.120
+a 25.120 25.150
+cure 25.150 25.440
+for 25.440 25.580
+headaches 25.580 26.160 ,
+nerves 26.260 26.750 ,
+and 26.850 26.970
+even 26.970 27.310
+morphine 27.310 27.770
+addiction 27.770 28.130 .
+when 28.180 28.270
+the 28.270 28.330
+city 28.330 28.630
+bans 28.630 28.930
+alcohol 28.930 29.510 ,
+you 29.590 29.650
+swap 29.650 30.010
+the 30.010 30.100
+wine 30.100 30.400
+for 30.400 30.540
+sweet 30.540 30.940
+brown 30.940 31.230
+syrup 31.230 31.610 ,
+mix 31.610 31.810
+it 31.810 31.880
+with 31.880 32.010
+fizzy 32.010 32.310
+water 32.310 32.710 ,
+and 32.710 32.880
+sell 32.880 33.170
+it 33.170 33.270
+as 33.270 33.400
+a 33.400 33.440
+brain 33.440 33.830
+tonic 33.830 34.290 ,
+five 34.290 34.520
+cents 34.520 34.800
+a 34.800 34.850
+glass 34.850 35.340 .
+it 35.410 35.530
+never 35.530 35.810
+cures 35.810 36.160
+you 36.160 36.280 .
+but 36.280 36.390
+when 36.390 36.530
+you 36.530 36.640
+die 36.640 36.950
+two 36.950 37.220
+years 37.220 37.510
+later 37.510 37.900 ,
+still 37.970 38.330
+hooked 38.330 38.620
+on 38.620 38.730
+morphine 38.730 39.240 ,
+after 39.240 39.510
+selling 39.510 39.890
+your 39.890 40.020
+share 40.020 40.280
+of 40.280 40.360
+the 40.360 40.450
+business 40.450 40.970 ,
+you 41.060 41.140
+never 41.140 41.460
+find 41.460 41.790
+out 41.790 41.940
+what 41.940 42.080
+your 42.080 42.200
+drink 42.200 42.450
+becomes 42.450 43.050 .
+today 43.120 43.630
+it's 43.630 43.790
+sold 43.790 44.100
+in 44.100 44.180
+almost 44.180 44.570
+every 44.570 44.890
+country 44.890 45.320
+on 45.320 45.450
+earth 45.450 45.870 ,
+and 45.920 46.020
+it's 46.020 46.140
+called 46.140 46.540
+coca 46.540 46.890 -
+cola 46.890 47.310 .

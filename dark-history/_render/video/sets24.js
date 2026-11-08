@@ -364,7 +364,7 @@
   S.sconce = (x, y, t) => `<path d="M${x},${y + 30} L${x},${y - 10}" stroke="#b8863a" stroke-width="6"/><path d="M${x - 22},${y - 10} L${x + 22},${y - 10} L${x + 14},${y - 52} L${x - 14},${y - 52}Z" fill="#fff0d0" opacity="0.85" ${ol(1)}/>` + C.bloom(x, y - 32, 70, '#ffd090', 0.6) + C.radial(x, y - 32, 220, '#ffc070', 0.2 * fl(t, x));
   // the marble counter: veined white top, the walnut front with carved panels, a brass rail; on it the nickel the
   // customer put down (a Liberty "V" nickel: five cents) and a tray of clean glasses
-  S.counter = (t) => {
+  S.counter = (t, o = {}) => {
     const { TOP, NEAR } = S.SF, r = rng(211);
     let g = `<defs><filter id="sfMarble" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.03" numOctaves="4" seed="7"/><feColorMatrix values="0 0 0 0 0.55  0 0 0 0 0.52  0 0 0 0 0.48  0 0 0 -2.6 1.5"/></filter></defs>`;
     g += `<path d="M-200,${TOP} L1280,${TOP} L1320,${NEAR} L-240,${NEAR}Z" fill="#ece6da"/><path d="M-200,${TOP} L1280,${TOP} L1320,${NEAR} L-240,${NEAR}Z" fill="#000" filter="url(#sfMarble)" opacity="0.5"/>`;
@@ -375,8 +375,8 @@
     for (let i = 0; i < 5; i++) { const dx = -60 + i * 250; g += `<rect x="${dx}" y="${NEAR + 60}" width="220" height="300" rx="6" fill="#4a2c16" ${ol(1.3)}/><rect x="${dx + 18}" y="${NEAR + 78}" width="184" height="264" rx="4" fill="none" stroke="#7a4a26" stroke-width="3" opacity="0.6"/><ellipse cx="${dx + 110}" cy="${NEAR + 210}" rx="40" ry="60" fill="none" stroke="#6a3e1e" stroke-width="5" opacity="0.7"/>`; }
     g += lg('sfFr', [[0, '#000', 0.1], [1, '#000', 0.65]]) + `<rect x="-240" y="${NEAR + 26}" width="1560" height="500" fill="url(#sfFr)"/>`;
     g += `<rect x="-240" y="${NEAR + 380}" width="1560" height="16" rx="8" fill="#c8963a" ${ol(1.2)}/>`;
-    // the nickel
-    g += `<g transform="translate(700,1468)"><ellipse rx="34" ry="13" fill="#3a3a38" opacity="0.45" transform="translate(4,5)" filter="url(#b2)"/><ellipse rx="34" ry="13" fill="#c8ccce" ${ol(1.2)}/><ellipse rx="27" ry="9.5" fill="none" stroke="#8a8e90" stroke-width="1.5"/>` + `<g transform="scale(1,0.38)">` + TXT(0, 12, 32, '#6a6e72', 'V', { w: 'bold' }) + `</g><ellipse cx="-10" cy="-4" rx="12" ry="3" fill="#fff" opacity="0.7"/></g>`;
+    // the nickel (o.noNickel: a shot that drops its own)
+    if (!o.noNickel) g += `<g transform="translate(700,1468)"><ellipse rx="34" ry="13" fill="#3a3a38" opacity="0.45" transform="translate(4,5)" filter="url(#b2)"/><ellipse rx="34" ry="13" fill="#c8ccce" ${ol(1.2)}/><ellipse rx="27" ry="9.5" fill="none" stroke="#8a8e90" stroke-width="1.5"/>` + `<g transform="scale(1,0.38)">` + TXT(0, 12, 32, '#6a6e72', 'V', { w: 'bold' }) + `</g><ellipse cx="-10" cy="-4" rx="12" ry="3" fill="#fff" opacity="0.7"/></g>`;
     // a tray of clean glasses upside down at the right end
     g += `<ellipse cx="1010" cy="1420" rx="120" ry="26" fill="#b8b4ac" ${ol(1.2)}/>`;
     for (const gx of [950, 1010, 1070, 980, 1040]) { const gy = gx % 20 ? 1414 : 1400; g += `<path d="M${gx - 26},${gy} L${gx - 22},${gy - 90} L${gx + 22},${gy - 90} L${gx + 26},${gy}Z" fill="#eef4f4" fill-opacity="0.22" ${ol(1.1)}/><path d="M${gx - 18},${gy - 8} L${gx - 16},${gy - 82}" stroke="#fff" stroke-width="3" opacity="0.6"/>`; }

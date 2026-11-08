@@ -169,7 +169,7 @@
     } else t = (o.side === 'R' ? -1 : 1) * (o.facing === 'palm' ? 1 : -1);
     // (pose 'legs': index and middle finger out and apart, the others curled - two fingers walking or leaping)
     const pose = o.pose || 'relaxed', fist = pose === 'fist' || pose === 'point' || pose === 'grip' || pose === 'legs', palmV = o.facing === 'palm';
-    const id = uid('hh'), hs = mix(skin, '#c97a62', 0.14);
+    const id = uid('hh'), hs = mix(skin, '#c97a62', G.RIG_CRISP ? 0.05 : 0.14);
     const P = (x, y) => [t * x * L, y * L], Q = p => `${f(p[0])},${f(p[1])}`;
     // a tapered capsule from a (width w0) to b (width w1): its b end rounded, its a end buried in the hand
     const cap = (a, b, w0, w1) => {
@@ -202,10 +202,14 @@
       } else {
         // a curled finger from the back: the first joint comes toward the lens and the rest folds under, a rounded
         // block below the knuckle; the blocks touch (a fist has no gaps between its fingers)
-        const y0 = ky - 0.06, y1 = ky + 0.25, ww = w * 1.1, r = ww * 0.5;
+        // (G.RIG_CRISP: the curled fingers fan a little from the knuckles and differ in length - the middle one longest -
+        // each a rounded shape, not four equal parallel blocks, which read as a mitten)
+        const crisp = !!G.RIG_CRISP, lenK = crisp ? [0.9, 1.0, 0.95, 0.8][i] : 1, fan = crisp ? [-5, -1.5, 2, 6.5][i] * Math.PI / 180 : 0;
+        const y0 = ky - 0.06, y1 = ky + 0.25 * lenK, ww = w * (crisp ? 1.06 : 1.1), r = ww * 0.5;
         const x0 = t * (kx - ww / 2) * L, x1 = t * (kx + ww / 2) * L, X0 = Math.min(x0, x1), X1 = Math.max(x0, x1);
-        fingers += `M${f(X0)},${f(y0 * L)} L${f(X1)},${f(y0 * L)} L${f(X1)},${f(y1 * L - r * L)} C${f(X1)},${f(y1 * L - r * L * 0.45)} ${f(X1 - (X1 - X0) * 0.22)},${f(y1 * L)} ${f((X0 + X1) / 2)},${f(y1 * L)} C${f(X0 + (X1 - X0) * 0.22)},${f(y1 * L)} ${f(X0)},${f(y1 * L - r * L * 0.45)} ${f(X0)},${f(y1 * L - r * L)}Z`;
-        segs.push([kx, ky, w]);
+        const pc = [t * kx * L, y0 * L], ca = Math.cos(t * fan), sa = Math.sin(t * fan), rt = (x, y) => { const dx2 = x - pc[0], dy2 = y - pc[1]; return `${f(pc[0] + dx2 * ca - dy2 * sa)},${f(pc[1] + dx2 * sa + dy2 * ca)}`; };
+        fingers += `M${rt(X0, y0 * L)} L${rt(X1, y0 * L)} L${rt(X1, y1 * L - r * L)} C${rt(X1, y1 * L - r * L * 0.4)} ${rt(X1 - (X1 - X0) * 0.2, y1 * L)} ${rt((X0 + X1) / 2, y1 * L)} C${rt(X0 + (X1 - X0) * 0.2, y1 * L)} ${rt(X0, y1 * L - r * L * 0.4)} ${rt(X0, y1 * L - r * L)}Z`;
+        segs.push([kx, ky, w, lenK, fan]);
       }
     });
     // the held object: behind the fingers (back view), in its own frame at the grip slot
@@ -213,9 +217,9 @@
     const objBack = pose === 'grip' && o.hold ? `<g transform="translate(0,${f(gy)}) scale(${t},1) rotate(${f(o.holdRot || 0)})">${o.hold}</g>` : '';
     const objFront = pose === 'grip' && o.holdFront ? `<g transform="translate(0,${f(gy)}) scale(${t},1) rotate(${f(o.holdRot || 0)})">${o.holdFront}</g>` : '';
     // shaded across the hand: the little-finger edge in shadow, light over the back of the hand, the thumb side turning
-    const grd = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f(-t * 0.21 * L)}" y1="0" x2="${f(t * 0.3 * L)}" y2="0"><stop offset="0" stop-color="${shade(hs, -0.24)}"/><stop offset="0.38" stop-color="${shade(hs, 0.06)}"/><stop offset="0.66" stop-color="${hs}"/><stop offset="1" stop-color="${shade(hs, -0.18)}"/></linearGradient>`;
+    const gk = G.RIG_CRISP ? 0.6 : 1, grd = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f(-t * 0.21 * L)}" y1="0" x2="${f(t * 0.3 * L)}" y2="0"><stop offset="0" stop-color="${shade(hs, -0.24 * gk)}"/><stop offset="0.38" stop-color="${shade(hs, 0.06 * gk)}"/><stop offset="0.66" stop-color="${hs}"/><stop offset="1" stop-color="${shade(hs, -0.18 * gk)}"/></linearGradient>`;
     const body = `<path d="${palm}"/>` + (thumbOver ? '' : `<path d="${thumb}"/>`) + `<path d="${fingers}"/>`;
-    const outl = d => `<g fill="${OUT}" stroke="${OUT}" stroke-width="${f(OW * 1.5)}" ${NS} stroke-linejoin="round" opacity="0.9">${d}</g>`;
+    const outl = d => `<g fill="${OUT}" stroke="${OUT}" stroke-width="${f(OW * (G.RIG_CRISP ? 1.05 : 1.5))}" ${NS} stroke-linejoin="round" opacity="0.9">${d}</g>`;
     const ln = (op, w = 1) => `stroke="${shade(hs, -0.5)}" stroke-width="${w}" ${NS} stroke-linecap="round" fill="none" opacity="${op}"`;
     const across = (c, d, hw, op) => `<path d="M${f(c[0] + d[1] * hw)},${f(c[1] - d[0] * hw)} L${f(c[0] - d[1] * hw)},${f(c[1] + d[0] * hw)}" ${ln(op)}/>`;
     // soft light and shade inside the silhouette
@@ -253,8 +257,9 @@
       // the knuckle block: a crease where it meets the back of the hand, the knuckles' sheen, the lines between
       // the curled fingers and the fold of each one
       det += `<path d="M${Q(P(-0.19, 0.39))} Q${Q(P(0, 0.455))} ${Q(P(0.2, 0.41))}" ${ln(0.42)}/>`;
-      segs.forEach(([kx, ky, w]) => { sh += `<path d="M${Q(P(kx - w * 0.32, ky - 0.005))} Q${Q(P(kx, ky - 0.035))} ${Q(P(kx + w * 0.32, ky - 0.005))}" stroke="${shade(hs, 0.36)}" stroke-width="${f(0.034 * L)}" fill="none" opacity="0.55" filter="url(#b05)"/>`; det += `<path d="M${Q(P(kx - w * 0.38, ky + 0.13))} Q${Q(P(kx, ky + 0.165))} ${Q(P(kx + w * 0.38, ky + 0.13))}" ${ln(0.34)}/>`; });
-      for (let i = 0; i < segs.length - 1; i++) { const xm = (segs[i][0] + segs[i + 1][0]) / 2, y0 = Math.max(segs[i][1], segs[i + 1][1]) - 0.01; det += `<path d="M${Q(P(xm, y0))} L${Q(P(xm, y0 + 0.24))}" ${ln(0.7)}/>`; }
+      segs.forEach(([kx, ky, w, lenK = 1]) => { sh += `<path d="M${Q(P(kx - w * 0.32, ky - 0.005))} Q${Q(P(kx, ky - 0.035))} ${Q(P(kx + w * 0.32, ky - 0.005))}" stroke="${shade(hs, 0.36)}" stroke-width="${f(0.034 * L)}" fill="none" opacity="0.55" filter="url(#b05)"/>`; det += `<path d="M${Q(P(kx - w * 0.36, ky + 0.13 * lenK))} Q${Q(P(kx, ky + 0.16 * lenK))} ${Q(P(kx + w * 0.36, ky + 0.13 * lenK))}" ${ln(G.RIG_CRISP ? 0.26 : 0.34)}/>`; });
+      if (G.RIG_CRISP) for (let i = 0; i < segs.length - 1; i++) { const xm = (segs[i][0] + segs[i + 1][0]) / 2, y0 = Math.max(segs[i][1], segs[i + 1][1]) + 0.01, fa = (segs[i][4] + segs[i + 1][4]) / 2, l2 = 0.17 * Math.min(segs[i][3], segs[i + 1][3]); det += `<path d="M${Q(P(xm, y0))} Q${Q(P(xm + Math.sin(fa) * l2 * 0.5 + 0.004, y0 + l2 * 0.5))} ${Q(P(xm + Math.sin(fa) * l2, y0 + l2))}" ${ln(0.42)}/>`; }
+      else for (let i = 0; i < segs.length - 1; i++) { const xm = (segs[i][0] + segs[i + 1][0]) / 2, y0 = Math.max(segs[i][1], segs[i + 1][1]) - 0.01; det += `<path d="M${Q(P(xm, y0))} L${Q(P(xm, y0 + 0.24))}" ${ln(0.7)}/>`; }
       sh += `<rect x="${f(-0.5 * L)}" y="${f(0.6 * L)}" width="${f(L)}" height="${f(0.2 * L)}" fill="#3a1408" opacity="0.2" filter="url(#b4)"/>`;
     }
     // a fist seen from the palm side: the thumb lies over the curled fingers, outlined on its own
@@ -300,8 +305,10 @@
     const arc = (p, q2) => { const cx = (p[0] - E[0]) * (q2[1] - E[1]) - (p[1] - E[1]) * (q2[0] - E[0]); return `A${f(w1 / 2)},${f(w1 / 2)} 0 0 ${cx > 0 ? 1 : 0} ${Q(q2)}`; };
     // (G.RIG_CRISP: the inside of the bend is a soft rounded fold, not a sharp paper corner)
     const rnd = (P0, P1, P2) => { const rr = w1 * 0.45, a = Math.min(0.45, rr / (Math.hypot(P0[0] - P1[0], P0[1] - P1[1]) || 1)), b = Math.min(0.45, rr / (Math.hypot(P2[0] - P1[0], P2[1] - P1[1]) || 1)); return `L${Q([P1[0] + (P0[0] - P1[0]) * a, P1[1] + (P0[1] - P1[1]) * a])} Q${Q(P1)} ${Q([P1[0] + (P2[0] - P1[0]) * b, P1[1] + (P2[1] - P1[1]) * b])}`; };
-    const down = s => s === sOut ? `L${Q(B(s))} ${arc(B(s), Cf(s))} L${Q(Dd(s))}` : (G.RIG_CRISP ? `${rnd(A(s), X, Dd(s))} L${Q(Dd(s))}` : `L${Q(X)} L${Q(Dd(s))}`);
-    const upTo = (s, end) => s === sOut ? `L${Q(Cf(s))} ${arc(Cf(s), B(s))} L${Q(end)}` : (G.RIG_CRISP ? `${rnd(Dd(s), X, end)} L${Q(end)}` : `L${Q(X)} L${Q(end)}`);
+    // (G.RIG_CRISP: the forearm's outer edge swells a little and tapers into the cuff - two straight edges read as a box)
+    const bul = (p, q, s) => add([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2], nF, s * w1 * 0.07);
+    const down = s => s === sOut ? `L${Q(B(s))} ${arc(B(s), Cf(s))} ` + (G.RIG_CRISP ? `Q${Q(bul(Cf(s), Dd(s), s))} ${Q(Dd(s))}` : `L${Q(Dd(s))}`) : (G.RIG_CRISP ? `${rnd(A(s), X, Dd(s))} L${Q(Dd(s))}` : `L${Q(X)} L${Q(Dd(s))}`);
+    const upTo = (s, end) => s === sOut ? (G.RIG_CRISP ? `Q${Q(bul(Dd(s), Cf(s), s))} ${Q(Cf(s))}` : `L${Q(Cf(s))}`) + ` ${arc(Cf(s), B(s))} L${Q(end)}` : (G.RIG_CRISP ? `${rnd(Dd(s), X, end)} L${Q(end)}` : `L${Q(X)} L${Q(end)}`);
     const kc = w2 * 0.3, k0 = w0 * 0.66;
     const cuff = `C${Q(add(Dd(sLat), dn, kc))} ${Q(add(Dd(sMed), dn, kc))} ${Q(Dd(sMed))}`;
     const shape = `M${Q(A(sLat))} ${down(sLat)} ${cuff} ${upTo(sMed, A(sMed))} C${Q(add(A(sMed), ud, -k0))} ${Q(add(A(sLat), ud, -k0))} ${Q(A(sLat))}Z`;
@@ -321,8 +328,8 @@
     // (G.RIG_CRISP: clean, defined form shadows instead of wide airbrushed bands, which read as smudges and see-through
     // fades on light cloth against a dark ground)
     let shd = G.RIG_CRISP
-      ? `<g filter="url(#b2)">${box}<path d="${latC}" stroke="${shade(sl, -0.38)}" stroke-width="${f(w1 * 0.3)}" fill="none" stroke-linejoin="round" opacity="0.55"/></g>` +
-        `<g filter="url(#b1)">${box}<path d="${medC}" stroke="${shade(sl, -0.24)}" stroke-width="${f(w1 * 0.14)}" fill="none" stroke-linejoin="round" opacity="0.4"/><path d="${hl}" stroke="${shade(sl, 0.2)}" stroke-width="${f(w1 * 0.09)}" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity="0.35"/></g>`
+      ? `<g filter="url(#b4)">${box}<path d="${latC}" stroke="${shade(sl, -0.42)}" stroke-width="${f(w1 * 0.56)}" fill="none" stroke-linejoin="round" opacity="0.5"/></g>` +
+        `<g filter="url(#b2)">${box}<path d="${medC}" stroke="${shade(sl, -0.28)}" stroke-width="${f(w1 * 0.26)}" fill="none" stroke-linejoin="round" opacity="0.4"/><path d="${hl}" stroke="${shade(sl, 0.24)}" stroke-width="${f(w1 * 0.16)}" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity="0.42"/></g>`
       : `<g filter="url(#b8)">${box}<path d="${latC}" stroke="${shade(sl, -0.46)}" stroke-width="${f(w1 * 0.55)}" fill="none" stroke-linejoin="round" opacity="0.6"/></g>` +
         `<g filter="url(#b4)">${box}<path d="${medC}" stroke="${shade(sl, -0.32)}" stroke-width="${f(w1 * 0.3)}" fill="none" stroke-linejoin="round" opacity="0.42"/><path d="${hl}" stroke="${shade(sl, 0.22)}" stroke-width="${f(w1 * 0.16)}" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/></g>`;
     // folds: a crease at the inside of the bend fanning into both halves; soft folds across the upper arm above the
@@ -337,10 +344,11 @@
     }
     for (const k of [0.6, 0.82]) { const c = add(sh, ud, ul * k); fo += `<path d="M${Q(add(c, nU, sLat * w0 * 0.4))} Q${Q(add(c, ud, w0 * 0.1))} ${Q(add(c, nU, sMed * w0 * 0.3))}" stroke="${shade(sl, -0.5)}" stroke-width="${f(sw * 0.035)}" fill="none" opacity="0.42"/>`; }
     for (const k of [0.38, 0.7]) { const c = add(E, dn, fcl * k), w = w1 + (w2 - w1) * k; fo += `<path d="M${Q(add(c, nF, sOut * w * 0.42))} Q${Q(add(c, dn, w * 0.12))} ${Q(add(c, nF, sIn * w * 0.3))}" stroke="${shade(sl, -0.5)}" stroke-width="${f(sw * 0.03)}" fill="none" opacity="0.32"/>`; }
-    if (G.RIG_CRISP) fo = `<g opacity="0.5">${fo}</g>`;
+    if (G.RIG_CRISP) { for (const k of [0.84, 0.92]) { const c = add(E, dn, fcl * k), w = w1 + (w2 - w1) * k; fo += `<path d="M${Q(add(c, nF, sLat * w * 0.46))} Q${Q(add(add(c, dn, -w * 0.08), nF, sLat * w * 0.1))} ${Q(add(add(c, dn, w * 0.04), nF, sMed * w * 0.2))}" stroke="${shade(sl, -0.45)}" stroke-width="${f(sw * 0.026)}" fill="none" stroke-linecap="round" opacity="0.5"/>`; } fo = `<g opacity="0.72">${fo}</g>`; }
     // the fitted cuff band: a shade darker, its seam a thin line, a light edge where it turns
     const cb = Math.min(sw * 0.14, fcl * 0.25), C0 = add(Wc, dn, -cb), Cx = add(Wc, dn, w2);
-    let band = `<path d="M${Q(add(C0, nF, w2 * 0.8))} L${Q(add(Cx, nF, w2 * 0.8))} L${Q(add(Cx, nF, -w2 * 0.8))} L${Q(add(C0, nF, -w2 * 0.8))}Z" fill="${shade(sl, -0.14)}" opacity="0.85"/>`;
+    let band = `<path d="M${Q(add(C0, nF, w2 * 0.8))} L${Q(add(Cx, nF, w2 * 0.8))} L${Q(add(Cx, nF, -w2 * 0.8))} L${Q(add(C0, nF, -w2 * 0.8))}Z" fill="${shade(sl, G.RIG_CRISP ? -0.06 : -0.14)}" opacity="${G.RIG_CRISP ? 0.7 : 0.85}"/>`;
+    if (G.RIG_CRISP) { const bc = add(add(C0, dn, cb * 0.55), nF, sLat * w2 * 0.3); band += `<circle cx="${f(bc[0])}" cy="${f(bc[1])}" r="${f(Math.max(1.2, w2 * 0.055))}" fill="${shade(sl, 0.28)}" stroke="${shade(sl, -0.5)}" stroke-width="0.8"/>`; }
     band += `<path d="M${Q(add(C0, nF, w2 * 0.6))} L${Q(add(C0, nF, -w2 * 0.6))}" stroke="${shade(sl, -0.55)}" stroke-width="1.2" ${NS} opacity="0.55"/>`;
     const id = uid('sv');
     let body = `<defs><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><g filter="url(#clothN)"><path d="${shape}" fill="${sl}"/><g clip-path="url(#${id}c)">${weaveFill(weave, bx0, by0, bx1 - bx0, by1 - by0)}${shd}<g filter="url(#b1)">${box}${fo}</g>${band}<g filter="url(#b1)">${box}<path d="M${Q(add(add(C0, dn, cb * 0.35), nF, w2 * 0.5))} L${Q(add(add(C0, dn, cb * 0.35), nF, -w2 * 0.5))}" stroke="${shade(sl, 0.32)}" stroke-width="${f(sw * 0.03)}" opacity="0.45"/></g></g></g><path d="${outline}" fill="none" ${ol()}/>`;
@@ -392,7 +400,10 @@
     const nF = [-dn[1], dn[0]]; let nH = [-hn[1], hn[0]]; if (nF[0] * nH[0] + nF[1] * nH[1] < 0) nH = [-nH[0], -nH[1]];
     const a0 = add(Wc, dn, -wIn), wa = cw * 0.46, wb = HL * 0.152, b0 = add(W, hn, -0.045 * HL), b1 = add(W, hn, 0.12 * HL);
     const k = 0.5 * Math.hypot(b0[0] - Wc[0], b0[1] - Wc[1]) + 0.5;
-    const S = s => { const p1 = add(Wc, nF, s * wa), q0 = add(b0, nH, s * wb); return { p0: add(a0, nF, s * wa), p1, q0, q1: add(b1, nH, s * wb * 0.98), c1: add(p1, dn, k), c2: add(q0, hn, -k) }; };
+    // (the side on the inside of the bend gets short handles: with long ones it looped over itself into a point when the
+    // hand turned sharply off the forearm - a hand gripping sideways on an arm that hangs down)
+    const bendIn = s => (nF[0] * s * hn[0] + nF[1] * s * hn[1]) > 0, dd = Math.max(-1, Math.min(1, dn[0] * hn[0] + dn[1] * hn[1])), sharp = Math.max(0, Math.min(1, (0.8 - dd) / 0.8));
+    const S = s => { const p1 = add(Wc, nF, s * wa), q0 = add(b0, nH, s * wb), kk = k * (bendIn(s) ? Math.max(0.15, 1 - 0.85 * sharp) : Math.max(0.35, 1 - 0.65 * sharp)); return { p0: add(a0, nF, s * wa), p1, q0, q1: add(b1, nH, s * wb * 0.98), c1: add(p1, dn, kk), c2: add(q0, hn, -kk) }; };
     const A = S(1), B = S(-1), id = uid('wb'), g1 = add(W, nH, wb), g2 = add(W, nH, -wb);
     const d = `M${Q(A.p0)} L${Q(A.p1)} C${Q(A.c1)} ${Q(A.c2)} ${Q(A.q0)} L${Q(A.q1)} L${Q(B.q1)} L${Q(B.q0)} C${Q(B.c2)} ${Q(B.c1)} ${Q(B.p1)} L${Q(B.p0)}Z`;
     const grd = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f(g1[0])}" y1="${f(g1[1])}" x2="${f(g2[0])}" y2="${f(g2[1])}"><stop offset="0" stop-color="${shade(col, -0.22)}"/><stop offset="0.4" stop-color="${shade(col, 0.05)}"/><stop offset="0.7" stop-color="${col}"/><stop offset="1" stop-color="${shade(col, -0.2)}"/></linearGradient>`;

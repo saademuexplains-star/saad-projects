@@ -1,0 +1,67 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 2840; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script><script src="../lib/hairkit.js"></script>
+<script src="cast.js"></script><script src="cast21.js"></script>
+<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script><script src="map18.js"></script><script src="sets25.js"></script><script src="sets25b.js"></script>
+<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script><script src="shots_x.js"></script><script src="shots_x2.js"></script><script src="shots_x3.js"></script></head>
+<body><div id="root"></div>
+<script>
+// The Coca-Cola video (2840 frames, 60 fps; VO _vo18). Frames outside transitions are drawn as they are. Inside a transition the two shots are never rasterised together:
+// first the transition is laid out with a measuring rectangle in each shot's place, to read off which part of each shot
+// it will show and at what magnification; then each shot is drawn on its own into an image of just that part (at that
+// sharpness), and the transition is composed from the two images. (Two heavy shots in one frame made Chrome drop whole
+// layers for single frames: a room vanishing for a frame, blocks of the other shot.)  ?noimg turns this off.
+const root = document.getElementById('root'), X = ENG, W = 1080, H = 1920;
+let urls = [];
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+const region = k => {
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, sc = 1, n = 0, found = 0;
+  for (const el of root.querySelectorAll('.probe' + k)) {
+    found++;
+    const m = el.getScreenCTM(); if (!m) continue;
+    if (Math.abs(m.a * m.d - m.b * m.c) < 1e-6) continue;
+    const inv = m.inverse(); n++;
+    for (const [px, py] of [[0, 0], [W, 0], [0, H], [W, H]]) { const p = new DOMPoint(px, py).matrixTransform(inv); x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); }
+    sc = Math.max(sc, Math.hypot(m.a, m.b), Math.hypot(m.c, m.d));
+  }
+  if (!found) return null;
+  if (!n) return { x0: -300, y0: -300, x1: W + 300, y1: H + 300, sc: 1 };
+  // a margin for blurs at the edges; beyond what a shot can show while it is still visible, nothing is needed
+  return { x0: Math.max(-560, x0 - 24), y0: Math.max(-760, y0 - 24), x1: Math.min(W + 560, x1 + 24), y1: Math.min(H + 760, y1 + 24), sc: Math.min(2.2, sc) };
+};
+const rasterShot = async (id, tt, R, vexp) => {
+  const x0 = Math.floor(R.x0), y0 = Math.floor(R.y0), w = Math.ceil(R.x1) - x0, h = Math.ceil(R.y1) - y0;
+  const pw = Math.max(1, Math.round(w * R.sc)), ph = Math.max(1, Math.round(h * R.sc));
+  X.VEXP = vexp; let body; try { body = X.renderShot(id, tt); } finally { X.VEXP = 1; }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${pw}" height="${ph}" viewBox="${x0} ${y0} ${w} ${h}" preserveAspectRatio="none"><defs>${X.defs()}</defs><rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="#000"/>${body}</svg>`;
+  const su = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  const img = new Image(); img.src = su; await img.decode();
+  const cv = document.createElement('canvas'); cv.width = pw; cv.height = ph;
+  cv.getContext('2d').drawImage(img, 0, 0, pw, ph);
+  URL.revokeObjectURL(su);
+  const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+  const url = URL.createObjectURL(blob); urls.push(url);
+  const im2 = new Image(); im2.src = url; await im2.decode();
+  return { url, x: x0, y: y0, w, h };
+};
+window.renderFrame = async n => {
+  for (const u of urls) URL.revokeObjectURL(u); urls = [];
+  const t = n / X.FPS, tr = X.transAt(t);
+  X.SHOTIMG = null;
+  if (tr && !G_NOIMG) {
+    X.SHOTIMG = 'probe';
+    root.innerHTML = X.svgFrame(n);
+    const ra = region('a'), rb = region('b'), S = {}, vexp = X.vexpFor(tr.T);
+    if (ra) S.a = await rasterShot(tr.T.a, t, ra, vexp);
+    if (rb) S.b = await rasterShot(tr.T.b, t + (tr.T.bOff || 0), rb, vexp);
+    X.SHOTIMG = S;
+  }
+  try { root.innerHTML = X.svgFrame(n); } finally { X.SHOTIMG = null; }
+  for (let i = 0; i < 4; i++) await nextFrame();
+  await new Promise(r => setTimeout(r, 120));
+  return true;
+};
+const G_NOIMG = new URLSearchParams(location.search).has('noimg');
+window.READY = true;
+</script></body></html>

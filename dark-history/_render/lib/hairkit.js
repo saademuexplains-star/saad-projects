@@ -107,8 +107,10 @@
   };
 
   // ======================================================= men: a side parting, swept across the crown, sideburns
+  // o.crown (default 1): below 1 lowers the crown's volume (everything above the temples is drawn closer to them), for a
+  // long face whose full cap reads as a tall dome
   HK.sidePart = (o = {}) => {
-    const m = mapper(o.kind || 'man', o.fx), col = o.col || '#5e4026', id = o.id || 'hks', lt = o.light || 1, pt = o.part ?? 28;
+    const m0 = mapper(o.kind || 'man', o.fx), cr = o.crown ?? 1, m = cr === 1 ? m0 : p => m0([p[0], p[1] < -40 ? -40 + (p[1] + 40) * cr : p[1]]), col = o.col || '#5e4026', id = o.id || 'hks', lt = o.light || 1, pt = o.part ?? 28;
     // the cap, its sideburns ending in a rounded taper (never a straight cut)
     const outerD = [['M', [-70, 30]], ['C', [-74, 34], [-80, 30], [-80, 20]], ['C', [-84, -6], [-88, -24], [-90, -46]], ['C', [-95, -90], [-88, -122], [-62, -138]], ['C', [-32, -156], [30, -158], [60, -140]], ['C', [84, -126], [96, -96], [90, -46]], ['C', [88, -24], [84, -6], [80, 20]], ['C', [80, 30], [74, 34], [70, 30]]];
     const hlD = [['M', [70, 30]], ['C', [68, 26], [67, 10], [67, -4]], ['C', [67, -30], [67, -40], [66, -52]], ['C', [58, -74], [42, -84], [24, -86]], ['C', [6, -88], [-20, -96], [-44, -88]], ['C', [-58, -82], [-66, -62], [-66, -34]], ['C', [-67, -12], [-67, 10], [-68, 26]], ['C', [-68, 28], [-69, 30], [-70, 30]]];
