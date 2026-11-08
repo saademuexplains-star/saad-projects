@@ -104,7 +104,7 @@
       [24.9, { expr: 'grim', look: [0.85, 0.3], lid: 0.32, mouth: 'closed', brows: [-4, 3], sweat: 0.1, bags: 0.6, age: true }],
       [27.6, { expr: 'tired', look: [-0.55, 0.62], lid: 0.62, mouth: 'tight', brows: [-15, 8], sweat: 0.2, bags: 0.7, age: true }]], 0.5);
     const P = up(Q.pembOld(Object.assign(o, { noLegs: true, face: F,
-      armL: gripAt(o, Q.HAND.pembOld, top, fingersFor('L', 'back', rodDir), { facing: 'back', detachHand: true, elbow: 'in' }),
+      armL: gripAt(o, Q.HAND.pembOld, top, fingersFor('L', 'back', rodDir), { facing: 'back', detachHand: true }),
       armR: { hand: R.toLocal(o, [330, 1352]), dir: [0.45, 0.9], pose: 'relaxed', facing: 'back' } })), o);
     const rodTop = `<path d="M${f(top[0] - rodDir[0] * 30)},${f(top[1] - rodDir[1] * 30)} L${f(mouth[0] + rodDir[0] * 4)},${f(mouth[1] + rodDir[1] * 4)}" stroke="#e8f0ec" stroke-width="9" stroke-linecap="round" opacity="0.75"/><path d="M${f(top[0] - rodDir[0] * 30 - 2)},${f(top[1] - rodDir[1] * 30)} L${f(mouth[0] - 2)},${f(mouth[1])}" stroke="#fff" stroke-width="2.5" opacity="0.8"/>`;
     const body = clipTop('wnTop', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + rodTop + P.handL, [top[0] - 90, top[1] - 90, top[0] + 90, top[1] + 90]));
