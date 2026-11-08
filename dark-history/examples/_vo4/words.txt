@@ -1,0 +1,213 @@
+﻿# total 49.01s; chunks:
+#   0.00-  2.50 [1] The water in it a market
+#   2.50-  5.21 [1] Lilly argue just swallowed a microscopic
+#   5.21-  5.80 [0] 
+#   5.80-  6.75 [1] It holds months
+#   6.75-  7.55 [1] You'll not
+#   7.55- 11.15 [1] All 3 foot long white worm quietly grows inside your torso
+#  11.15- 12.93 [1] We don't order like
+#  12.93- 16.59 [1] Mourning had your ankle feels like it's been class students from red hot iron
+#  16.59- 17.22 [0] 
+#  17.22- 19.01 [1] Abel's it'll massive blister
+#  19.01- 20.90 [1] And when you stop and look old river to stop
+#  20.90- 21.46 [1] The burning
+#  21.46- 22.25 [1] Of what had
+#  22.25- 23.96 [1] Street through your flash
+#  23.96- 25.26 [1] Glad you got
+#  25.26- 27.23 [1] The village dealer slots are hand where
+#  27.23- 29.05 [1] It has not insider leg
+#  29.05- 32.18 [1] It ruled animal that your blood and tool you by summer
+#  32.18- 32.42 [0] 
+#  32.42- 33.11 [1] Instead
+#  33.11- 34.94 [1] The healer ties that of the worm to a
+#  34.94- 35.80 [1] Tiny wouldn't
+#  35.80- 36.14 [0] 
+#  36.14- 37.00 [1] Interns are just
+#  37.00- 37.51 [1] One in
+#  37.51- 37.77 [0] 
+#  37.77- 38.43 [1] Gotta sit
+#  38.43- 41.20 [1] Terrill and why not want closure of raw flesh
+#  41.20- 43.27 [1] MM pine MM for the next
+#  43.27- 44.10 [1] Tardy Denise
+#  44.10- 45.92 [1] And not one coiled around a stick
+#  45.92- 46.81 [1] A team he exact
+#  46.81- 47.78 [1] Symbol of
+#  47.78- 49.01 [1] Every ambulance today
+you 0.000 0.012 
+drink 0.012 0.024 
+a 0.024 0.036 
+cup 0.036 0.048 
+of 0.048 0.060 
+cool 0.060 0.150 
+water 0.830 1.160 
+in 1.160 1.280 
+an 1.280 1.640 
+ancient 1.640 1.710 
+market 1.710 2.080 ,
+completely 2.080 2.495 
+unaware 2.495 3.145 
+you 3.145 3.395 
+just 3.395 3.595 
+swallowed 3.595 3.995 
+a 3.995 4.025 
+microscopic 4.025 4.815 
+predator 4.815 5.795 .
+for 5.795 5.885 
+twelve 5.885 6.175 
+months 6.175 6.565 ,
+you 6.750 6.800 
+feel 6.800 6.800 
+nothing 6.800 7.070 ,
+while 7.070 7.545 
+a 7.545 7.575 
+three 7.575 7.895 -
+foot 7.895 8.105 -
+long 8.105 8.445 
+white 8.445 8.675 
+worm 8.675 9.015 
+quietly 9.015 9.585 
+grows 9.585 9.935 
+inside 9.935 10.265 
+your 10.265 10.375 
+torso 10.375 10.865 ,
+eating 10.865 11.045 
+its 11.045 11.225 
+way 11.225 11.405 
+down 11.405 11.585 
+toward 11.585 11.995 
+your 11.995 12.325 
+leg 12.325 12.675 .
+one 12.955 13.285 
+morning 13.285 13.485 ,
+your 13.485 13.655 
+ankle 13.655 13.915 
+feels 13.915 14.215 
+like 14.215 14.335 
+it's 14.335 14.455 
+being 14.675 15.015 
+pressed 15.015 15.325 
+against 15.325 15.445 
+red 15.445 15.635 -
+hot 15.635 15.905 
+iron 15.925 16.365 .
+your 16.365 16.648 
+skin 16.648 16.932 
+bubbles 16.932 17.215 
+into 17.215 17.445 
+a 17.445 17.755 
+massive 17.755 18.315 
+blister 18.315 18.805 ,
+and 19.005 19.005 
+when 19.005 19.115 
+you 19.115 19.185 
+step 19.185 19.465 
+into 19.465 19.605 
+a 19.605 19.885 
+cold 19.885 20.115 
+river 20.115 20.375 
+to 20.375 20.465 
+stop 20.465 20.735 
+the 20.900 20.860 
+burning 20.900 21.260 ,
+a 21.260 21.455 
+white 21.455 21.445 
+head 21.455 21.695 
+bursts 21.695 22.085 
+straight 22.250 22.660 
+through 22.660 22.820 
+your 22.820 22.930 
+flesh 22.930 22.930 .
+you 22.930 22.930 
+grab 22.930 22.930 
+it 22.930 22.930 
+to 22.930 22.930 
+yank 22.930 23.450 
+it 23.955 24.195 
+out 24.195 24.425 ,
+but 24.545 24.865 
+the 25.265 25.345 
+village 25.345 25.735 
+healer 25.735 26.005 
+slaps 26.005 26.455 
+your 26.455 26.565 
+hand 26.565 26.825 
+away 26.825 26.825 .
+if 26.825 27.055 
+that 27.225 27.635 
+worm 27.635 27.825 
+snaps 27.825 28.105 
+inside 28.105 28.545 
+your 28.545 28.545 
+leg 28.545 28.815 ,
+its 28.815 29.045 
+internal 29.045 29.295 
+venom 29.295 29.605 
+will 29.605 29.965 
+rot 29.965 30.295 
+your 30.295 30.435 
+blood 30.435 30.785 
+and 30.785 31.005 
+kill 31.005 31.295 
+you 31.295 31.425 
+by 31.425 31.545 
+sunrise 31.545 31.985 .
+instead 32.415 32.935 ,
+the 33.105 33.105 
+healer 33.105 33.425 
+ties 33.425 33.795 
+the 33.795 33.795 
+tip 33.795 33.995 
+of 33.995 34.215 
+the 34.215 34.315 
+worm 34.315 34.595 
+to 34.595 34.745 
+a 34.745 34.775 
+tiny 34.940 35.230 
+wooden 35.230 35.230 
+twig 35.230 35.230 
+and 35.230 35.590 
+turns 36.140 36.500 
+it 36.500 36.580 
+just 36.580 36.810 
+one 36.995 37.155 
+inch 37.155 37.155 .
+you 37.155 37.155 
+have 37.155 37.325 
+to 37.765 37.965 
+sit 37.965 38.215 
+there 38.425 38.745 
+and 38.745 38.895 
+let 38.895 38.895 
+him 38.895 38.895 
+wind 38.895 39.195 
+that 39.195 39.485 
+worm 39.485 39.775 
+out 39.775 40.175 
+of 40.175 40.285 
+your 40.285 40.285 
+raw 40.285 40.495 
+flesh 40.495 41.005 ,
+millimeter 41.195 41.555 
+by 41.555 41.795 
+millimeter 41.795 42.345 ,
+for 42.395 42.515 
+the 42.515 42.605 
+next 42.605 42.915 
+thirty 43.265 43.475 
+days 43.475 43.935 
+and 44.095 44.095 
+that 44.095 44.285 
+worm 44.285 44.645 
+coiled 44.645 45.025 
+around 45.025 45.265 
+a 45.265 45.325 
+stick 45.325 45.735 
+became 45.915 46.015 
+the 46.015 46.145 
+exact 46.145 46.645 
+symbol 46.805 47.125 
+painted 47.125 47.455 
+on 47.455 47.605 
+every 47.780 47.930 
+ambulance 47.930 48.400 
+today 48.400 48.730 .

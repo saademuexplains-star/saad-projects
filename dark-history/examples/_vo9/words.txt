@@ -1,0 +1,215 @@
+﻿# total 54.41s; chunks:
+#   0.00-  2.48 [1] A village Dr. Tyson called wooden chair
+#   2.48-  5.44 [1] Oates are held the armed wide open with a sharp knife
+#   5.44-  6.70 [1] And roads think you'll owe
+#   6.70-  8.34 [1] Haas from six formed a
+#   8.34- 10.50 [1] Lister street insurable Ying Wu
+#  10.65- 11.76 [1] It led your window
+#  11.76- 13.70 [1] Every third person on your street is
+#  13.70- 14.50 [1] Tying from an
+#  14.50- 16.69 [1] Deadly plague of ritter's team in
+#  16.69- 17.69 [1] Little source
+#  17.69- 21.58 [1] Still try to porter armed has the Dr. forces and nasty sit
+#  21.58- 23.96 [1] This will form Cal street inter plot
+#  23.96- 26.76 [1] Drizzly long day Easter shrieking that
+#  26.76- 27.15 [0] 
+#  27.15- 28.60 [1] Tang's with a high fever
+#  28.60- 30.74 [1] And of eerie moment you finally get better
+#  30.74- 31.84 [1] The Dr. Tyson a
+#  31.84- 33.61 [1] Down toss something Cle easy
+#  33.61- 34.93 [1] Description of your
+#  34.93- 37.50 [1] Deadly played straight off a dying man skin
+#  37.50- 38.11 [1] And rotted
+#  38.11- 39.09 [1] And you can't
+#  39.09- 40.28 [1] Just to see if you drop
+#  40.28- 40.65 [0] 
+#  40.65- 44.90 [1] Cal citizen your blood destroys the plague before single Sorkin four
+#  44.90- 50.43 [1] The doctors slices your arm toys and see what the plate 20 more times just to be sure you can't die
+#  50.43- 54.41 [1] And our teams seem test to create a world very first vaccine
+a 0.000 -0.110 
+village 0.000 0.260 
+doctor 0.260 0.690 
+ties 0.690 0.690 
+you 0.690 0.690 
+to 0.690 1.190 
+a 1.190 1.490 
+wooden 1.490 1.750 
+chair 1.750 2.210 ,
+cuts 2.545 2.665 
+your 2.665 2.965 
+healthy 2.965 3.135 
+arm 3.135 3.545 
+wide 3.545 3.815 
+open 3.815 4.155 
+with 4.155 4.275 
+a 4.275 4.325 
+sharp 4.325 4.745 
+knife 4.745 5.145 ,
+and 5.435 5.465 
+rubs 5.465 5.785 
+thick 5.785 6.135 
+yellow 6.165 6.445 
+pus 6.445 6.525 
+from 6.700 6.850 
+a 6.850 7.070 
+sick 7.070 7.470 
+farm 7.470 7.810 
+girl's 7.810 8.060 
+blister 8.340 8.650 
+straight 8.650 9.230 
+into 9.230 9.810 
+your 9.810 10.070 
+bleeding 10.070 10.310 
+wound 10.645 10.785 .
+outside 10.785 10.945 
+your 10.945 11.085 
+window 11.085 11.565 ,
+every 11.755 11.875 
+third 11.875 12.255 
+person 12.255 12.635 
+on 12.635 12.755 
+your 12.755 12.885 
+street 12.885 13.275 
+is 13.305 13.465 
+dying 13.695 13.845 
+from 13.845 13.995 
+a 13.995 14.105 
+deadly 14.495 14.645 
+plague 14.645 15.035 
+that 15.035 15.315 
+covers 15.315 15.445 
+their 15.445 15.925 
+skin 15.925 16.165 
+in 16.165 16.295 
+painful 16.295 16.490 
+sores 16.490 16.685 ,
+yet 16.685 16.805 
+you 16.805 17.385 
+still 17.825 18.285 
+try 18.285 18.495 
+to 18.495 18.585 
+pull 18.585 18.585 
+your 18.585 18.995 
+arm 18.995 19.275 
+back 19.275 19.275 
+as 19.275 19.625 
+the 19.625 19.725 
+doctor 19.725 20.095 
+forces 20.095 20.495 
+a 20.495 20.675 
+nasty 20.675 21.135 
+sickness 21.135 21.415 
+from 21.575 21.665 
+a 21.665 21.845 
+farm 21.845 22.255 
+cow 22.255 22.535 
+straight 22.535 23.065 
+into 23.065 23.415 
+your 23.415 23.415 
+blood 23.415 23.415 .
+for 23.415 23.775 
+three 23.955 24.455 
+long 24.455 24.875 
+days 24.875 25.115 
+you 25.115 25.115 
+shake 25.115 25.115 
+in 25.115 25.115 
+bed 25.115 25.115 
+as 25.115 25.425 
+your 25.425 26.005 
+body 26.005 26.355 
+burns 27.145 27.425 
+with 27.425 27.545 
+a 27.545 27.585 
+high 27.585 27.895 
+fever 27.895 28.415 ,
+and 28.595 28.545 
+the 28.595 28.755 
+very 28.755 28.985 
+moment 28.985 29.275 
+you 29.275 29.365 
+finally 29.365 29.915 
+get 29.915 30.095 
+better 30.095 30.465 ,
+the 30.735 30.715 
+doctor 30.735 31.055 
+ties 31.055 31.055 
+you 31.055 31.585 
+back 31.585 31.635 
+down 31.835 32.025 
+and 32.025 32.215 
+does 32.215 32.455 
+something 32.455 32.785 
+crazy 32.785 33.165 ,
+he 33.165 33.435 
+scrapes 33.605 34.135 
+the 34.135 34.285 
+real 34.345 34.635 ,
+deadly 34.930 35.210 
+plague 35.210 35.570 
+straight 35.570 36.020 
+off 36.020 36.200 
+a 36.200 36.310 
+dying 36.310 36.620 
+man's 36.620 36.850 
+skin 36.850 37.300 
+and 37.500 37.510 
+rubs 37.510 37.510 
+it 37.510 37.510 
+deep 37.510 38.000 
+into 38.105 38.145 
+your 38.145 38.355 
+cut 38.355 38.625 
+just 39.085 39.275 
+to 39.275 39.375 
+see 39.375 39.645 
+if 39.645 39.765 
+you 39.765 39.855 
+drop 39.855 40.165 
+dead 40.165 40.325 .
+the 40.325 40.485 
+cow 40.485 40.645 
+sickness 40.645 40.785 
+in 40.785 41.245 
+your 41.245 41.385 
+blood 41.385 41.695 
+destroys 41.695 42.365 
+the 42.365 42.445 
+plague 42.445 42.875 
+before 42.875 43.235 
+a 43.235 43.235 
+single 43.235 43.705 
+sore 43.705 44.235 
+can 44.235 44.235 
+form 44.235 44.575 ,
+the 44.895 44.895 
+doctor 44.895 45.305 
+slices 45.305 45.725 
+your 45.725 45.925 
+arm 45.925 46.165 
+and 46.325 46.695 
+poisons 46.695 46.795 
+you 46.795 46.925 
+with 46.925 47.045 
+the 47.045 47.145 
+plague 47.145 47.485 
+twenty 47.485 47.905 
+more 47.905 48.135 
+times 48.135 48.605 
+just 48.605 48.945 
+to 48.945 49.015 
+be 49.015 49.125 
+sure 49.125 49.485 
+you 49.485 49.595 
+can't 49.595 49.885 
+die 49.885 50.245 ,
+and 50.425 50.535 
+that 50.645 50.895 
+insane 50.895 51.265 
+test 51.265 51.625 
+creates 51.745 52.125 
+the 52.125 52.235 
+world's 52.235 52.565 
+very 52.565 52.995 
+first 52.995 53.515 
+vaccine 53.515 54.165 .

@@ -1,0 +1,32 @@
+﻿<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 2655;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast14.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props7.js"></script><script src="props8.js"></script><script src="props10.js"></script><script src="props12.js"></script><script src="props13.js"></script><script src="props14.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets3.js"></script><script src="sets14.js"></script><script src="sets14b.js"></script><script src="sets16.js"></script><script src="sets16b.js"></script><script src="sets17.js"></script><script src="sets17b.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, S = SETS, PR = PROPS, C = CINE;
+// [set builder, camera, grade, extra chars]
+const T0 = 3.3;
+const views = [
+  [t => S.home(t, {}), [300, 1150, 0.82, 0], 'gNight', t => S.homeTable17(t, {})],
+  [t => S.home(t, {}), [1335, 1150, 0.9, 0], 'gNight', t => S.homeTable17(t, {}) + S.homeQuilt17(t, {}) + S.homeFoot17(t)],
+  [t => S.home(t, {}), [2230, 1250, 0.92, 0], 'gNight', t => S.homeQuilt17(t, {}) + S.homeFoot17(t)],
+  [t => S.home(t, { day: 1, lamp: 0 }), [480, 1150, 0.9, 0], 'gDay', t => S.homeTable17(t, { lamp: 0 })],
+  [t => S.pharmacy(t, {}), [420, 1180, 0.6, 0], 'gDay', t => S.counter17(t, {})],
+  [t => S.pharmacy(t, { night: 1 }), [500, 1180, 0.6, 0], 'gNight', t => S.counter17(t, { cartons: 1 })],
+  [t => S.globeRoom(t, { red: [1, 1, 0.6, 0.3, 0, 0, 0] }), [560, 1200, 0.8, 0], 'gHall', t => PR.globe(S.GS.GLOBE[0], S.GS.GLOBE[1], S.GS.GLOBE[2], t, { lon: -30, red: [1, 1, 0.6, 0.3, 0, 0, 0] })],
+  [t => S.docRoom(t, {}), [600, 1200, 0.75, 0], 'gNight', t => S.docTable17(t, {})],
+  [t => S.home(t, {}), [250, 900, 2.2, 0], 'gNight', t => PR.heroinBottle(250, 1000, 0.6, t, { rot: 180, level: 0.7 })],
+];
+window.renderFrame = async n => {
+  const [set, cam, grade, chars] = views[n], t = T0;
+  X.CAM = cam;
+  const body = X.compose(X.stage(set(t), chars(t)), cam) + C.vignette(0.5);
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/><g filter="url(#${grade})">${body}</g>${X.post(t, n)}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await new Promise(r => setTimeout(r, 80));
+  return true;
+};
+window.READY = true;
+</script></body></html>

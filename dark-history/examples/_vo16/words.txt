@@ -1,0 +1,212 @@
+﻿# total 49.64s; chunks:
+#   0.00-  5.62 [1] Some wore a string during a cult of many colors walks and your town cleanest rink to not
+#   5.62-  6.11 [0] 
+#   6.11-  6.34 [0] 
+#   6.34-  9.88 [1] Every child who hears it stops what are doing it starts to follow
+#   9.88- 12.11 [1] Your mother and a small Germantown
+#  12.11- 13.62 [1] Summer when daughter what you
+#  13.62- 15.11 [1] I'm somewhat past
+#  15.11- 15.95 [1] Some I'm
+#  15.95- 18.32 [1] It had when youths green his knee
+#  18.46- 19.50 [1] One of the
+#  19.50- 19.76 [0] 
+#  19.76- 22.62 [1] All RE through that algae and climbing toward the hills
+#  22.62- 24.33 [1] 130 children
+#  24.33- 25.72 [1] Tia sing behind the music
+#  25.72- 27.09 [1] But I knew reach the top
+#  27.09- 28.18 [1] The music is stocked
+#  28.18- 28.93 [1] And got
+#  28.93- 29.74 [1] Nobody's
+#  29.74- 30.19 [0] 
+#  30.19- 30.68 [0] 
+#  30.68- 31.15 [0] 
+#  31.29- 32.82 [1] Only three are a lot behind
+#  32.82- 32.98 [0] 
+#  32.98- 34.54 [1] The ones who link to keep all cut
+#  34.54- 36.43 [1] The ashram never heard the song
+#  36.43- 38.62 [1] And one blind and see where they want
+#  38.62- 38.81 [0] 
+#  38.81- 39.91 [1] Centuries later
+#  39.91- 41.22 [1] The world turns it into a
+#  41.22- 41.40 [0] 
+#  41.40- 42.09 [1] Times story
+#  42.09- 43.60 [1] Children have we'll
+#  43.60- 44.35 [0] 
+#  44.35- 44.98 [1] Was real
+#  44.98- 47.11 [1] And a stranger who took some is still known
+#  47.11- 48.07 [1] Everywhere as
+#  48.07- 49.64 [1] Hyde piper of Hamelin
+on 0.000 0.005 
+a 0.005 0.010 
+summer 0.010 0.430 
+morning 0.430 0.580 ,
+a 0.920 0.980 
+stranger 0.980 1.380 
+in 1.380 1.640 
+a 1.640 1.710 
+coat 1.710 2.010 
+of 2.010 2.120 
+many 2.120 2.440 
+colours 2.440 2.900 
+walks 2.900 3.240 
+into 3.240 3.360 
+your 3.360 3.550 
+town 3.550 3.920 
+playing 3.920 3.920 
+a 3.920 3.920 
+strange 3.920 3.920 
+tune 3.920 3.920 
+on 3.920 4.490 
+a 4.490 4.910 
+pipe 4.910 5.190 ,
+and 5.190 5.420 
+every 6.335 6.465 
+child 6.465 6.815 
+who 6.815 6.905 
+hears 6.905 7.235 
+it 7.235 7.345 
+stops 7.345 7.775 
+what 7.775 7.915 
+they're 7.915 8.025 
+doing 8.025 8.415 
+and 8.415 8.505 
+starts 8.505 8.875 
+to 8.875 8.965 
+follow 8.965 9.495 
+him 9.495 9.875 .
+you're 9.875 9.975 
+a 9.975 9.975 
+mother 9.975 10.385 
+in 10.385 10.515 
+a 10.515 10.545 
+small 10.545 11.045 
+german 11.045 11.735 
+town 11.735 12.105 ,
+and 12.105 12.465 
+from 12.465 12.635 
+your 12.635 13.055 
+window 13.055 13.345 
+you 13.345 13.425 
+watch 13.425 13.488 
+your 13.488 13.552 
+own 13.552 13.615 
+son 13.615 13.575 
+walk 13.615 14.225 
+past 14.225 14.745 ,
+smiling 14.745 14.928 ,
+not 14.928 15.110 
+even 15.110 15.320 
+turning 15.320 15.620 
+his 15.945 16.375 
+head 16.375 16.735 
+when 16.735 16.865 
+you 16.865 17.085 
+scream 17.085 17.425 
+his 17.425 17.605 
+name 17.605 17.605 .
+you 17.605 17.875 
+run 18.455 18.595 
+after 18.595 18.895 
+them 18.895 19.015 ,
+but 19.015 19.760 
+they're 19.760 19.860 
+already 19.860 20.060 
+through 20.060 20.360 
+the 20.360 20.360 
+town 20.360 20.550 
+gate 20.550 20.950 
+and 21.000 21.100 
+climbing 21.100 21.590 
+toward 21.590 21.890 
+the 21.890 21.960 
+hills 21.960 22.420 ,
+a 22.615 22.585 
+hundred 22.615 23.065 
+and 23.065 23.155 
+thirty 23.155 23.645 
+children 23.645 24.145 
+dancing 24.460 24.650 
+behind 24.650 24.970 
+the 24.970 25.040 
+music 25.040 25.520 .
+by 25.520 25.715 
+the 25.715 25.905 
+time 25.905 25.985 
+you 25.985 26.145 
+reach 26.145 26.365 
+the 26.365 26.465 
+top 26.465 26.885 ,
+the 27.085 27.035 
+music 27.085 27.355 
+has 27.355 27.485 
+stopped 27.485 27.975 ,
+and 28.175 28.275 
+they're 28.275 28.275 
+gone 28.275 28.275 .
+no 28.275 28.275 
+bodies 28.275 28.275 .
+no 28.275 28.275 
+footprints 28.275 28.685 .
+nothing 28.925 29.525 .
+only 31.285 31.455 
+three 31.455 31.855 
+are 31.855 31.975 
+left 32.045 32.275 
+behind 32.275 32.655 
+one 32.975 33.295 
+too 33.295 33.415 
+lame 33.415 33.725 
+to 33.725 33.805 
+keep 33.805 34.045 
+up 34.045 34.195 ,
+one 34.195 34.425 
+deaf 34.535 34.815 
+who 34.815 35.235 
+never 35.235 35.485 
+heard 35.485 35.765 
+the 35.765 35.845 
+song 35.845 36.215 ,
+and 36.425 36.365 
+one 36.425 36.615 
+blind 36.615 37.165 
+who 37.165 37.525 
+couldn't 37.525 37.615 
+see 37.615 37.895 
+where 37.895 38.025 
+they 38.025 38.155 
+went 38.155 38.365 .
+centuries 38.805 39.285 
+later 39.285 39.705 ,
+the 39.910 39.890 
+world 39.910 40.270 
+turns 40.270 40.580 
+it 40.580 40.680 
+into 40.680 40.950 
+a 40.950 41.070 
+bedtime 41.395 41.505 
+story 41.505 41.845 .
+but 41.845 41.995 
+the 41.995 42.145 
+children 42.145 42.645 
+were 42.645 42.645 
+real 42.645 42.645 .
+your 42.645 42.995 
+son 42.995 43.365 
+was 44.345 44.435 
+real 44.435 44.805 .
+and 44.975 44.985 
+the 44.985 45.025 
+stranger 45.025 45.505 
+who 45.505 45.635 
+took 45.635 45.865 
+them 45.865 46.105 
+is 46.135 46.275 
+still 46.275 46.685 
+known 46.685 46.895 
+everywhere 47.105 47.535 
+as 47.565 47.685 
+the 47.685 48.065 
+pied 48.065 48.135 
+piper 48.135 48.585 
+of 48.585 48.695 
+hamelin 48.695 49.295 .

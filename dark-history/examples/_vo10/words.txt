@@ -1,0 +1,200 @@
+﻿# total 42.816s; chunks:
+#   0.00-  2.97 [1] Every day for 10 days of needle filled with every piece of
+#   2.97-  4.23 [1] It your stomach
+#   4.23-  6.59 [1] Each door to me from the spinal cord of are rapid that
+#   6.59-  7.64 [1] Height of the deceased
+#   7.64-  9.23 [1] Stronger than the day before
+#   9.23- 10.80 [1] And it had
+#  10.80- 11.07 [0] 
+#  11.07- 11.42 [0] 
+#  11.42- 12.60 [1] Nine years old
+#  12.60- 14.18 [1] To leave before the first shot
+#  14.18- 15.22 [1] I'm mad dog
+#  15.22- 16.02 [1] It
+#  16.02- 16.73 [1] Gene tie
+#  16.73- 16.94 [0] 
+#  16.94- 17.77 [1] And in your world
+#  17.77- 20.75 [1] Every person bitten by a router dog diced the scene where
+#  20.75- 21.77 [1] Green was fever
+#  21.77- 22.78 [1] Filming the mouth
+#  22.78- 24.46 [1] Schooling at the site of water
+#  24.46- 25.27 [1] It has
+#  25.27- 26.92 [1] Ever been given the shots before
+#  26.92- 27.87 [1] On the 10th day
+#  27.87- 28.50 [1] Did you see the
+#  28.50- 29.61 [1] Deadliest one of a law
+#  29.61- 32.73 [1] Reedy sole power for two or animals and we
+#  32.73- 33.24 [1] And then
+#  33.24- 34.08 [1] All you can do
+#  34.08- 34.29 [0] 
+#  34.29- 34.52 [0] 
+#  34.52- 34.71 [0] 
+#  34.71- 36.14 [1] The eastern in two weeks
+#  36.14- 37.30 [1] The fever and never come
+#  37.30- 37.52 [0] 
+#  37.52- 39.11 [1] It looks spending your life
+#  39.11- 40.77 [1] Torrid date of the first man
+#  40.77- 42.50 [1] Ever to see the human from league
+#  42.50- 42.82 [0] 
+every 0.000 0.210 
+day 0.210 0.420 
+for 0.420 0.580 
+ten 0.580 0.950 
+days 0.950 1.340 
+a 1.340 1.440 
+needle 1.440 1.740 
+filled 1.740 2.010 
+with 2.010 2.150 
+rabies 2.170 2.460 
+is 2.460 2.690 
+pushed 2.690 2.800 
+into 2.965 3.205 
+your 3.205 3.405 
+stomach 3.405 3.875 ,
+each 4.225 4.405 
+dose 4.645 4.755 
+made 4.755 4.885 
+from 4.885 5.035 
+the 5.035 5.115 
+spinal 5.115 5.535 
+cord 5.535 5.755 
+of 5.755 5.835 
+a 5.835 5.975 
+rabbit 5.975 6.315 
+that 6.315 6.425 
+died 6.590 6.570 
+of 6.590 6.680 
+the 6.680 6.760 
+disease 6.760 7.260 ,
+stronger 7.635 8.135 
+than 8.135 8.265 
+the 8.265 8.345 
+day 8.345 8.485 
+before 8.485 9.015 ,
+and 9.225 9.605 
+the 9.605 9.605 
+man 9.605 9.605 
+ordering 9.605 9.605 
+it 9.605 10.525 
+isn't 10.525 10.525 
+even 10.525 10.525 
+a 10.525 10.525 
+doctor 10.525 10.525 .
+you're 10.525 10.625 
+nine 11.505 11.765 
+years 11.765 12.035 
+old 12.035 12.355 ,
+and 12.355 12.595 
+two 12.595 12.795 
+days 12.795 13.025 
+before 13.025 13.295 
+the 13.295 13.385 
+first 13.385 13.705 
+shot 13.705 14.005 
+a 14.180 14.250 
+mad 14.250 14.540 
+dog 14.540 14.780 
+ripped 14.780 15.000 
+into 15.000 15.220 
+you 15.220 16.020 
+fourteen 16.020 16.220 
+times 16.220 16.530 ,
+and 16.935 16.945 
+in 16.945 17.035 
+your 17.035 17.255 
+world 17.255 17.575 
+every 17.765 17.795 
+person 17.795 18.185 
+bitten 18.185 18.415 
+by 18.415 18.555 
+a 18.555 18.635 
+rabid 18.635 18.995 
+dog 18.995 19.335 
+dies 19.335 19.625 
+the 19.625 19.705 
+same 19.705 20.075 
+way 20.075 20.365 ,
+burning 20.745 20.915 
+with 20.915 21.065 
+fever 21.065 21.525 ,
+foaming 21.525 21.765 
+at 21.765 22.075 
+the 22.145 22.245 
+mouth 22.245 22.585 ,
+screaming 22.780 23.350 
+at 23.350 23.420 
+the 23.420 23.510 
+sight 23.510 23.740 
+of 23.740 23.880 
+water 23.880 24.300 .
+no 24.300 24.455 
+human 24.455 24.885 
+has 24.885 25.045 
+ever 25.265 25.355 
+been 25.355 25.485 
+given 25.485 25.715 
+these 25.715 25.815 
+shots 25.815 26.175 
+before 26.175 26.645 ,
+and 26.645 26.915 
+on 26.915 26.985 
+the 26.985 27.065 
+tenth 27.065 27.375 
+day 27.375 27.625 
+he 27.865 27.825 
+gives 27.865 27.915 
+you 27.915 28.065 
+the 28.065 28.265 
+deadliest 28.495 28.865 
+one 28.865 29.015 
+of 29.015 29.105 
+all 29.105 29.175 ,
+rabies 29.175 29.405 
+so 29.605 29.865 
+powerful 29.865 30.235 
+it 30.235 30.625 
+would 30.625 31.025 
+kill 31.025 31.245 
+an 31.245 31.375 
+animal 31.515 31.975 
+within 31.975 31.975 
+a 31.975 32.095 
+week 32.095 32.395 ,
+and 32.725 32.715 
+then 32.725 32.975 
+all 33.235 33.215 
+you 33.235 33.325 
+can 33.325 33.475 
+do 33.475 33.805 
+is 33.805 34.255 
+wait 34.255 34.705 .
+the 34.705 34.805 
+days 34.805 35.255 
+turn 35.255 35.325 
+into 35.325 35.455 
+weeks 35.455 35.945 ,
+the 36.140 36.100 
+fever 36.140 36.470 
+never 36.570 36.850 
+comes 36.850 37.130 ,
+and 37.130 37.323 
+you 37.323 37.515 
+grow 37.515 37.865 
+up 37.865 38.105 
+spending 38.105 38.475 
+your 38.475 38.615 
+life 38.615 38.905 
+guarding 38.905 39.105 
+the 39.105 39.405 
+gate 39.405 39.675 
+of 39.675 39.775 
+the 39.775 39.865 
+first 39.865 40.305 
+man 40.305 40.555 
+ever 40.765 40.895 
+to 40.895 41.025 
+save 41.025 41.205 
+a 41.205 41.275 
+human 41.275 41.695 
+from 41.695 41.915 
+rabies 41.915 42.135 .

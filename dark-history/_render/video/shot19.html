@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 3371; window.SETS = window.SETS || {}; window.DBG = {}; for (const k of (new URLSearchParams(location.search).get('dbg') || '').split(',')) if (k) window.DBG[k] = 1;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast19.js"></script>
+<script src="props.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props17.js"></script>
+<script src="street3d.js"></script><script src="sets22.js"></script><script src="sets23.js"></script><script src="sets22b.js"></script><script src="sets23b.js"></script><script src="sets23c.js"></script>
+<script src="engine.js"></script><script src="shots_u.js"></script><script src="shots_v.js"></script><script src="shots_v2.js"></script><script src="shots_v3.js"></script></head>
+<body><div id="root"></div>
+<script>
+// one shot on its own, no transition: frame n is shot ?shot=ID at time n/60 + ?off (seconds)
+const Q2 = new URLSearchParams(location.search), SHOT = Q2.get('shot') || 'CAP', OFF = +(Q2.get('off') || 0);
+window.renderFrame = async n => {
+  const X = ENG, t = n / X.FPS + OFF;
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/>${X.renderShot(SHOT, t)}${X.post(t, n)}</svg>`;
+  for (let i = 0; i < 4; i++) await new Promise(r => requestAnimationFrame(r));
+  await new Promise(r => setTimeout(r, 200));
+  return true;
+};
+window.READY = true;
+</script></body></html>

@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast3.js"></script><script src="cast4.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets3.js"></script><script src="sets4.js"></script><script src="sets5.js"></script><script src="sets6.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, S = SETS;
+const BF = s => [...s.back, ...s.front];
+const Q = QCAST, PR = PROPS, R = RIG, C = CINE;
+const Lx = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const ppl = () => { const list = [Q.you({ x: 130, y: 1750, s: 0.5 }), Q.seller({ x: 330, y: 1750, s: 0.5 }), Q.healer({ x: 520, y: 1750, s: 0.5 }), Q.basketWoman({ x: 700, y: 1750, s: 0.5 }), Q.merchant({ x: 880, y: 1750, s: 0.5 }), Q.kid({ x: 1000, y: 1750, s: 0.6 })]; return list.map(p => { const r = C.lit(p, Lx); return r.cast + r.body; }).join(''); };
+const sets = [
+  t => [[...S.market(t), { p: 1, svg: ppl() }, { p: 1.3, svg: S.hangingCloth(t, -200, -200) }], [540, 1100, 0.55, 0]],
+  t => [[...S.micro(t), { p: 1, svg: PR.copepod(540, 900, 1.6, 20, t, { larva: true }) + PR.copepod(250, 1400, 0.9, -30, t) + PR.larva(800, 500, 1.2, t) }], [540, 960, 1, 0]],
+  t => [S.courtyard(t, { day: 1, sunA: 0.4, season: 0.4 }), [540, 1100, 0.55, 0]],
+  t => [S.courtyard(t, { day: 0.05, sunA: 0.6, season: 0.9, lamp: true }), [540, 1100, 0.55, 0]],
+  t => [[...S.room(t), { p: 1, svg: `<g transform="translate(540,1500) scale(0.8)">${PR.legClose({ heat: 0.8, blister: 0.6 })}</g>` }], [540, 1100, 0.6, 0]],
+  t => [[...S.river(t, { waterY: 1300 })], [540, 1100, 0.6, 0]],
+  t => [[...S.hut(t, { light: 0.8, tally: 17 }), { p: 1, svg: `<g transform="translate(540,1300) rotate(-80)">${PR.twig({ coil: 0.7, thread: true })}</g>` + PR.worm([[300, 1600], [400, 1500], [480, 1560], [560, 1450]], 18, { head: true }) }], [540, 1100, 0.6, 0]],
+  t => [[...S.city(t), { p: 1, svg: PR.ambulance(540, 1650, 0.8, t, {}) }], [540, 1100, 0.6, 0]],
+];
+window.renderFrame = async n => {
+  const [L, cam] = sets[n](3.3);
+  X.CAM = cam;
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/>${X.compose(L, cam)}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

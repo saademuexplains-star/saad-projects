@@ -1,0 +1,208 @@
+﻿# total 45.71s; chunks:
+#   0.00-  4.51 [1] It lists growth of the enemy warlord and please your mother in advance for your funeral
+#   4.51-  5.74 [1] It has thrown room
+#   5.74-  6.96 [1] The warlord can read
+#   6.96- 10.51 [1] It really acts your throat and tells you to read it out loud
+#  10.51- 11.71 [1] Do brittle axial
+#  11.71- 12.83 [1] Tilt the first line
+#  12.83- 14.20 [1] Your stomach drops
+#  14.20- 15.28 [1] It right
+#  15.28- 16.00 [1] She's treaty
+#  16.00- 19.46 [1] It he does: the warlord of fat bold tower to
+#  19.46- 19.83 [0] 
+#  19.83- 20.95 [1] Pitcher of an crying
+#  20.95- 21.93 [1] Hans sheet
+#  21.93- 22.50 [0] 
+#  22.50- 23.94 [1] Dear reader single were
+#  23.94- 26.95 [1] Does you seen what happens to messengers have ruined his move
+#  26.95- 27.14 [0] 
+#  27.14- 29.32 [1] Came to the floor and have morton's silver
+#  29.32- 30.34 [1] Hoard on the three
+#  30.34- 30.60 [0] 
+#  30.60- 31.12 [1] She looked
+#  31.12- 32.20 [1] Did was ice
+#  32.20- 33.16 [1] Shorter smile
+#  33.16- 36.33 [1] And it home about how handsome and terrifying he is
+#  36.33- 38.01 [1] Warlord actually blushes
+#  38.01- 39.29 [1] George will died of gold
+#  39.29- 40.04 [1] And spears you
+#  40.04- 42.18 [1] And when you reach home thinking you're safe now
+#  42.18- 43.80 [1] The writing even worse letter
+#  43.80- 45.71 [1] Dried you back to the castle and
+your 0.000 0.000 
+king 0.000 0.000 
+hands 0.000 0.000 
+you 0.000 0.290 
+a 0.290 0.540 
+scroll 0.540 0.900 
+for 0.900 0.980 
+the 0.980 1.070 
+enemy 1.070 1.350 
+warlord 1.350 1.890 ,
+and 2.030 2.130 
+pays 2.130 2.420 
+your 2.420 2.520 
+mother 2.520 2.790 
+in 2.790 2.900 
+advance 2.900 3.370 
+for 3.370 3.510 
+your 3.510 3.620 
+funeral 3.620 4.060 .
+when 4.060 4.283 
+you 4.283 4.505 
+reach 4.505 4.805 
+his 4.805 4.965 
+throne 4.965 5.295 
+room 5.295 5.545 ,
+the 5.735 5.735 
+warlord 5.735 6.145 
+can't 6.145 6.465 
+read 6.465 6.675 —
+so 6.675 6.745 
+he 6.745 6.815 
+presses 6.815 6.885 
+a 6.885 6.955 
+bloody 6.955 7.645 
+axe 7.645 7.975 
+to 7.975 8.285 
+your 8.285 8.455 
+throat 8.455 8.795 
+and 8.795 8.925 
+tells 8.925 9.255 
+you 9.255 9.325 
+to 9.325 9.395 
+read 9.395 9.665 
+it 9.665 9.775 
+out 9.775 9.965 
+loud 9.965 10.265 .
+you 10.265 10.345 
+break 10.345 10.425 
+the 10.425 10.505 
+wax 10.505 10.495 
+seal 10.505 10.915 ,
+look 10.915 11.505 
+at 11.705 11.835 
+the 11.835 11.925 
+first 11.925 12.295 
+line 12.295 12.655 ,
+and 12.655 12.825 
+your 12.825 12.755 
+stomach 12.825 13.225 
+drops 13.225 13.835 .
+your 13.835 13.955 
+king 13.955 14.075 
+didn't 14.075 14.195 
+write 14.195 14.855 
+a 14.855 15.065 
+peace 15.280 15.460 
+treaty 15.460 15.830 .
+he 15.830 15.995 
+wrote 15.995 16.555 
+two 16.555 16.725 
+pages 16.725 16.935 
+calling 16.935 17.245 
+the 17.245 17.345 
+warlord 17.345 17.825 
+a 17.825 17.915 
+fat 17.915 18.405 ,
+bald 18.405 18.405 
+coward 18.405 18.405 ,
+and 18.405 18.775 
+drew 18.775 19.235 
+a 19.235 19.295 
+picture 19.825 20.065 
+of 20.065 20.155 
+him 20.155 20.285 
+crying 20.285 20.765 .
+your 20.765 20.945 
+hands 20.945 21.065 
+shake 21.065 21.065 ,
+and 21.065 21.065 
+you 21.065 21.065 
+don't 21.065 21.535 
+dare 22.500 22.710 
+read 22.710 22.930 
+a 22.930 22.930 
+single 22.930 23.420 
+word 23.420 23.710 .
+because 23.935 23.995 
+you've 23.995 24.135 
+seen 24.135 24.535 
+what 24.535 24.665 
+happens 24.665 25.015 
+to 25.015 25.115 
+messengers 25.115 25.665 
+who 25.665 25.855 
+ruin 25.855 26.155 
+his 26.155 26.315 
+mood 26.315 26.315 .
+they're 26.315 26.625 
+pinned 27.135 27.285 
+to 27.285 27.395 
+the 27.395 27.475 
+floor 27.475 27.925 
+and 27.925 28.065 
+have 28.065 28.215 
+molten 28.215 28.785 
+silver 28.785 29.125 
+poured 29.315 29.535 
+down 29.535 29.645 
+their 29.645 29.735 
+throats 29.735 30.085 .
+so 30.085 30.595 
+you 30.595 30.715 
+look 30.715 30.945 
+dead 30.945 31.033 
+into 31.033 31.120 
+his 31.120 31.390 
+eyes 31.390 31.610 ,
+force 31.610 32.020 
+a 32.195 32.505 
+smile 32.505 32.975 ,
+and 33.155 33.235 
+make 33.235 33.235 
+up 33.235 33.235 
+a 33.235 33.555 
+poem 33.555 33.915 
+about 33.915 34.155 
+how 34.155 34.265 
+handsome 34.265 34.835 
+and 34.835 34.995 
+terrifying 34.995 35.655 
+he 35.655 35.835 
+is 35.835 36.155 .
+the 36.155 36.325 
+warlord 36.325 36.735 
+actually 36.735 37.185 
+blushes 37.185 37.825 ,
+throws 37.825 38.005 
+you 38.005 38.225 
+a 38.225 38.345 
+bag 38.345 38.575 
+of 38.575 38.665 
+gold 38.665 39.115 ,
+and 39.285 39.325 
+spares 39.325 39.755 
+you 39.755 39.875 —
+and 40.035 40.035 
+when 40.035 40.155 
+you 40.155 40.245 
+reach 40.245 40.535 
+home 40.535 40.895 
+thinking 40.895 41.225 
+you're 41.225 41.345 
+safe 41.345 41.695 
+now 41.695 41.975 ,
+they 42.175 42.215 
+write 42.215 42.645 
+an 42.645 42.645 
+even 42.645 42.875 
+worse 42.875 43.275 
+letter 43.275 43.625 ,
+drag 43.795 44.005 
+you 44.005 44.135 
+back 44.135 44.375 
+to 44.375 44.495 
+the 44.495 44.575 
+castle 44.575 45.185 
+and 45.205 45.535 

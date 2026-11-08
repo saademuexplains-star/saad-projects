@@ -1,0 +1,193 @@
+﻿# total 44.59s; chunks:
+#   0.00-  3.01 [1] Gene please you'll fortune to reduce future in the store
+#   3.01-  5.19 [1] It whole of golden instruments
+#   5.19-  8.12 [1] And once you got one wrong production costs are head
+#   8.12- 11.16 [1] The last straw deer's head still hangs above the castle gate
+#  11.16- 12.65 [1] Every night is a gamble
+#  12.65- 15.41 [1] But still you foretell that his fevered lee will die within
+#  15.41- 15.65 [0] 
+#  15.65- 16.19 [1] Denise
+#  16.19- 17.67 [1] But suddenly for a
+#  17.67- 18.49 [1] It lives
+#  18.49- 19.30 [1] Dour fraud
+#  19.30- 20.30 [1] And if she dies
+#  20.30- 21.21 [1] Your murder
+#  21.21- 22.17 [1] On the eighth day
+#  22.17- 22.95 [1] She'd us
+#  22.95- 24.40 [1] The king summit midnight
+#  24.40- 25.64 [1] Leading cursor at
+#  25.64- 27.98 [1] And you see his guards by the open window steering
+#  27.98- 30.80 [1] You waiting for the king signal from the daughter at
+#  30.95- 32.74 [1] 10 king smiles and asks
+#  32.74- 33.59 [1] You know everything
+#  33.73- 34.34 [1] So Tom
+#  34.34- 35.35 [1] When will you die
+#  35.35- 36.53 [1] Yuba Allan answer
+#  36.53- 38.81 [1] Exactly three days before your majesty
+#  38.81- 39.78 [1] Deter scale
+#  39.78- 40.95 [1] Believe the guards away
+#  40.95- 42.24 [1] It has life
+#  42.24- 44.07 [1] She makes sure you matter even touch
+#  44.07- 44.38 [0] 
+#  44.38- 44.59 [0] 
+your 0.000 0.000 
+king 0.000 0.040 
+pays 0.040 0.300 
+you 0.300 0.470 
+a 0.470 0.470 
+fortune 0.470 1.020 
+to 1.020 1.140 
+read 1.140 1.140 
+his 1.140 1.450 
+future 1.450 1.850 
+in 1.850 1.930 
+the 1.930 2.010 
+stars 2.010 2.010 ,
+gives 2.010 2.010 
+you 2.010 2.010 
+a 2.010 2.390 
+tower 3.005 3.685 
+full 3.685 4.005 
+of 4.005 4.105 
+golden 4.105 4.415 
+instruments 4.415 4.975 ,
+and 5.185 5.255 
+warns 5.255 5.635 
+you 5.635 5.725 
+that 5.725 5.895 
+one 5.895 6.275 
+wrong 6.275 6.515 
+prediction 6.515 6.975 
+costs 6.975 7.385 
+your 7.385 7.505 
+head 7.505 7.925 .
+the 8.115 8.105 
+last 8.115 8.505 
+astrologer's 8.775 8.975 
+head 8.975 9.215 
+still 9.215 9.565 
+hangs 9.565 9.955 
+above 9.955 10.175 
+the 10.175 10.255 
+castle 10.255 10.635 
+gate 10.635 10.975 .
+every 11.155 11.315 
+night 11.315 11.625 
+is 11.625 11.765 
+a 11.765 11.835 
+gamble 11.835 12.355 ,
+until 12.675 12.875 
+you 12.875 13.035 
+foretell 13.035 13.475 
+that 13.475 13.595 
+his 13.595 13.755 
+favorite 13.755 14.175 
+lady 14.175 14.445 
+will 14.445 14.575 
+die 14.575 14.935 
+within 14.935 15.225 
+eight 15.225 15.650 
+days 15.650 15.980 ,
+and 16.185 16.195 
+suddenly 16.195 16.765 
+you're 16.765 16.985 
+trapped 16.985 17.255 
+if 17.255 17.485 
+she 17.665 17.825 
+lives 17.825 18.265 ,
+you're 18.265 18.490 
+a 18.490 18.580 
+fraud 18.580 19.060 ,
+and 19.295 19.275 
+if 19.295 19.345 
+she 19.345 19.495 
+dies 19.495 20.095 ,
+you're 20.295 20.325 
+a 20.325 20.325 
+murderer 20.325 20.935 .
+on 21.205 21.145 
+the 21.205 21.255 
+eighth 21.255 21.545 
+day 21.545 21.895 ,
+she 22.165 22.375 
+does 22.375 22.755 .
+the 22.945 22.845 
+king 22.945 23.115 
+summons 23.115 23.715 
+you 23.715 23.715 
+at 23.715 23.715 
+midnight 23.715 24.135 ,
+sure 24.135 24.395 
+you 24.395 24.475 
+cursed 24.475 25.175 
+her 25.175 25.245 ,
+and 25.635 25.635 
+you 25.635 25.705 
+see 25.705 25.925 
+his 25.925 26.115 
+guards 26.115 26.455 
+by 26.455 26.595 
+the 26.595 26.715 
+open 26.715 27.005 
+window 27.005 27.315 
+staring 27.315 27.315 
+dead 27.315 27.315 
+at 27.315 27.745 
+you 27.985 28.135 ,
+waiting 28.135 28.545 
+for 28.545 28.665 
+his 28.665 28.755 
+signal 28.755 29.005 
+to 29.005 29.375 
+throw 29.375 29.585 
+you 29.585 29.715 
+out 29.715 30.215 
+of 30.215 30.395 
+it 30.945 31.135 .
+he 31.255 31.465 
+smiles 31.465 32.035 
+and 32.035 32.115 
+asks 32.115 32.555 ,
+you 32.735 32.725 
+know 32.735 32.895 
+everything 32.895 33.345 ,
+so 33.725 33.775 
+tell 33.775 33.775 
+me 33.775 34.085 ,
+when 34.335 34.375 
+will 34.375 34.495 
+you 34.495 34.725 
+die 34.725 35.095 
+you 35.095 35.345 
+bow 35.345 35.465 
+and 35.465 35.825 
+answer 35.825 36.295 ,
+exactly 36.525 36.925 
+three 36.925 37.305 
+days 37.305 37.625 
+before 37.625 37.985 
+your 37.985 38.095 
+majesty 38.095 38.625 .
+he 38.625 38.805 
+turns 38.805 39.095 
+pale 39.095 39.555 ,
+waves 39.775 39.975 
+the 39.975 40.115 
+guards 40.115 40.385 
+away 40.385 40.735 ,
+and 40.735 40.788 
+for 40.788 40.840 
+the 40.840 40.893 
+rest 40.893 40.945 
+of 40.945 41.505 
+his 41.505 41.685 
+life 41.685 42.035 ,
+he 42.240 42.290 
+makes 42.290 42.520 
+sure 42.520 42.750 
+you 42.750 42.880 
+never 42.880 43.330 
+even 43.330 43.580 
+catch 43.580 43.580 
+a 43.580 43.580 
+cold 43.580 43.880 .

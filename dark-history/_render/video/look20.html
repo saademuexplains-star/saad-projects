@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}#root svg{height:100vh;width:auto;margin:0 auto}</style>
+<script>window.VIDEO_FRAMES = 180; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script>
+<script src="cast.js"></script><script src="cast20.js"></script>
+<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script>
+<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script><script src="shots_w.js"></script></head>
+<body><div id="root"></div>
+<script>
+// The Coca-Cola look test: three stills (BATTLE 0-1 s, ROOM 1-2 s, FOUNT 2-3 s). Render frames 30, 90, 150.
+const root = document.getElementById('root'), X = ENG;
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+window.renderFrame = async n => {
+  if (window.__E && window.__E.length) throw new Error('PAGE ERR: ' + window.__E.join(' | '));
+  root.innerHTML = X.svgFrame(n);
+  for (let i = 0; i < 4; i++) await nextFrame();
+  await new Promise(r => setTimeout(r, 150));
+  return true;
+};
+window.READY = true;
+// opened in a browser: show a frame (?f=30 default), fitted to the window
+window.renderFrame(+(new URLSearchParams(location.search).get('f') || 30));
+</script></body></html>

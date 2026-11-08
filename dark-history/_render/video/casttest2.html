@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast2.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs } = RIG, C = CINE, W = WCAST;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const row1 = [W.king({ x: 190, y: 900, s: 0.55 }), W.prince({ x: 450, y: 900, s: 0.62 }), W.boy({ x: 650, y: 900, s: 0.62, rags: true }), W.boy({ x: 870, y: 900, s: 0.62 })];
+const row2 = [W.tutor({ x: 170, y: 1860, s: 0.55, face: { expr: 'stern' } }), W.man({ x: 420, y: 1860, s: 0.55 }), W.guard({ x: 660, y: 1860, s: 0.5 }), W.courtier({ x: 860, y: 1860, s: 0.5 }, 1)];
+const parts = [...row1, ...row2].map(p => C.lit(p, L));
+document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs><rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map(p => p.body).join('')}</svg>`;
+window.READY = true;
+</script></body></html>

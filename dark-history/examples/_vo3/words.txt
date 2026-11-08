@@ -1,0 +1,232 @@
+﻿# total 47.93s; chunks:
+#   0.00-  2.32 [1] It has you the most
+#   2.32-  5.23 [1] It mean the castle and steers interfaces you could rot
+#   5.23-  5.59 [0] 
+#   5.59-  7.79 [1] Every meal is a game of Russian roulette
+#   7.79-  9.58 [1] But a one night and will feast
+#   9.58- 10.99 [1] It light of roasted meat
+#  10.99- 11.59 [1] In your tongue
+#  11.59- 12.66 [1] Some legal is not
+#  12.66- 14.74 [1] Look up across the table and see the Kings
+#  14.74- 15.90 [1] All and rather steering
+#  15.90- 17.62 [1] Tell you with his hand on his dagger
+#  17.62- 18.74 [1] Gleason a plea
+#  18.74- 20.58 [1] He's waiting to see if you warn that a
+#  20.58- 21.12 [0] 
+#  21.12- 22.72 [1] Lines looks cool glass
+#  22.72- 23.22 [1] Gillette
+#  23.22- 24.30 [1] Horse down your neck
+#  24.30- 24.75 [0] 
+#  24.75- 26.41 [1] Dear car to drop your school
+#  26.41- 29.07 [1] But as you know what happens to tasters ruin a coup
+#  29.07- 32.07 [1] The trader slaughter entire family inside your house and
+#  32.07- 32.94 [1] It ran
+#  33.08- 34.13 [1] It looked the king
+#  34.13- 35.02 [1] Forces mile
+#  35.02- 35.86 [1] And Ptolemy
+#  35.86- 36.83 [1] Is delicious
+#  36.83- 37.77 [1] Gene last
+#  37.77- 39.73 [1] Due to massive bite off the same plea
+#  39.73- 41.18 [1] In shorts to death on the table
+#  41.18- 42.20 [1] All the guards panic
+#  42.20- 44.53 [1] Accused brother slips an antidote and your pocket
+#  44.53- 46.01 [1] It ran a zone had
+#  46.01- 46.80 [1] It makes you
+#  46.80- 46.97 [0] 
+#  46.97- 47.93 [1] Personal taste are
+he 0.000 0.000 
+gives 0.000 0.000 
+you 0.000 0.000 
+a 0.000 0.000 
+golden 0.000 0.000 
+spoon 0.000 1.090 ,
+feeds 1.090 1.460 
+you 1.460 1.560 
+the 1.560 1.630 
+most 1.630 1.840 
+expensive 2.315 2.555 
+meat 2.555 2.785 
+in 2.785 2.785 
+the 2.785 2.855 
+castle 2.855 3.305 ,
+and 3.305 3.455 
+stares 3.455 3.455 
+at 3.455 3.455 
+your 3.455 3.455 
+face 3.455 3.455 
+to 3.455 3.455 
+see 3.455 3.865 
+if 3.865 4.575 
+you 4.575 4.695 
+drop 4.695 4.905 
+dead 4.905 5.105 .
+every 5.585 5.735 
+meal 5.735 6.055 
+is 6.055 6.205 
+a 6.205 6.285 
+game 6.285 6.555 
+of 6.555 6.675 
+russian 6.675 7.045 
+roulette 7.045 7.495 ,
+until 7.805 7.935 
+one 7.935 8.175 
+night 8.175 8.445 
+at 8.445 8.545 
+a 8.545 8.635 
+royal 8.635 8.935 
+feast 8.935 9.385 ,
+you 9.385 9.480 
+take 9.480 9.575 
+a 9.575 9.875 
+bite 9.875 10.015 
+of 10.015 10.145 
+roasted 10.145 10.565 
+meat 10.565 10.815 
+and 10.990 10.960 
+your 10.990 11.070 
+tongue 11.070 11.370 
+instantly 11.605 11.865 
+goes 11.865 12.115 
+numb 12.115 12.225 .
+you 12.225 12.545 
+look 12.655 12.705 
+up 12.705 12.805 
+across 12.805 13.155 
+the 13.155 13.245 
+table 13.245 13.705 ,
+and 13.725 13.805 
+see 13.805 13.975 
+the 13.975 14.075 
+king's 14.075 14.425 
+own 14.735 14.715 
+brother 14.735 14.945 
+staring 14.945 15.245 
+dead 15.245 15.665 
+at 15.895 15.985 
+you 15.985 16.245 
+with 16.245 16.375 
+his 16.375 16.505 
+hand 16.505 16.825 
+on 16.825 16.925 
+his 16.925 17.065 
+dagger 17.065 17.445 .
+he 17.445 17.530 
+poisoned 17.530 17.615 
+the 17.615 18.015 
+plate 18.015 18.075 ,
+and 18.075 18.415 
+he's 18.735 18.795 
+waiting 18.795 19.065 
+to 19.065 19.145 
+see 19.145 19.405 
+if 19.405 19.525 
+you 19.525 19.645 
+warn 19.645 19.865 
+the 19.865 19.865 
+king 19.865 19.865 .
+your 19.865 20.115 
+throat 20.115 20.255 
+burns 21.115 21.225 
+like 21.225 21.485 
+swallowed 21.485 21.835 
+glass 21.835 22.355 ,
+sweat 22.715 23.025 
+pours 23.220 23.340 
+down 23.340 23.550 
+your 23.550 23.660 
+neck 23.660 23.850 ,
+and 23.850 24.150 
+you 24.150 24.450 
+don't 24.450 24.750 
+dare 24.750 24.900 
+cough 24.900 25.240 
+or 25.240 25.390 
+drop 25.490 25.750 
+your 25.750 25.860 
+spoon 26.405 26.425 .
+because 26.425 26.585 
+you 26.585 26.685 
+know 26.685 26.985 
+what 26.985 27.125 
+happens 27.125 27.455 
+to 27.455 27.575 
+tasters 27.575 28.125 
+who 28.125 28.125 
+ruin 28.125 28.465 
+a 28.465 28.555 
+coup 28.555 28.875 .
+the 29.065 28.985 
+traitors 29.065 29.375 
+lock 29.375 29.375 
+your 29.375 29.845 
+entire 29.845 30.355 
+family 30.355 30.785 
+inside 30.785 31.185 
+your 31.185 31.295 
+house 31.295 31.605 
+and 31.605 31.825 
+burn 31.825 32.065 
+it 32.065 32.565 
+to 32.565 32.565 
+the 32.565 32.565 
+ground 32.565 32.565 .
+so 32.565 32.705 
+you 33.075 33.245 
+look 33.245 33.475 
+at 33.475 33.475 
+the 33.475 33.565 
+king 33.565 33.935 ,
+force 34.125 34.365 
+a 34.365 34.365 
+smile 34.365 34.725 ,
+and 35.015 34.985 
+tell 34.985 34.995 
+him 34.995 35.005 
+the 35.005 35.015 
+meat 35.015 35.645 
+is 35.855 35.915 
+delicious 35.915 36.665 .
+the 36.665 36.825 
+king 36.825 37.055 
+laughs 37.055 37.585 ,
+takes 37.765 37.805 
+a 37.805 37.915 
+massive 37.915 38.475 
+bite 38.475 38.685 
+off 38.685 38.825 
+the 38.825 38.915 
+same 38.915 39.245 
+plate 39.245 39.525 ,
+and 39.725 39.735 
+chokes 39.735 40.135 
+to 40.135 40.255 
+death 40.255 40.465 
+on 40.465 40.565 
+the 40.565 40.645 
+table 40.645 40.995 .
+while 41.175 41.085 
+the 41.175 41.175 
+guards 41.175 41.475 
+panic 41.475 41.915 ,
+the 41.915 42.195 
+king's 42.195 42.385 
+brother 42.385 42.665 
+slips 42.665 42.965 
+an 42.965 43.125 
+antidote 43.125 43.535 
+into 43.535 43.675 
+your 43.675 43.815 
+pocket 43.815 44.235 ,
+puts 44.235 44.380 
+the 44.380 44.525 
+crown 44.525 44.825 
+on 44.825 45.125 
+his 45.125 45.175 
+own 45.175 45.505 
+head 45.505 45.815 
+and 46.005 45.995 
+makes 46.005 46.235 
+you 46.235 46.585 
+his 46.585 46.965 
+personal 46.965 47.325 
+taster 47.325 47.675 .

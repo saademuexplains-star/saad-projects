@@ -1,0 +1,195 @@
+﻿# total 44.24s; chunks:
+#   0.00-  2.13 [1] All it has chilled has one word
+#   2.13-  2.88 [1] It has
+#   2.88-  3.80 [1] Abdur it almost
+#   3.80-  4.74 [1] It
+#   4.74-  5.71 [1] It Linda
+#   5.71-  6.23 [0] 
+#   6.23-  9.39 [1] Right now the most trusted cough medicine money can buy a
+#   9.39- 11.62 [1] A little cigars it's safer than morphine
+#  11.62- 14.04 [1] In your child has sought cotton for week
+#  14.04- 15.61 [1] It let
+#  15.61- 16.57 [1] Match
+#  16.57- 18.92 [1] A card starts in your child sleeps leaking
+#  18.92- 19.48 [0] 
+#  19.48- 20.34 [1] The
+#  20.34- 21.93 [1] Once it and forties and am not
+#  21.93- 22.86 [1] See you get to
+#  22.86- 23.56 [1] But soon
+#  23.56- 24.17 [1] Taking
+#  24.17- 24.61 [1] Due out
+#  24.61- 25.43 [1] Every morning
+#  25.43- 25.64 [0] 
+#  25.64- 26.40 [1] Every night
+#  26.40- 27.32 [1] But a wonder how
+#  27.46- 28.43 [1] All overruns at
+#  28.43- 29.78 [1] A hamster cheating
+#  29.78- 30.29 [0] 
+#  30.29- 31.22 [1] It has
+#  31.22- 32.24 [1] The next room
+#  32.24- 34.30 [1] Your child's greening for
+#  34.30- 35.33 [1] All perform see
+#  35.33- 38.09 [1] The line is filled tariffs with the seams seeking hair
+#  38.09- 38.30 [0] 
+#  38.30- 40.35 [1] It hung doctors admit the stone
+#  40.35- 41.21 [1] It's too late
+#  41.21- 42.35 [1] Because of one word
+#  42.35- 43.34 [1] XOMA bottle
+#  43.34- 44.24 [1] But her a one
+the 0.000 0.000 
+bottle 0.000 0.000 
+on 0.000 0.260 
+your 0.260 0.500 
+kitchen 0.500 0.830 
+shelf 0.830 1.090 
+has 1.090 1.300 
+one 1.300 1.700 
+word 1.700 1.960 
+printed 1.960 2.043 
+on 2.043 2.125 
+it 2.125 2.465 ,
+a 2.465 2.625 
+word 2.875 3.075 
+that 3.075 3.255 
+almost 3.255 3.605 
+every 3.605 3.638 
+country 3.638 3.670 
+on 3.670 3.703 
+earth 3.703 3.735 
+will 3.735 3.768 
+one 3.768 3.800 
+day 3.800 4.620 
+ban 4.735 5.195 ,
+but 5.195 5.555 
+right 6.265 6.465 
+now 6.465 6.785 
+it's 6.785 6.935 
+the 6.935 7.015 
+most 7.015 7.265 
+trusted 7.265 7.745 
+cough 7.745 8.045 
+medicine 8.045 8.395 
+money 8.395 8.645 
+can 8.645 8.825 
+buy 8.825 9.155 ,
+the 9.385 9.345 
+label 9.385 9.615 
+swears 9.615 10.205 
+it's 10.205 10.375 
+safer 10.375 10.675 
+than 10.675 10.795 
+morphine 10.795 11.275 ,
+and 11.615 11.545 
+your 11.615 11.675 
+child 11.675 12.105 
+hasn't 12.105 12.395 
+stopped 12.395 12.635 
+coughing 12.635 13.065 
+for 13.065 13.305 
+a 13.305 13.305 
+week 13.305 13.625 .
+so 13.625 13.707 
+you 13.707 13.789 
+pour 13.789 13.871 
+one 13.871 13.953 
+spoonful 13.953 14.035 ,
+and 14.035 15.145 
+like 15.145 15.465 
+magic 15.775 16.195 ,
+the 16.570 16.560 
+cough 16.570 16.880 
+stops 16.880 17.350 
+and 17.350 17.500 
+your 17.500 17.600 
+child 17.600 18.040 
+sleeps 18.040 18.470 
+like 18.470 18.470 
+an 18.470 18.470 
+angel 18.470 18.720 .
+but 19.475 20.115 
+the 20.335 20.485 
+next 20.485 20.605 
+night 20.605 20.745 ,
+one 20.745 21.155 
+spoonful 21.155 21.285 
+isn't 21.285 21.365 
+enough 21.365 21.735 ,
+so 21.925 21.995 
+you 21.995 22.085 
+give 22.085 22.295 
+two 22.295 22.645 ,
+and 22.855 22.845 
+soon 22.855 23.235 
+you're 23.235 23.555 
+taking 23.555 23.855 
+it 24.165 24.375 
+too 24.375 24.525 ,
+every 24.605 24.805 
+morning 24.805 25.175 
+and 25.175 25.640 
+every 25.640 25.750 
+night 25.750 26.100 ,
+until 26.100 26.159 
+one 26.159 26.218 
+day 26.218 26.277 
+the 26.277 26.336 
+bottle 26.336 26.395 
+runs 26.395 26.415 
+out 26.415 26.505 .
+your 26.505 26.995 
+hands 26.995 27.125 
+start 27.460 27.560 
+shaking 27.560 27.940 ,
+your 27.940 28.130 
+whole 28.425 28.495 
+body 28.495 28.985 
+aches 28.985 29.455 ,
+and 30.285 30.615 
+from 30.615 31.025 
+the 31.215 31.295 
+next 31.295 31.715 
+room 31.715 31.995 ,
+you 31.995 32.115 
+hear 32.115 32.235 
+your 32.235 32.345 
+child 32.345 32.915 
+screaming 32.915 33.425 
+for 33.425 33.725 
+it 33.725 34.010 ,
+while 34.010 34.295 
+at 34.295 34.335 
+the 34.335 34.765 
+pharmacy 34.765 35.025 ,
+the 35.330 35.320 
+line 35.330 35.560 
+is 35.560 35.710 
+full 35.710 35.710 
+of 35.710 36.170 
+parents 36.260 36.570 
+with 36.570 36.680 
+the 36.680 36.760 
+same 36.760 36.760 
+shaking 36.760 36.760 
+hands 36.760 37.260 ,
+and 37.260 37.600 
+by 37.600 37.900 
+the 38.300 38.530 
+time 38.530 38.770 
+doctors 38.770 39.160 
+admit 39.160 39.460 
+what 39.460 39.610 
+they've 39.610 39.760 
+done 39.760 40.160 ,
+it's 40.345 40.405 
+too 40.405 40.615 
+late 40.615 41.005 ,
+because 41.205 41.415 
+that 41.415 41.505 
+one 41.505 41.885 
+word 41.885 42.205 
+printed 42.375 42.705 
+on 42.705 43.095 
+the 43.335 43.375 
+bottle 43.375 43.675 
+was 43.675 43.745 
+heroin 43.745 43.925 .

@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.RIG_HANDS = 1; window.VIDEO_FRAMES = 3265;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast9.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script><script src="props8.js"></script><script src="props9.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets12.js"></script>
+<script src="engine.js"></script><script src="shots_j.js"></script><script src="shots_j2.js"></script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root');
+window.renderFrame = async n => {
+  root.innerHTML = ENG.svgFrame(n);
+  // heavy frames (full-frame blur, noise masks over two scenes) need longer to finish rastering every tile
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r)))));
+  await new Promise(r => setTimeout(r, 120));
+  return true;
+};
+window.READY = true;
+</script></body></html>

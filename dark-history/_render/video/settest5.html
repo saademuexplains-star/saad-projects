@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast3.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets3.js"></script><script src="sets4.js"></script><script src="sets5.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, S = SETS;
+const BF = s => [...s.back, ...s.front];
+const sets = [
+  t => [BF(S.dining(t)), [540, 1100, 0.62, 0]],
+  t => [BF(S.feast(t, { side: 'A' })), [540, 1000, 0.55, 0]],
+  t => [BF(S.feast(t, { side: 'B' })), [540, 1000, 0.55, 0]],
+  t => [S.roulette(t, { rot: 20, spin: 40, liftIdx: 0, lift: 0.4 }), [540, 960, 1, 0]],
+  t => [S.ceiling(t, { rot: 10 }), [540, 960, 1, 0]],
+  t => [BF(S.kitchen(t)), [540, 1100, 0.62, 0]],
+  t => [[...S.village(t, { fire: 0.7 }), { p: 1, svg: S.houseFire(540, 1640, 1, t, 0.7) }], [540, 1100, 0.62, 0]],
+];
+window.renderFrame = async n => {
+  const [L, cam] = sets[n](3.3);
+  X.CAM = cam;
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/>${X.compose(L, cam)}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

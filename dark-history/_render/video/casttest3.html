@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast3.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs, DIMS } = RIG, C = CINE, T = TCAST;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const list = [['taster', 'man'], ['king', 'man'], ['brother', 'man'], ['guard0', 'man'], ['guard1', 'man'], ['server', 'woman'], ['page', 'kid'], ['lady', 'woman'], ['lord', 'man'], ['baron', 'man'], ['jester', 'man'], ['cook', 'man'], ['mother', 'woman'], ['wife', 'woman'], ['daughter', 'kid'], ['son', 'kid'], ['thug0', 'man'], ['thug1', 'man']];
+const mkP = (n, o) => n.startsWith('guard') ? T.guard(o, +n.slice(5)) : n.startsWith('thug') ? T.thug(o, +n.slice(4)) : T[n](o);
+window.renderFrame = async mode => {
+  let body = '';
+  if (mode === 0) {
+    // face close-ups: 3 x 6 grid of 360 x 320 cells
+    list.forEach(([n, k], i) => {
+      const cx = (i % 3) * 360 + 180, cy = Math.floor(i / 3) * 320 + 175, s = k === 'kid' ? 1.25 : 0.95, hy = DIMS[k].headY;
+      const p = mkP(n, { x: cx, y: cy - hy * s, s });
+      body += `<g clip-path="url(#c${i})"><defs><clipPath id="c${i}"><rect x="${cx - 178}" y="${cy - 158}" width="356" height="316"/></clipPath></defs><rect x="${cx - 180}" y="${cy - 160}" width="360" height="320" fill="${i % 2 ? '#6e6a64' : '#7a756e'}"/>${p.svg}<text x="${cx - 170}" y="${cy + 150}" fill="#fff" font-size="22" font-family="Arial">${n}</text></g>`;
+    });
+  } else {
+    const parts = list.map(([n, k], i) => mkP(n, { x: 110 + (i % 6) * 172, y: 620 + Math.floor(i / 6) * 640, s: k === 'kid' ? 0.5 : 0.36 })).map(p => C.lit(p, L));
+    body = `<rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map(p => p.body).join('')}`;
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.RIG_HANDS = 1;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="props.js"></script><script src="sets1.js"></script><script src="sets2.js"></script>
+<script src="engine.js"></script><script src="shots_a.js"></script><script src="shots_b.js"></script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root');
+const qq = new URLSearchParams(location.search);
+const strip = qq.get('strip');
+window.renderFrame = async n => {
+  let s = ENG.svgFrame(n);
+  if (strip) s = s.replace(new RegExp(`filter="url\\(#(${strip.replace(/,/g, '|')})\\)"`, 'g'), '');
+  root.innerHTML = s;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+const q = new URLSearchParams(location.search);
+document.fonts.load('80px Gabriola').then(async () => {
+  if (q.has('f')) await window.renderFrame(+q.get('f'));
+  window.READY = true;
+});
+</script></body></html>

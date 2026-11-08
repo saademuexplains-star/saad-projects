@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast11.js"></script><script src="props.js"></script><script src="props11.js"></script><script src="props11b.js"></script></head><body><div id="root"></div>
+<script>
+const { defs } = RIG, C = CINE, PR = PROPS, Q = QCAST;
+const LT = { from: [0.8, -0.6], shadow: '#2a1c10', shadowOp: 0.35, floor: '#4a3a20', floorOp: 0.25, contactOp: 0.3, key: '#fff0d0', keyAdd: 0.07, rims: [{ from: [1, -0.4], col: '#ffe0a0', w: 7, op: 0.5 }], face: { col: '#fff0d8', op: 0.1 } };
+const lit = P => { const r = C.lit(P, LT); return r.cast + r.body; };
+window.renderFrame = async n => {
+  let body = `<rect width="1080" height="1920" fill="#8a8680"/>`;
+  const G = PR.GAIT;
+  if (n === 0) {
+    body += `<rect y="1500" width="1080" height="420" fill="#6e6a62"/>`;
+    body += PR.horse({ x: 560, y: 900, s: 0.48, g: G.stand, c: 0, col: '#6a3a1e', tack: { bridle: true, saddle: '#4a2a14' } }).svg;
+    body += PR.horse({ x: 560, y: 1800, s: 0.48, g: G.stand, c: 0, col: '#d8d4cc', low: '#8a8680', mane: '#e8e4dc', hoof: '#4a4440', tack: { bridle: true, blinkers: true, plume: '#a8182a', collar: true, harness: true, metal: '#c9a040' } }).svg;
+  } else if (n >= 1 && n <= 3) {
+    const g = [G.walk, G.trot, G.gallop][n - 1];
+    for (let i = 0; i < 8; i++) {
+      const c = i / 8, x = 290 + (i % 2) * 520, y = 420 + Math.floor(i / 2) * 470;
+      body += `<path d="M${x - 260},${y} L${x + 260},${y}" stroke="#4a4640" stroke-width="3"/>`;
+      body += PR.horse({ x, y, s: 0.2, g, c, col: '#5a3218', t: c * g.P, tack: { bridle: true } }).svg;
+      body += `<text x="${x - 250}" y="${y - 330}" fill="#fff" font-size="22" font-family="Arial">c=${c.toFixed(3)}</text>`;
+    }
+  } else if (n === 4) {
+    // a rider (the king as a guard) on his horse
+    body += `<rect y="1500" width="1080" height="420" fill="#6e6a62"/>`;
+    body += PR.rider({ who: 'king', x: 520, y: 1560, s: 0.5, g: G.walk, c: 0.1, t: 0, lit, pose: { outfit: 'guard', face: { look: [0.6, 0] } }, leg: { legs: '#2e2a26', boot: '#1e1610', hem: '#5a4630' }, horse: { col: '#5a3a24', tack: { bridle: true, saddle: '#3a2414' } } }).svg;
+    body += PR.rider({ who: 'escort', x: 520, y: 900, s: 0.36, g: G.trot, c: 0.3, t: 0, lit, pose: { face: { look: [0.6, 0] } }, leg: { legs: '#2e2a26', boot: '#1e1610', hem: '#1e3a6a' }, horse: { col: '#2a2420', low: '#141010', mane: '#0a0808', tack: { bridle: true, saddle: '#3a2414', blanket: '#1e3a6a' } } }).svg;
+  } else if (n === 5 || n === 6) {
+    body += `<rect y="1400" width="1080" height="520" fill="#6e6a62"/>`;
+    const sc = n === 5 ? 0.22 : 0.5, x0 = n === 5 ? 380 : 560, y0 = n === 5 ? 1500 : 1900;
+    const CO = PR.COACH;
+    body += PR.coach({ x: x0, y: y0, s: sc, t: 0, run: { x: 300, c: 0.2, g: G.walk }, lean: 0, glass: 1,
+      passenger: () => lit(Q.you({ x: -10, y: CO.SEAT + 820, s: 1, face: { look: [0.5, 0.1] } })),
+      driver: () => `<g clip-path="url(#drv)"><defs><clipPath id="drv"><rect x="0" y="-4000" width="3000" height="${-1650 + 4000}"/></clipPath></defs>${lit(Q.driver({ x: 840, y: -850, s: 1, armR: { hand: [140, -720], dir: [0.6, 0.5], pose: 'fist', facing: 'back' }, armL: { hand: [190, -740], dir: [0.6, 0.5], pose: 'fist', facing: 'back' } }))}</g>`,
+      arrows: [[-120, -1300, -30, 260], [420, -1200, -150, 240]] }).svg;
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

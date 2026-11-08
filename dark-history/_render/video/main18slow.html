@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.RIG_HANDS = 1; window.VIDEO_FRAMES = 2979; window.SETS = window.SETS || {};</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="props.js"></script><script src="props16.js"></script>
+<script src="engine.js"></script><script src="sil.js"></script><script src="cast17.js"></script><script src="sets20.js"></script><script src="cast.js"></script><script src="cast16.js"></script>
+<script src="street3d.js"></script><script src="terrain3d.js"></script><script src="hamelin3d.js"></script>
+<script src="shots_u.js"></script><script src="shots_uh.js"></script><script src="shots_u2.js"></script><script src="shots_u3.js"></script><script src="shots_u4.js"></script><script src="shots_u5.js"></script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root');
+window.renderFrame = async n => {
+  root.innerHTML = ENG.svgFrame(n);
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r)))));
+  await new Promise(r => setTimeout(r, 700));
+  return true;
+};
+window.READY = true;
+</script></body></html>

@@ -1,0 +1,41 @@
+﻿# total 9.7s; chunks:
+#   0.00-  1.05 [1] Ewing and tools
+#   1.05-  1.99 [1] Reusing school
+#   1.99-  2.39 [0] 
+#   2.39-  3.06 [1] And wait
+#   3.06-  3.35 [0] 
+#   3.35-  4.09 [1] Within minutes
+#   4.09-  4.30 [0] 
+#   4.30-  6.20 [1] Leach's latch onto your bare light
+#   6.20-  6.46 [0] 
+#   6.46-  7.32 [1] You loft
+#   7.32-  8.23 [1] Sell them to the dock
+#   8.23-  8.69 [1] Juror
+#   8.69-  9.70 [1] The moral
+you 0.000 0.000 
+wade 0.000 0.300 
+into 0.410 0.500 
+a 0.500 0.830 
+freezing 1.045 1.405 
+swamp 1.405 1.825 ...
+and 2.385 2.435 
+wait 2.435 2.685 .
+within 3.345 3.515 
+minutes 3.515 3.795 ,
+leeches 4.295 4.535 
+latch 4.535 4.915 
+onto 4.915 5.195 
+your 5.195 5.335 
+bare 5.335 5.635 
+legs 5.635 5.885 .
+you 6.455 6.465 
+peel 6.465 6.465 
+them 6.465 6.465 
+off 6.465 7.045 ,
+sell 7.315 7.495 
+them 7.495 7.635 
+to 7.635 7.765 
+the 7.765 7.875 
+doctor 7.875 8.175 ...
+and 8.690 8.800 
+tomorrow 8.830 9.350 ,

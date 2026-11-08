@@ -1,0 +1,151 @@
+﻿# total 36.06s; chunks:
+#   0.00-  1.80 [1] It has Lanes you with hot
+#   1.80-  2.35 [1] I hear
+#   2.35-  2.80 [1] It looked
+#   2.80-  3.61 [0] 
+#   3.61-  8.38 [1] And recently inside his secret war room one man can read as bottle maps
+#   8.38- 10.55 [1] Every song is a gleam of survival
+#  10.55- 11.49 [1] But a one night
+#  11.49- 12.67 [1] Canada's slip
+#  12.67- 13.55 [1] Rely cert
+#  13.55- 15.41 [1] Isa fueled just enough to see
+#  15.41- 16.12 [1] Lurch she
+#  16.12- 16.42 [0] 
+#  16.42- 18.52 [1] Look up amid song CD endorse
+#  18.52- 21.37 [1] Rather torn Gleason into the oil one
+#  21.37- 22.84 [1] And when you accidentally flinch
+#  22.84- 24.89 [1] It has with his hand on a stack her
+#  24.89- 26.26 [1] Realizing you can see
+#  26.26- 28.22 [1] And leading to see if you want the young tour
+#  28.22- 29.94 [1] Fort blank stare in key
+#  29.94- 31.85 [1] Slain without missing a single not
+#  31.85- 33.29 [1] Workshops the death
+#  33.29- 34.42 [1] And the other makes you could
+#  34.42- 36.06 [1] Personal war room musician
+your 0.000 0.520 
+emperor 0.520 0.630 
+blinds 0.630 0.990 
+you 0.990 1.080 
+with 1.080 1.230 
+hot 1.230 1.630 
+iron 1.630 1.715 ,
+gives 1.715 1.800 
+you 1.800 1.810 
+a 1.810 2.020 
+golden 2.345 2.505 
+harp 2.505 2.785 ,
+and 3.605 3.615 
+makes 3.615 3.615 
+you 3.615 3.615 
+play 3.615 4.275 
+inside 4.275 4.625 
+his 4.625 4.785 
+secret 4.785 5.295 
+war 5.295 5.635 
+room 5.635 5.945 
+because 5.945 6.155 
+a 6.155 6.365 
+blind 6.365 6.605 
+man 6.605 6.845 
+can't 6.845 7.095 
+read 7.095 7.245 
+his 7.245 7.365 
+battle 7.365 7.725 
+maps 7.725 8.205 .
+every 8.375 8.535 
+song 8.535 9.025 
+is 9.025 9.145 
+a 9.145 9.205 
+game 9.205 9.535 
+of 9.535 9.625 
+survival 9.625 10.285 ,
+until 10.575 10.715 
+one 10.715 10.985 
+night 10.985 11.285 
+your 11.285 11.525 
+bandages 11.525 12.005 
+slip 12.005 12.435 
+and 12.435 12.512 
+you 12.512 12.588 
+realize 12.588 12.665 
+your 12.665 12.905 
+eyes 12.905 13.155 
+have 13.545 13.685 
+healed 13.685 14.045 
+just 14.045 14.495 
+enough 14.495 14.825 
+to 14.825 14.925 
+see 14.925 15.135 
+blurred 15.135 15.410 
+shapes 15.410 15.520 .
+you 15.520 15.800 
+look 16.415 16.385 
+up 16.415 16.515 
+mid 16.515 16.725 -
+song 16.725 17.125 
+and 17.125 17.162 
+see 17.162 17.198 
+the 17.198 17.235 
+emperor's 17.235 17.585 
+own 17.585 18.055 
+brother 18.835 19.165 
+pouring 19.165 19.495 
+poison 19.545 20.085 
+into 20.085 20.285 
+the 20.285 20.535 
+royal 20.535 20.765 
+wine 20.765 21.035 ,
+and 21.365 21.355 
+when 21.365 21.455 
+you 21.455 21.565 
+accidentally 21.565 22.105 
+flinch 22.105 22.645 ,
+he 22.835 23.305 
+freezes 23.305 23.485 
+with 23.485 23.595 
+his 23.595 23.725 
+hand 23.725 24.025 
+on 24.025 24.105 
+his 24.185 24.515 
+dagger 24.515 24.715 ,
+realizing 24.885 25.245 
+you 25.245 25.365 
+can 25.365 25.515 
+see 25.515 25.965 
+and 26.255 26.295 
+waiting 26.295 26.605 
+to 26.605 26.725 
+see 26.725 26.915 
+if 26.915 27.025 
+you 27.025 27.125 
+warn 27.125 27.415 
+the 27.415 27.495 
+emperor 27.495 27.495 .
+you 27.495 27.655 
+force 27.655 27.995 
+a 28.215 28.305 
+blank 28.425 28.765 
+stare 28.765 29.145 
+and 29.145 29.285 
+keep 29.285 29.525 
+playing 29.935 30.175 
+without 30.175 30.425 
+missing 30.425 30.745 
+a 30.745 30.785 
+single 30.785 31.355 
+note 31.355 31.625 ,
+the 31.625 31.765 
+emperor 31.765 31.905 
+chokes 31.905 32.565 
+to 32.565 32.645 
+death 32.645 32.975 ,
+and 33.285 33.275 
+the 33.285 33.535 
+brother 33.535 33.745 
+makes 33.745 33.995 
+you 33.995 34.095 
+his 34.095 34.205 
+personal 34.415 34.785 
+war 34.785 35.055 -
+room 35.055 35.235 
+musician 35.235 35.745 .

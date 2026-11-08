@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}#root svg{height:100vh;width:auto;margin:0 auto}</style>
+<script>window.VIDEO_FRAMES = 60; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script>
+<script src="cast.js"></script><script src="castT1.js"></script>
+<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script>
+<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script>
+<script>
+// Rig sheet for the test cast (castT1.js), copied from rig20.html: the cast full length in a warm studio, lit from the
+// upper left; the fourth cell is a waist-up close-up of the mother. Render frame 30.
+(function (G) {
+  const X = G.ENG, Q = G.QCAST, R = G.RIG, C = G.CINE, ST = G.STAGE, S = G.SETS;
+  const L = { from: [-0.8, -0.5], shadow: '#2a1a10', shadowOp: 0.5, floor: '#3a2a1a', floorOp: 0.4, contactOp: 0.5, key: '#fff0dc', keyAdd: 0.08, rims: [{ from: [1, -0.3], col: '#ffe0b0', w: 5, op: 0.35 }], face: { col: '#fff0e0', op: 0.14 } };
+  const CELLS = [
+    { who: 'semm', kind: 'man', x: 270, y: 905, name: 'YOU · IGNAZ SEMMELWEIS', face: { expr: 'anxious', look: [0.2, 0], lid: 0.2 } },
+    { who: 'klein', kind: 'man', x: 810, y: 905, name: 'PROFESSOR KLEIN', face: { expr: 'stern', look: [-0.2, 0.05], lid: 0.34, age: true } },
+    { who: 'mother', kind: 'woman', x: 270, y: 1865, name: 'THE MOTHER', face: { expr: 'fear', look: [0.25, 0], lid: 0.12, sweat: 0.18, blush: 0.4, bags: 0.4 } }];
+  X.shot('SHEET', 0, 1, t => {
+    const cam = [540, 960, 1, 0]; X.CAM = cam;
+    let g = S.lg('rsBg', [[0, '#3a2e24'], [0.5, '#2c2219'], [1, '#1e1610']]) + `<rect x="-100" y="-100" width="1280" height="2120" fill="url(#rsBg)"/>`;
+    g += `<path d="M-100,958 L1180,958" stroke="#000" stroke-width="2" opacity="0.4"/><path d="M540,958 L540,2020" stroke="#000" stroke-width="2" opacity="0.4"/>`;
+    for (const c of CELLS) {
+      g += C.radial(c.x - 40, c.y - 520, 520, '#ffe0b0', 0.16) + `<ellipse cx="${c.x}" cy="${c.y}" rx="230" ry="34" fill="#140e0a" opacity="0.35" filter="url(#b8)"/>`;
+      const o = ST.still(c.x, c.y, 0.56);
+      const P = Q[c.who](Object.assign(o, { face: c.face,
+        armR: { hand: R.restHand(c.kind, 'R'), dir: [0.02, 1], pose: 'relaxed', facing: 'back' },
+        armL: { hand: R.restHand(c.kind, 'L'), dir: [-0.02, 1], pose: 'relaxed', facing: 'back' } }));
+      const body = X.lit(P, L);
+      const art = { mother: () => Q.motherArt(0.3), semm: Q.semmArt, klein: Q.kleinArt }[c.who]();
+      g += Q.withArt(P, o, art, body) + S.TXT(c.x, c.y + 46, 19, '#d8c8a8', c.name, { ls: 3, w: 'bold' });
+    }
+    // the mother waist-up at full scale (cell 4): the face, the hair, the nightgown's neck
+    const o = ST.still(810, 2560, 0.98);
+    const P = ST.up(Q.mother(Object.assign(o, { noLegs: true, face: { expr: 'fear', look: [-0.3, 0.05], lid: 0.12, sweat: 0.18, blush: 0.4, bags: 0.4 },
+      armR: { hand: [-150, -700], dir: [0.1, 1], pose: 'relaxed', facing: 'back' }, armL: { hand: [150, -700], dir: [-0.1, 1], pose: 'relaxed', facing: 'back' } })), o);
+    g += `<defs><clipPath id="c4"><rect x="545" y="963" width="540" height="960"/></clipPath></defs><g clip-path="url(#c4)">${C.radial(760, 1300, 520, '#ffe0b0', 0.16)}${Q.withArt(P, o, Q.motherArt(0.5), ST.lit(P, L))}</g>`;
+    return X.compose([{ p: 1, svg: g }], cam) + C.vignette(0.35, '#060302', 0.5);
+  }, { grade: 'gHall' });
+})(window);
+</script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root'), X = ENG;
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+window.renderFrame = async n => {
+  if (window.__E && window.__E.length) throw new Error('PAGE ERR: ' + window.__E.join(' | '));
+  root.innerHTML = X.svgFrame(n);
+  for (let i = 0; i < 4; i++) await nextFrame();
+  await new Promise(r => setTimeout(r, 150));
+  return true;
+};
+window.READY = true;
+window.renderFrame(+(new URLSearchParams(location.search).get('f') || 30));
+</script></body></html>

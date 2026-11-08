@@ -1,0 +1,268 @@
+﻿# total 58.79s; chunks:
+#   0.00-  5.69 [1] It lime of the titanic shoveling coal in your underwear while rich people dance 60 feet above your head
+#   5.69-  8.48 [1] It leads as the walla
+#   8.48-  9.79 [1] But freezing black war
+#   9.79- 10.83 [1] Lots of room
+#  10.83- 10.99 [0] 
+#  10.99- 11.93 [1] It wrong
+#  11.93- 13.11 [1] Adler leaned over to
+#  13.11- 13.38 [0] 
+#  13.38- 17.53 [1] And the cattle on the top deck flip the switch the drops heavy iron doors from the ceiling
+#  17.53- 18.01 [0] 
+#  18.01- 19.32 [1] To water down sure what you
+#  19.32- 19.67 [0] 
+#  19.67- 22.06 [1] It your chest deep water indict under the GATT
+#  22.06- 23.87 [1] It had ER indoor calms down
+#  23.87- 25.21 [1] Use your door to the floor
+#  25.21- 26.14 [1] Totally for how
+#  26.14- 26.31 [0] 
+#  26.31- 27.42 [1] It meant rot
+#  27.42- 30.13 [1] A hind your cloying are short support you back in
+#  30.13- 31.34 [1] It hurt her foot
+#  31.34- 33.90 [1] All of you love the site of the door slams shut
+#  33.90- 34.82 [1] Seconds later
+#  34.82- 38.34 [1] Freezing ocean hits the red hot coal furnace is behind that wall
+#  38.34- 39.30 [1] All are six
+#  39.30- 39.94 [0] 
+#  39.94- 40.29 [0] 
+#  40.43- 41.73 [1] Donning a steel door of the
+#  41.73- 42.58 [1] Hunter back
+#  42.58- 43.12 [0] 
+#  43.12- 45.71 [1] It likes of our and stares with one bleeding for
+#  45.71- 47.23 [1] Ticking you finally safe
+#  47.23- 47.46 [0] 
+#  47.46- 48.83 [1] It hot
+#  48.83- 50.90 [1] It half empty like school
+#  51.05- 53.53 [1] The officer fires a warning shot into the year
+#  53.53- 54.82 [1] It has done it just
+#  54.82- 56.17 [1] Lahti iron gates sort
+#  56.17- 57.17 [1] Horman can't
+#  57.17- 58.24 [1] The rich people's life
+#  58.24- 58.44 [0] 
+#  58.44- 58.79 [0] 
+you're 0.000 0.000 
+at 0.000 0.000 
+the 0.000 0.000 
+very 0.000 0.630 
+bottom 0.630 0.880 
+of 0.880 0.970 
+the 0.970 1.050 
+titanic 1.050 1.750 ,
+shoveling 1.750 2.170 
+coal 2.170 2.460 
+in 2.460 2.530 
+your 2.530 2.730 
+underwear 2.730 3.200 
+while 3.200 3.410 
+rich 3.410 3.640 
+people 3.640 3.900 
+dance 3.900 4.170 
+sixty 4.170 4.580 
+feet 4.580 4.820 
+above 4.820 5.040 
+your 5.040 5.170 
+head 5.170 5.470 .
+at 5.470 5.578 
+midnight 5.578 5.685 ,
+an 5.685 6.945 
+iceberg 6.945 7.255 
+rips 7.255 7.435 
+the 7.435 7.675 
+steel 7.675 7.675 
+wall 7.675 8.075 
+open 8.075 8.475 ,
+and 8.475 8.465 
+freezing 8.475 9.035 
+black 9.035 9.315 
+water 9.315 9.315 
+blasts 9.315 9.615 
+into 9.785 10.115 
+the 10.115 10.435 
+room 10.435 10.615 .
+before 10.615 10.738 
+you 10.738 10.862 
+can 10.862 10.985 
+run 10.985 11.475 ,
+a 11.475 11.685 
+red 11.925 12.365 
+warning 12.365 12.545 
+bell 12.545 12.825 
+rings 12.825 12.885 —
+and 13.375 13.355 
+the 13.375 13.425 
+captain 13.425 13.845 
+on 13.845 13.925 
+the 13.925 14.005 
+top 14.005 14.315 
+deck 14.315 14.525 
+flips 14.525 14.825 
+a 14.825 14.945 
+switch 14.945 15.335 
+that 15.335 15.465 
+drops 15.465 15.745 
+heavy 15.745 16.115 
+iron 16.115 16.405 
+doors 16.405 16.705 
+from 16.705 16.835 
+the 16.835 16.915 
+ceiling 16.915 17.325 
+to 18.005 18.025 
+trap 18.025 18.025 
+the 18.025 18.025 
+water 18.025 18.315 
+down 18.315 18.545 
+here 18.545 18.545 
+with 18.545 18.785 
+you 18.785 19.055 .
+you 19.055 19.145 
+sprint 19.665 19.795 
+through 19.795 19.935 
+chest 19.935 20.285 -
+deep 20.285 20.495 
+water 20.495 20.745 
+and 20.745 20.745 
+dive 20.745 21.255 
+under 21.255 21.425 
+the 21.425 21.525 
+gap 21.525 21.525 ,
+but 21.525 21.875 
+the 22.055 22.115 
+heavy 22.115 22.355 
+iron 22.355 22.655 
+door 22.655 22.965 
+comes 22.965 23.285 
+down 23.285 23.545 
+and 23.545 23.865 
+pins 23.865 24.045 
+your 24.045 24.175 
+boot 24.175 24.375 
+to 24.375 24.495 
+the 24.495 24.585 
+floor 24.585 24.995 .
+you 24.995 25.100 
+don't 25.100 25.205 
+wait 25.205 25.505 
+for 25.505 25.675 
+help 25.675 25.845 ,
+because 26.305 26.815 
+the 26.815 27.095 
+ten 27.095 27.295 
+men 27.420 27.360 
+trapped 27.420 27.680 
+behind 27.680 27.940 
+you 27.940 28.550 
+are 28.550 28.660 
+clawing 28.660 28.660 
+at 28.660 28.660 
+your 28.660 28.660 
+shirt 28.660 28.660 
+to 28.660 29.010 
+pull 29.010 29.340 
+you 29.340 29.410 
+back 29.410 29.670 
+in 29.670 29.910 .
+so 29.910 30.018 
+you 30.018 30.125 
+rip 30.125 30.605 
+your 30.605 30.785 
+bare 30.785 30.965 
+foot 30.965 31.185 
+out 31.340 31.350 
+of 31.350 31.430 
+your 31.430 31.520 
+leather 31.520 31.700 
+boot 31.700 32.060 
+right 32.150 32.400 
+as 32.400 32.520 
+the 32.520 32.620 
+door 32.620 32.890 
+slams 32.890 33.270 
+shut 33.270 33.640 .
+seconds 33.895 34.265 
+later 34.265 34.605 ,
+the 34.605 34.835 
+freezing 34.835 35.335 
+ocean 35.335 35.625 
+hits 35.625 35.935 
+the 35.935 36.115 
+red 36.135 36.315 -
+hot 36.315 36.585 
+coal 36.585 36.825 
+furnaces 36.825 37.145 
+behind 37.255 37.625 
+that 37.625 37.815 
+wall 37.815 38.135 ,
+and 38.135 38.495 
+the 38.495 38.705 
+boilers 38.705 38.795 
+explode 38.795 39.115 
+like 40.425 40.645 
+a 40.645 40.715 
+bomb 40.715 40.715 ,
+bending 40.715 40.715 
+the 40.715 40.715 
+steel 40.715 41.045 
+door 41.045 41.255 
+right 41.255 41.385 
+behind 41.385 41.455 
+your 41.730 42.030 
+back 42.030 42.390 .
+you 42.390 42.755 
+limp 42.755 43.120 
+up 43.120 43.420 
+ten 43.420 43.640 
+flights 43.640 43.750 
+of 43.750 43.940 
+iron 43.940 44.030 
+stairs 44.030 44.380 
+with 44.380 44.520 
+one 44.520 44.850 
+bleeding 44.850 45.180 
+foot 45.180 45.410 ,
+thinking 45.710 45.890 
+you're 45.890 46.020 
+finally 46.020 46.540 
+safe 46.540 47.040 .
+you 47.040 47.093 
+burst 47.093 47.145 
+onto 47.145 47.198 
+the 47.198 47.250 
+freezing 47.250 47.303 
+top 47.303 47.355 
+deck 47.355 47.408 
+and 47.408 47.460 
+run 47.460 48.480 
+toward 48.480 48.710 
+a 48.825 49.785 
+half 49.785 50.105 -
+empty 50.105 50.345 
+lifeboat 50.345 50.555 —
+until 50.555 50.745 
+an 51.045 51.225 
+officer 51.305 51.765 
+fires 51.765 52.075 
+a 52.075 52.145 
+warning 52.145 52.465 
+shot 52.465 52.735 
+into 52.735 52.915 
+the 52.915 53.005 
+air 53.005 53.005 ,
+points 53.005 53.005 
+his 53.005 53.335 
+gun 53.525 53.655 
+at 53.655 53.815 
+your 53.815 54.095 
+chest 54.095 54.165 ,
+locks 54.165 54.615 
+the 54.815 55.195 
+iron 55.195 55.425 
+gate 55.425 55.765 
+so 55.765 55.765 
+poor 55.765 55.995 
+men 56.165 56.515 
+can't 56.515 56.875 
+take 56.875 57.165 
+the 57.165 57.195 
+rich 57.215 57.455 
+people's 57.455 57.835 
+lifeboats 57.835 58.075 

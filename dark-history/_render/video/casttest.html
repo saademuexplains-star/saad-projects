@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs } = RIG, C = CINE, K = CAST, PR = PROPS;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }] };
+const king = K.king({ x: 200, y: 1000, s: 0.62, face: { mouth: 'smirk' }, armL: { hand: [150, -900], pose: 'fist', facing: 'back', thumb: 'up', fs: 0.6 }, props: PR.scroll(150, -900, 220, 50, -10) });
+const mes = K.messenger({ x: 540, y: 1000, s: 0.62, face: { expr: 'fear', sweat: 1 } });
+const war = K.warlord({ x: 880, y: 1000, s: 0.6, face: { expr: 'stern', mouth: 'snarl' }, armR: { hand: [-200, -700], pose: 'fist', facing: 'back', thumb: 'up' }, props: PR.axe(-200, -700, 0.9, -20) });
+const mom = K.mother({ x: 170, y: 1900, s: 0.58, face: { expr: 'grief', tears: true } });
+const gd = K.guard({ x: 520, y: 1900, s: 0.58 });
+const her = K.herald({ x: 860, y: 1900, s: 0.58, face: { mouth: 'grin' } });
+const parts = [king, mes, war, mom, gd, her].map(p => C.lit(p, L));
+document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs><rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map(p => p.body).join('')}</svg>`;
+window.READY = true;
+</script></body></html>

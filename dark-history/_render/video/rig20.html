@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}#root svg{height:100vh;width:auto;margin:0 auto}</style>
+<script>window.VIDEO_FRAMES = 60; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script>
+<script src="cast.js"></script><script src="cast20.js"></script>
+<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script>
+<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script>
+<script>
+// The rig sheet of the clean rig (G.RIG_CRISP + tailor.js): the Coca-Cola cast full length in a warm studio, lit from
+// the upper left. Render frame 30. Use it to check a new cast: faces, tailored clothes, sleeves, hands, legs, shoes.
+(function (G) {
+  const X = G.ENG, Q = G.QCAST, R = G.RIG, C = G.CINE, ST = G.STAGE, S = G.SETS;
+  const L = { from: [-0.8, -0.5], shadow: '#2a1a10', shadowOp: 0.5, floor: '#3a2a1a', floorOp: 0.4, contactOp: 0.5, key: '#fff0dc', keyAdd: 0.08, rims: [{ from: [1, -0.3], col: '#ffe0b0', w: 5, op: 0.35 }], face: { col: '#fff0e0', op: 0.14 } };
+  const CELLS = [
+    { who: 'pembYoung', x: 270, y: 905, name: 'JOHN PEMBERTON · 1865', face: { expr: 'stern', look: [0.2, 0], lid: 0.2 } },
+    { who: 'pembOld', x: 810, y: 905, name: 'JOHN PEMBERTON · 1885', face: { expr: 'tired', look: [-0.2, 0.05], lid: 0.32, bags: 0.6, age: true } },
+    { who: 'surgeon', x: 270, y: 1865, name: 'THE FIELD SURGEON', face: { expr: 'grim', look: [0.25, 0], lid: 0.34, age: true } },
+    { who: 'clerk', x: 810, y: 1865, name: 'THE SODA CLERK', face: { expr: 'neutral', mouth: 'smile', open: 0.05, look: [-0.15, 0], lid: 0.14 } }];
+  X.shot('SHEET', 0, 1, t => {
+    const cam = [540, 960, 1, 0]; X.CAM = cam;
+    let g = S.lg('rsBg', [[0, '#3a2e24'], [0.5, '#2c2219'], [1, '#1e1610']]) + `<rect x="-100" y="-100" width="1280" height="2120" fill="url(#rsBg)"/>`;
+    g += `<path d="M-100,958 L1180,958" stroke="#000" stroke-width="2" opacity="0.4"/>`;
+    for (const c of CELLS) {
+      g += C.radial(c.x - 40, c.y - 520, 520, '#ffe0b0', 0.16) + `<ellipse cx="${c.x}" cy="${c.y}" rx="230" ry="34" fill="#140e0a" opacity="0.35" filter="url(#b8)"/>`;
+      const o = ST.still(c.x, c.y, 0.56);
+      const P = Q[c.who](Object.assign(o, { face: c.face,
+        armR: { hand: R.restHand('man', 'R'), dir: [0.02, 1], pose: 'relaxed', facing: 'back' },
+        armL: { hand: R.restHand('man', 'L'), dir: [-0.02, 1], pose: 'relaxed', facing: 'back' } }));
+      g += X.lit(P, L) + S.TXT(c.x, c.y + 46, 19, '#d8c8a8', c.name, { ls: 3, w: 'bold' });
+    }
+    return X.compose([{ p: 1, svg: g }], cam) + C.vignette(0.35, '#060302', 0.5);
+  }, { grade: 'gHall' });
+})(window);
+</script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root'), X = ENG;
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+window.renderFrame = async n => {
+  if (window.__E && window.__E.length) throw new Error('PAGE ERR: ' + window.__E.join(' | '));
+  root.innerHTML = X.svgFrame(n);
+  for (let i = 0; i < 4; i++) await nextFrame();
+  await new Promise(r => setTimeout(r, 150));
+  return true;
+};
+window.READY = true;
+// opened in a browser: show a frame (?f=30 default), fitted to the window
+window.renderFrame(+(new URLSearchParams(location.search).get('f') || 30));
+</script></body></html>

@@ -1,0 +1,24 @@
+﻿<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 2655;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast14.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props7.js"></script><script src="props8.js"></script><script src="props12.js"></script><script src="props13.js"></script><script src="props10.js"></script><script src="props14.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets3.js"></script><script src="sets14.js"></script><script src="sets14b.js"></script><script src="sets16.js"></script><script src="sets16b.js"></script><script src="sets17.js"></script><script src="sets17b.js"></script>
+<script src="engine.js"></script><script src="shots_p.js"></script><script src="shots_p2.js"></script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root');
+window.renderFrame = async n => {
+  const out = [], step = n === 0 ? 1 : 1, N = ENG.FRAMES;
+  let bad = 0;
+  for (let k = 0; k < N; k += step) {
+    try { const s = ENG.svgFrame(k); if (/NaN|undefined|Infinity/.test(s)) { const m = s.match(/.{60}(NaN|undefined|Infinity).{30}/); if (bad < 12) out.push('frame ' + k + ': ' + (m ? m[0] : '?').replace(/[<>&"]/g, ' ')); bad++; } }
+    catch (e) { if (bad < 12) out.push('frame ' + k + ' EXC: ' + String(e && e.message || e).replace(/[<>&"]/g, ' ')); bad++; }
+  }
+  const head = ['trans: ' + ENG.trans.length + '  shots: ' + ENG.shots.map(s => s.id).join(','), 'bad frames: ' + bad, 'errors: ' + ((window.__E || []).join(' | ') || 'none')];
+  const lines = head.concat(out).map((l, i) => `<text x="20" y="${60 + i * 44}" fill="#fff" font-size="26" font-family="Consolas">${l.slice(0, 74)}</text>`).join('');
+  root.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920"><rect width="1080" height="1920" fill="#101010"/>${lines}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

@@ -1,0 +1,48 @@
+﻿<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 3371; window.SETS = window.SETS || {}; const QS = new URLSearchParams(location.search); if (QS.get('v1')) window.RIG_HANDS = 1;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast19.js"></script>
+</head>
+<body><div id="root"></div>
+<script>
+// hand / arm test sheet. frame 0: every hand pose and facing, both sides, large. frame 1: the fool and the King in arm
+// poses from the film (hands at the belt, on the belly, on the chest, raised, pointing, out, on the lap), full figure.
+const R = window.RIG, Q = window.QCAST;
+window.renderFrame = async n => {
+  const W = 1080, H = 1920; let g = '';
+  if (n === 0) {
+    const poses = ['relaxed', 'open', 'fist', 'point', 'grip'], rows = [['R', 'back'], ['L', 'back'], ['R', 'palm'], ['L', 'palm']];
+    rows.forEach(([side, facing], r) => poses.forEach((pose, c) => {
+      const x = 120 + c * 205, y = 120 + r * 450;
+      const hold = pose === 'grip' ? '<rect x="-14" y="-160" width="28" height="320" rx="8" fill="#6a4a2a" stroke="#1f140c" stroke-width="2"/>' : '';
+      g += `<rect x="${x - 95}" y="${y - 70}" width="190" height="400" fill="#3a3530"/>`;
+      g += `<g transform="translate(${x},${y}) scale(1.6)">` + R.limb([0, -60], [0, 6], 116 * 1.3 * 0.3, 116 * 1.3 * 0.285, '#e0b494') + ((window.RIG_HANDS === 1 ? R.hand : R.handV2)({ x: 0, y: 0, dir: [0, 1], side, facing, thumb: 'auto', pose, size: 116, skin: '#e8c2a0', hold })) + `</g>`;
+      g += `<text x="${x - 90}" y="${y + 320}" fill="#fff" font-size="16" font-family="Arial">${side} ${facing} ${pose}</text>`;
+    }));
+  } else {
+    // the fool in eight poses, full figure, at two scales
+    const P = window.CASTQ;
+    const poses = [
+      ['rest', {}, {}],
+      ['belt', { hand: [-120, -880], dir: [0.4, 0.8], pose: 'relaxed', facing: 'back' }, { hand: [120, -880], dir: [-0.4, 0.8], pose: 'relaxed', facing: 'back' }],
+      ['belly+hip', { hand: [30, -900], dir: [1, 0.2], pose: 'relaxed', facing: 'back' }, { hand: [150, -840], dir: [-0.3, 1], pose: 'relaxed', facing: 'back' }],
+      ['chest+wave', { hand: [10, -1060], dir: [0.8, -0.4], pose: 'open', facing: 'back' }, { hand: [330, -1330], dir: [0.15, -1], pose: 'open', facing: 'palm' }],
+      ['cower', { hand: [-150, -1040], dir: [0.3, -1], pose: 'open', facing: 'palm' }, { hand: [150, -1040], dir: [-0.3, -1], pose: 'open', facing: 'palm' }],
+      ['point+fist', { hand: [-520, -1150], dir: [-1, 0.1], pose: 'point', facing: 'back' }, { hand: [170, -1000], dir: [-0.2, -1], pose: 'fist', facing: 'back' }],
+      ['arms out', { hand: [-480, -1250], dir: [-0.8, -0.6], pose: 'open', facing: 'palm' }, { hand: [480, -1250], dir: [0.8, -0.6], pose: 'open', facing: 'palm' }],
+      ['whisper', { hand: [-140, -940], dir: [0.5, 0.6], pose: 'relaxed', facing: 'back' }, { hand: [120, -1170], dir: [-0.1, -1], pose: 'open', facing: 'back' }]
+    ];
+    poses.forEach(([name, aR, aL], i) => {
+      const x = 140 + (i % 4) * 265, y = 900 + Math.floor(i / 4) * 960, s = 0.5;
+      const o = { x, y, s, blink: 0, breath: 0, sway: 0, tilt: 0, face: { expr: 'neutral', lid: 0.24 } };
+      if (aR.hand) o.armR = aR; if (aL.hand) o.armL = aL;
+      const FP = Q.fool(o);
+      g += FP.svg + `<text x="${x - 120}" y="${y + 40}" fill="#fff" font-size="18" font-family="Arial">${name}</text>`;
+    });
+  }
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs>${R.defs()}</defs><rect width="${W}" height="${H}" fill="#57504a"/>${g}</svg>`;
+  for (let i = 0; i < 3; i++) await new Promise(r => requestAnimationFrame(r));
+  return true;
+};
+window.READY = true;
+</script></body></html>

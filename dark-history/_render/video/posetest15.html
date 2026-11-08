@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 2947;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast15.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props7.js"></script><script src="props8.js"></script><script src="props10.js"></script><script src="props12.js"></script><script src="props13.js"></script><script src="props14.js"></script><script src="props15.js"></script><script src="props15b.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, R = RIG, C = CINE, Q = QCAST, PR = PROPS;
+const nrm = v => { const n = Math.hypot(v[0], v[1]) || 1; return [v[0] / n, v[1] / n]; };
+const gripAt = (o, who, Gw, dW, extra = {}) => { const dl = nrm(R.dirLocal(o, dW)), gl = R.toLocal(o, Gw), gy = 0.33 * (typeof who === 'number' ? who : Q.HAND[who]); return Object.assign({ hand: [gl[0] - dl[0] * gy, gl[1] - dl[1] * gy], dir: dl, pose: 'grip', facing: 'back' }, extra); };
+const L = { from: [-0.8, -0.5], shadow: '#1a120c', shadowOp: 0.38, floor: '#22160e', floorOp: 0.28, contactOp: 0.38, key: '#fff4e0', keyAdd: 0.05, rims: [{ from: [-1, -0.2], col: '#fff0d0', w: 7, op: 0.5 }, { from: [1, -0.3], col: '#ffc890', w: 4, op: 0.3 }], face: { col: '#ffeedd', op: 0.12 } };
+const lit = (P, o, art) => { const p = C.lit(P, Object.assign({ view: null }, L)); return p.cast + Q.withArt(P, o, art, p.body); };
+const HIPS = (eR, eL) => ({ armR: { hand: [-150, -790], dir: [0.4, 0.92], pose: 'relaxed', facing: 'back', elbow: eR }, armL: { hand: [150, -790], dir: [-0.4, 0.92], pose: 'relaxed', facing: 'back', elbow: eL } });
+const modes = [
+  // 0: Henrietta full length: hands on hips (two elbow settings), the house dress, the coat and hat
+  () => { let g = ''; [[200, 'suit', HIPS('free', 'free')], [540, 'suit', HIPS(undefined, undefined)], [880, 'home', {}]].forEach(([x, outfit, arms]) => { const o = Object.assign({ x, y: 1500, s: 0.5, outfit, face: { mouth: 'smile' } }, arms); g += lit(Q.henrietta(o), o, Q.henriettaArt(o)); });
+    const o = { x: 540, y: 1900, s: 0.25, outfit: 'coat', face: { expr: 'anxious' } }; g += lit(Q.henrietta(o), o, Q.henriettaArt(o)); return g; },
+  // 1: the photo framing: hands on hips, medium shot (nails)
+  () => { const o = Object.assign({ x: 540, y: 2350, s: 1.45, outfit: 'suit', face: { mouth: 'smile' } }, HIPS('free', 'free')); return lit(Q.henrietta(o), o, Q.henriettaArt(o)); },
+  // 5: hands on hips with the full forearm (fs: 1), four hand placements; and smile / grin
+  () => { let g = ''; const V = [[[-128, -812], [0.45, 0.89], 'smile'], [[-120, -840], [0.7, 0.7], 'grin'], [[-140, -800], [0.3, 0.95], 'smile'], [[-112, -860], [0.85, 0.5], 'grin']];
+    V.forEach(([h, d, m], i) => { const o = { x: 270 + (i % 2) * 540, y: 920 + Math.floor(i / 2) * 960, s: 0.62, outfit: 'suit', face: { mouth: m }, armR: { hand: h, dir: d, pose: 'relaxed', facing: 'back', fs: 1, elbow: 'free' }, armL: { hand: [-h[0], h[1]], dir: [-d[0], d[1]], pose: 'relaxed', facing: 'back', fs: 1, elbow: 'free' } }; g += lit(Q.henrietta(o), o, Q.henriettaArt(o)); }); return g; },
+  // 2: lying flat (asleep) and sitting up in bed against pillows
+  () => { let g = `<rect x="80" y="800" width="900" height="40" fill="#b8c0c4"/>`; const o = { x: 960, y: 740, s: 0.6, outfit: 'gown', sway: -90, face: { lid: 1, mouth: 'closed' } }; const P = Q.henrietta(o); g += `<g filter="url(#skinS)">${Q.withArt(P, o, Q.henriettaArt(o), P.svg)}</g>`;
+    const o2 = { x: 420, y: 1800, s: 0.75, outfit: 'gown', sway: -22, noLegs: true, ill: 0.5, face: { expr: 'tired', lid: 0.4 }, armR: { hand: [-40, -620], dir: [0.9, 0.3], pose: 'relaxed' }, armL: { hand: [140, -640], dir: [-0.3, 1], pose: 'relaxed' } }; const P2 = Q.henrietta(o2); g += `<g filter="url(#skinS)">${Q.withArt(P2, o2, Q.henriettaArt(o2), P2.svg)}</g>`; return g; },
+  // 3: the surgeon's gloved fist holding the forceps; the scientist's blue gloves on a flask
+  () => { let g = ''; const o = { x: 300, y: 1900, s: 0.7 }; const arm = gripAt(o, 'surgeon', [430, 1100], [0.3, 1], { hold: PR.forceps(1, { tissue: 1, open: 0.05 }), holdRot: 0 }); const P = Q.surgeon(Object.assign({}, o, { armL: arm })); g += lit(P, o, Q.surgeonArt);
+    const o2 = { x: 800, y: 1900, s: 0.7 }; const arm2 = gripAt(o2, 'scientist', [720, 1050], [0, 1], { hold: PR.flask(0, 90, 0.5, 0, { label: 'HeLa' }), holdRot: 0 }); const P2 = Q.scientist(Object.assign({}, o2, { armR: arm2 })); g += lit(P2, o2, Q.scientistArt); return g; },
+  // 4: the children: Lawrence with baby Joe, Elsie, Sonny, Deborah
+  () => { let g = ''; const oL = { x: 300, y: 1700, s: 0.62, armR: { hand: [-20, -930], dir: [1, 0.1], pose: 'open', facing: 'back' }, armL: { hand: [60, -1020], dir: [-0.4, 0.9], pose: 'open', facing: 'back', detachHand: true } }; const PL = Q.lawrence(oL); g += lit(PL, oL, Q.lawrenceArt) + PR.baby(310, 1060, 0.62, 0, { rot: -20 }) + C.lit({ svg: PL.handL, info: PL.info }, L).body;
+    for (const [mk, art, x, y, s] of [[Q.elsie, Q.elsieArt, 640, 1700, 0.85], [Q.sonny, Q.sonnyArt, 860, 1700, 0.62], [Q.deborah, Q.deborahArt, 1000, 1700, 0.5]]) { const o = { x, y, s }; g += lit(mk(o), o, art); } return g; },
+];
+window.renderFrame = async n => {
+  X.CAM = [540, 960, 1, 0];
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#8a8680"/>${modes[n]()}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await new Promise(r => setTimeout(r, 60));
+  return true;
+};
+window.READY = true;
+</script></body></html>

@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 2979;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast16.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props7.js"></script><script src="props8.js"></script><script src="props10.js"></script><script src="props12.js"></script><script src="props13.js"></script><script src="props14.js"></script><script src="props16.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets3.js"></script><script src="sets19.js"></script><script src="sets19b.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, S = SETS, PR = PROPS, C = CINE, Q = QCAST;
+const T0 = 3.3, none = () => '';
+const crowd = t => { const R = S.HH.ROUTE, L = [0]; for (let i = 1; i < R.length; i++) L.push(L[i - 1] + Math.hypot(R[i][0] - R[i - 1][0], R[i][1] - R[i - 1][1])); const at = d => { let i = 1; while (i < R.length - 1 && L[i] < d) i++; const k = (d - L[i - 1]) / (L[i] - L[i - 1]); return [R[i - 1][0] + (R[i][0] - R[i - 1][0]) * k, R[i - 1][1] + (R[i][1] - R[i - 1][1]) * k]; }; let g = ''; for (let i = 0; i < 40; i++) { const p = at(Math.min(L[L.length - 1], 400 + i * 70)); g += PR.kidSil(p[0], p[1], 0.32, t, ['#a8642a', '#4a5a7a', '#7a3a2a', '#6a7a4a', '#c8a050', '#3a5a5a'][i % 6], ['#6a4222', '#141010', '#b8582a', '#d8b060'][i % 4], i * 1.7); } return g; };
+const piper = (x, y, s) => { const o = { x, y, s }; const P = Q.piper(o); return Q.withArt(P, o, Q.piperArt(0), P.svg); };
+const views = [
+  [t => S.hgate(t), [540, 1080, 0.85, 0], 'gDusk', t => piper(540, 1340, 0.05)],
+  [t => S.hgate(t), [540, 1500, 1.5, 0], 'gDusk', t => piper(540, 1900, 0.25)],
+  [t => S.hstreet(t), [800, 1300, 0.8, 0], 'gDay', none],
+  [t => S.hstreet(t), [2510, 900, 1.2, 0], 'gDay', none],
+  [t => S.hkitchen(t), [500, 1200, 0.85, 0], 'gFeast', none],
+  [t => S.houtside(t), [600, 1200, 0.7, 0], 'gDay', none],
+  [t => S.hhill(t), [500, 1300, 0.6, 0], 'gDay', crowd],
+  [t => S.htop(t), [2300, 1300, 0.8, 0], 'gDay', none],
+  [t => S.htop(t), [0, 1500, 0.8, 0], 'gDay', none],
+  [t => S.htop(t, { dusk: 1 }), [2400, 1200, 0.8, 0], 'gDusk', none],
+  [t => S.bedroom(t), [800, 1200, 0.8, 0], 'gFeast', none],
+  [t => [{ p: 1, svg: '<rect x="-2000" y="-2000" width="5000" height="5000" fill="#3a2a2a"/>' }], [540, 960, 1, 0], 'gFeast', t => PR.storybook(540, 1200, 1.4, t)],
+];
+window.renderFrame = async n => {
+  const [set, cam, grade, chars] = views[n], t = T0;
+  X.CAM = cam;
+  const L = set(t), i = L.findIndex(l => l.tag === 'mist' || l.light || l.p > 1.05), c = { p: n < 2 ? 0.8 : 1, svg: chars(t), chars: true };
+  const layers = i < 0 ? [...L, c] : [...L.slice(0, i), c, ...L.slice(i)];
+  const body = X.compose(layers, cam) + C.vignette(0.5);
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/><g filter="url(#${grade})">${body}</g>${X.post(t, n)}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await new Promise(r => setTimeout(r, 80));
+  return true;
+};
+window.READY = true;
+</script></body></html>

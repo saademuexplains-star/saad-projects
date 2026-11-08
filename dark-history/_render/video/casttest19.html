@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast19.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs, DIMS } = RIG, C = CINE, T = QCAST;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const fa = () => T.foolArt(0.4, 0);
+const faces = [
+  [T.fool, 'man', {}, 'fool', fa], [T.fool, 'man', { face: { mouth: 'grin', lid: 0.16, brows: [-4, 6], look: [0.4, -0.2] } }, 'fool grin', () => T.foolArt(-0.6, 1)], [T.fool, 'man', { face: { expr: 'fear', mouth: 'tight', lid: 0.04, brows: [-9, -2], sweat: 0.6 } }, 'fool fear', fa],
+  [T.king, 'man', {}, 'king', () => null], [T.king, 'man', { face: { expr: 'neutral', mouth: 'grin', lid: 0.4, brows: [-3, 4] } }, 'king laugh', () => null], [T.king, 'man', { face: { expr: 'stern', mouth: 'snarl', open: 0.2, lid: 0.12, brows: [12, -4] } }, 'king rage', () => null],
+  [T.queen, 'woman', {}, 'queen', () => null], [T.lady, 'woman', { face: { mouth: 'smile' } }, 'lady', () => null], [T.chancellor, 'man', {}, 'chancellor', () => null],
+  [T.fatLord, 'man', {}, 'fat lord', () => null], [T.youngLord, 'man', {}, 'young lord', () => null], [T.scarLord, 'man', {}, 'scar lord', () => null],
+  [T.guardA, 'man', {}, 'guard A', () => null], [T.guardB, 'man', {}, 'guard B', () => null], [T.messenger, 'man', {}, 'messenger', () => null],
+  [T.messenger2, 'man', {}, 'messenger 2', () => null], [T.archer, 'man', {}, 'archer', () => null], ...T.sailors.map((s, i) => [s, 'man', {}, 'sailor ' + i, () => null])
+];
+window.renderFrame = async mode => {
+  let body = '';
+  if (mode === 0 || mode === 1) {
+    const list = mode === 0 ? faces.slice(0, 12) : faces.slice(12);
+    list.forEach(([mkr, k, o, lab, art], i) => {
+      const cx = (i % 3) * 360 + 180, cy = Math.floor(i / 3) * 440 + 230, s = 0.95, hy = DIMS[k].headY;
+      const oo = Object.assign({ x: cx, y: cy - hy * s + 90, s }, o), p = mkr(oo), a = art(oo);
+      body += `<g clip-path="url(#c${i})"><defs><clipPath id="c${i}"><rect x="${cx - 178}" y="${cy - 218}" width="356" height="436"/></clipPath></defs><rect x="${cx - 180}" y="${cy - 220}" width="360" height="440" fill="${i % 2 ? '#6e6a64' : '#7a756e'}"/>${T.withArt(p, oo, a, p.svg)}<text x="${cx - 170}" y="${cy + 210}" fill="#fff" font-size="22" font-family="Arial">${lab}</text></g>`;
+    });
+  } else {
+    const list = mode === 2 ? [faces[0], faces[3], faces[6], faces[8], faces[9], faces[10]] : [faces[11], faces[12], faces[13], faces[14], faces[15], faces[16]];
+    const oos = list.map(([m, k, o], i) => Object.assign({ x: 190 + (i % 3) * 350, y: 900 + Math.floor(i / 3) * 900, s: 0.55 }, o));
+    const ps = list.map(([m], i) => m(oos[i])), parts = ps.map(p => C.lit(p, L));
+    body = `<rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map((p, i) => T.withArt(ps[i], oos[i], list[i][4](oos[i]), p.body)).join('')}`;
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

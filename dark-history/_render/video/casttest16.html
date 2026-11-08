@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast16.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs, DIMS } = RIG, C = CINE, T = QCAST;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const faces = [
+  [T.mother, 'woman', {}, 'mother', () => null], [T.mother, 'woman', { face: { expr: 'fear', mouth: 'cry', open: 0.32, brows: [16, 4] } }, 'scream', () => null], [T.son, 'kid', { face: { mouth: 'smile', lid: 0.5 } }, 'son dreamy', () => T.sonArt],
+  [T.piper, 'man', {}, 'piper', () => T.piperArt(0)], [T.piper, 'man', { face: { mouth: 'grin', lid: 0.28, look: [0.3, 0] } }, 'piper grin', () => T.piperArt(0.5)], [T.oldWoman, 'woman', {}, 'old woman', () => null],
+  ...T.kids.map((k, i) => [k, 'kid', i % 2 ? { face: { mouth: 'smile', lid: 0.5 } } : {}, 'kid ' + i, () => T.kidArt[i]]),
+  [T.lame, 'kid', { face: { tears: 0.6 } }, 'lame', () => null], [T.deaf, 'kid', { face: { look: [0.6, 0] } }, 'deaf', () => T.deafArt], [T.blind, 'kid', { face: { look: [0, -0.3] } }, 'blind', () => null],
+  [T.baker, 'man', {}, 'baker', () => null], [T.reader, 'man', { face: { mouth: 'talk', open: 0.12 } }, 'reader', () => T.readerArt], [T.child, 'kid', { face: { lid: 0.6 } }, 'child', () => null]
+];
+window.renderFrame = async mode => {
+  let body = '';
+  if (mode === 0 || mode === 1) {
+    const list = mode === 0 ? faces.slice(0, 12) : faces.slice(12);
+    list.forEach(([mkr, k, o, lab, art], i) => {
+      const cx = (i % 3) * 360 + 180, cy = Math.floor(i / 3) * 440 + 230, s = 1.05, hy = DIMS[k].headY;
+      const oo = Object.assign({ x: cx, y: cy - hy * s + 70, s }, o), p = mkr(oo), a = art(oo);
+      body += `<g clip-path="url(#c${i})"><defs><clipPath id="c${i}"><rect x="${cx - 178}" y="${cy - 218}" width="356" height="436"/></clipPath></defs><rect x="${cx - 180}" y="${cy - 220}" width="360" height="440" fill="${i % 2 ? '#6e6a64' : '#7a756e'}"/>${T.withArt(p, oo, a, p.svg)}<text x="${cx - 170}" y="${cy + 210}" fill="#fff" font-size="22" font-family="Arial">${lab}</text></g>`;
+    });
+  } else {
+    const list = mode === 2 ? [faces[0], faces[2], faces[3], faces[6], faces[9], faces[14]] : [faces[15], faces[16], faces[17], faces[18], faces[19]];
+    const oos = list.map(([m, k, o], i) => Object.assign({ x: 190 + (i % 3) * 350, y: 900 + Math.floor(i / 3) * 900, s: k === 'kid' ? 0.95 : 0.55 }, o));
+    const ps = list.map(([m], i) => m(oos[i])), parts = ps.map(p => C.lit(p, L));
+    body = `<rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map((p, i) => T.withArt(ps[i], oos[i], list[i][4](oos[i]), p.body)).join('')}`;
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

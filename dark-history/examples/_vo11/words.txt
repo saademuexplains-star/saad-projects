@@ -1,0 +1,247 @@
+﻿# total 57.561s; chunks:
+#   0.00-  1.54 [1] Did usual golden crown
+#   1.54-  2.64 [1] Tentacles was a
+#   2.64-  4.79 [1] Dresses you witnessed silk worlds
+#   4.79-  8.97 [1] It has your ride in his loyal carriage to touch the arrows meant for his checks
+#   8.97- 11.03 [1] Every trip outside the castle walls
+#  11.03- 12.42 [1] Team of Russian roulette
+#  12.42- 13.68 [1] It left are new
+#  13.68- 18.04 [1] Running from mountain pass will deal king rides disguised as a common guard like
+#  18.04- 19.03 [1] Decide your window
+#  19.03- 21.04 [1] Had the stone bridge spot
+#  21.04- 21.55 [1] Perils of
+#  21.55- 21.87 [0] 
+#  21.87- 23.82 [1] Don power start beneath your choose
+#  23.82- 25.92 [1] Glenn sutcliffe's I see the Kings
+#  25.92- 27.96 [1] All in closet and flinging torch
+#  27.96- 28.53 [1] During
+#  28.53- 29.74 [1] Tell you from rich
+#  29.74- 31.26 [1] Due wired bridge to block
+#  31.26- 33.90 [1] Waiting to see if you recall the emergency brake
+#  33.90- 36.22 [1] It right
+#  36.22- 37.85 [1] Dear yell for the driver to stop
+#  37.85- 40.87 [1] As you know what happens to D course who rode an ambush
+#  40.87- 42.18 [1] The brothers mercenaries will
+#  42.18- 43.68 [1] Glynn your entire village to
+#  43.68- 44.92 [1] Ash before Sunday
+#  44.92- 46.52 [1] Duly not a carriage window
+#  46.52- 47.60 [1] One of the front wheel
+#  47.60- 47.79 [0] 
+#  47.79- 50.90 [1] All of the disguised kinda got ahead of secure the bridge
+#  50.90- 51.47 [0] 
+#  51.47- 53.98 [1] It has stalled Joseph girls ICS
+#  53.98- 54.46 [0] 
+#  54.46- 56.54 [1] Sun and plunging into the canyon in a
+#  56.54- 57.56 [1] All for her
+he 0.000 0.000 
+gives 0.000 0.000 
+you 0.000 0.050 
+a 0.050 0.450 
+golden 0.450 0.840 
+crown 0.840 1.180 
+identical 1.180 1.540 
+to 1.540 1.920 
+his 1.920 2.180 
+own 2.180 2.330 ,
+dresses 2.640 2.940 
+you 2.940 3.040 
+in 3.040 3.040 
+his 3.040 3.040 
+finest 3.040 3.870 
+silk 3.870 4.150 
+robes 4.150 4.540 ,
+and 4.785 5.155 
+forces 5.155 5.315 
+you 5.315 5.555 
+to 5.555 5.555 
+ride 5.555 5.795 
+in 5.795 5.875 
+his 5.875 6.065 
+royal 6.065 6.365 
+carriage 6.365 6.815 
+to 6.815 6.935 
+catch 6.935 7.255 
+the 7.255 7.425 
+arrows 7.425 7.745 
+meant 7.745 7.955 
+for 7.955 8.085 
+his 8.085 8.285 
+chest 8.285 8.775 .
+every 8.965 9.115 
+trip 9.115 9.395 
+outside 9.395 9.775 
+the 9.775 9.845 
+castle 9.845 10.235 
+walls 10.235 10.615 
+is 10.615 10.820 
+a 10.820 11.025 
+game 11.025 11.195 
+of 11.195 11.365 
+russian 11.365 11.715 
+roulette 11.715 12.225 .
+until 12.225 12.415 
+one 12.415 12.645 
+afternoon 12.645 13.035 ,
+you're 13.035 13.125 
+riding 13.125 13.345 
+through 13.695 14.035 
+a 14.035 14.275 
+mountain 14.275 14.565 
+pass 14.565 14.985 
+while 14.985 14.985 
+the 14.985 15.115 
+real 15.115 15.555 
+king 15.555 15.845 
+rides 15.845 16.155 
+disguised 16.155 16.695 
+as 16.695 16.775 
+a 16.775 16.845 
+common 16.845 17.245 
+guard 17.245 17.715 
+right 17.715 17.855 
+beside 18.035 18.295 
+your 18.295 18.425 
+window 18.425 18.855 .
+you 18.855 18.922 
+look 18.922 18.988 
+ahead 18.988 19.055 
+at 19.055 19.345 
+the 19.345 19.425 
+stone 19.425 19.825 
+bridge 19.825 20.185 
+and 20.185 20.285 
+spot 20.285 20.635 
+barrels 21.040 21.300 
+of 21.300 21.390 
+black 21.870 21.990 
+gunpowder 21.990 22.330 
+stacked 22.330 22.770 
+beneath 22.770 23.010 
+the 23.010 23.020 
+arches 23.020 23.030 .
+you 23.030 23.290 
+glance 23.290 23.290 
+up 23.290 23.290 
+at 23.290 23.630 
+the 23.815 23.925 
+cliffside 23.925 24.615 
+and 24.615 24.785 
+see 24.965 25.145 
+the 25.145 25.255 
+king's 25.255 25.595 
+own 25.915 25.945 
+brother 25.945 26.085 
+holding 26.085 26.745 
+a 26.745 26.825 
+flaming 26.825 27.295 
+torch 27.295 27.755 ,
+staring 27.755 27.955 
+dead 27.955 28.335 
+at 28.530 28.590 
+you 28.590 28.860 
+from 28.860 29.050 
+the 29.050 29.050 
+ridge 29.050 29.560 .
+he 29.735 29.785 
+wired 29.785 30.285 
+the 30.285 30.285 
+bridge 30.285 30.525 
+to 30.525 30.655 
+blow 30.655 31.095 ,
+and 31.095 31.175 
+he's 31.175 31.255 
+waiting 31.255 31.365 
+to 31.365 31.475 
+see 31.475 31.735 
+if 31.735 31.835 
+you 31.865 32.105 
+pull 32.105 32.365 
+the 32.365 32.475 
+emergency 32.475 32.985 
+brake 32.985 33.325 .
+your 33.325 33.420 
+mouth 33.420 33.515 
+goes 33.515 33.610 
+completely 33.610 33.705 
+dry 33.705 33.800 
+and 33.800 33.895 
+you 33.895 35.135 
+don't 35.135 35.545 
+dare 36.215 36.405 
+yell 36.405 36.625 
+for 36.625 36.745 
+the 36.745 36.815 
+driver 36.815 37.145 
+to 37.145 37.215 
+stop 37.215 37.655 ,
+because 37.845 37.885 
+you 37.885 37.975 
+know 37.975 38.315 
+what 38.315 38.465 
+happens 38.465 38.825 
+to 38.825 38.965 
+decoys 39.135 39.465 
+who 39.465 39.565 
+ruin 39.565 39.865 
+an 39.865 39.965 
+ambush 39.965 40.515 .
+the 40.865 40.855 
+brother's 40.865 41.235 
+mercenaries 41.235 41.845 
+will 41.845 41.995 
+burn 42.180 42.320 
+your 42.320 42.460 
+entire 42.460 42.990 
+village 42.990 43.370 
+to 43.370 43.510 
+ash 43.675 43.865 
+before 43.865 44.195 
+sundown 44.195 44.575 .
+so 44.575 44.745 
+you 44.745 44.915 
+lean 44.915 45.335 
+out 45.335 45.545 
+the 45.545 45.585 
+carriage 45.585 45.915 
+window 45.915 46.325 ,
+point 46.515 46.645 
+at 46.645 46.705 
+the 46.705 46.785 
+front 46.785 47.075 
+wheel 47.075 47.355 ,
+and 47.790 47.890 
+order 47.890 47.980 
+the 47.980 48.040 
+disguised 48.040 48.590 
+king 48.590 48.950 
+to 48.950 48.950 
+gallop 48.950 49.330 
+ahead 49.330 49.700 
+and 49.700 49.790 
+secure 49.790 50.190 
+the 50.190 50.300 
+bridge 50.300 50.740 .
+the 50.740 50.844 
+king 50.844 50.947 
+spurs 50.947 51.051 
+his 51.051 51.154 
+horse 51.154 51.258 
+onto 51.258 51.361 
+the 51.361 51.465 
+stones 51.465 52.175 
+just 52.175 52.335 
+as 52.335 52.675 
+the 52.675 53.185 
+barrels 53.185 53.625 
+explode 53.625 53.805 ,
+sending 54.455 54.745 
+him 54.745 54.845 
+plunging 54.845 55.425 
+into 55.425 55.585 
+the 55.585 55.675 
+canyon 55.675 56.115 
+in 56.115 56.225 
+a 56.225 56.355 
+ball 56.535 56.685 
+of 56.685 57.025 
+fire 57.025 57.315 .

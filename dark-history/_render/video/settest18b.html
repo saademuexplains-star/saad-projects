@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 2947;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast15.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props7.js"></script><script src="props8.js"></script><script src="props10.js"></script><script src="props12.js"></script><script src="props13.js"></script><script src="props14.js"></script><script src="props15.js"></script><script src="props15b.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets3.js"></script><script src="sets6.js"></script><script src="sets7.js"></script><script src="sets14.js"></script><script src="sets14b.js"></script><script src="sets16.js"></script><script src="sets16b.js"></script><script src="sets17.js"></script><script src="sets17b.js"></script><script src="sets18.js"></script><script src="sets18b.js"></script><script src="sets18c.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, S = SETS, PR = PROPS, C = CINE;
+const T0 = 3.3, none = () => '';
+const DESTS = [[-0.1, 51.5, 2.6], [2.35, 48.85, 2.75], [139.7, 35.7, 2.9], [151.2, -33.9, 3.05], [37.6, 55.75, 2.8], [-43.2, -22.9, 2.7], [18.4, -33.9, 2.95], [77.2, 28.6, 3.0], [-99.1, 19.4, 2.65]];
+const LABELS = ['CHICK 1948', 'MOUSE L', 'RAT 3', 'HUMAN 11', 'HUMAN 12', 'TISSUE 49', 'HUMAN 14', 'MONKEY K'];
+const deadCells = t => { let g = ''; for (let i = 0; i < 9; i++) { const a = i / 9 * 6.283 + 0.4, d = 260 + (i % 3) * 90; g += PR.cell(540 + Math.cos(a) * d, 960 + Math.sin(a) * d, 60, t, { seed: 40 + i, life: 0.05 }); } return g; };
+const views = [
+  [t => S.home51(t, { day: 1 }), [420, 1250, 0.72, 0], 'gDay', none],
+  [t => S.clinic(t, { film: 1 }), [560, 1100, 0.7, 0], 'gDay', none],
+  [t => S.hopkins(t, {}), [540, 760, 0.55, 0], 'gDusk', none],
+  [t => S.or51s(t, {}), [470, 1200, 0.72, 0], 'gHall', t => S.orTable(t) + S.orDrape(t)],
+  [t => S.corr51(t, {}), [3000, 1050, 0.75, 0], 'gHall', none],
+  [t => S.wardS(t, { season: 0.05, cal: 2 }), [500, 1250, 0.7, 0], 'gDay', t => PR.bedSide(-60, 1900, 1100, 1) + PR.bedCabinet(-230, 1900, 1)],
+  [t => S.wardS(t, { season: 0.5, day: 0.25, cal: 7, clock: 3 }), [900, 1250, 0.6, 0], 'gNight', t => PR.bedSide(-60, 1900, 1100, 1)],
+  [t => S.homeWin(t, {}), [540, 900, 0.85, 0], 'gNight', none],
+  [t => S.lab51(t, { glow: 0.6, fill: 0.2 }), [420, 1250, 0.95, 0], 'gNight', t => PR.tubeRack(-160, 1560, 1, t, { n: 8, labels: LABELS, dead: i => i < 4 ? 1 : 0 }) + PR.globe(700, 1100, 0.9, t, { lon: -40, overOut: PR.globeArcs([-76.6, 39.3], DESTS, t) })],
+  [t => S.micro(t, {}), [540, 960, 1, 0], 'gHall', t => deadCells(t) + PR.doublingCells(540, 960, 520, t, 3.5) + S.microRing(900)],
+  [t => S.inside(t, {}), [560, 1250, 0.7, 0], 'gHall', t => PR.tumor(560, 1400, 1.2, t, { grow: 1, spread: 0.7 })],
+  [t => S.inside(t, {}), [560, 1350, 1.3, 0], 'gHall', t => PR.tumor(560, 1400, 1, t, { grow: 0.6, spread: 0 })],
+  [t => S.cemetery(t, { year: 0.3, season: 0.8 }), [540, 1200, 0.68, 0], 'gDusk', none],
+  [t => S.cemetery(t, { year: 1, season: 0.55 }), [600, 1300, 0.8, 0], 'gDay', none],
+  [t => S.labNow(t, { photo: PR.photo(1085, 752, 0.13, X.compose(S.home51(t, { day: 1 }), [380, 1300, 1.3, 0]), { sepia: 1 }) }), [800, 1150, 0.72, 0], 'gDay', none],
+  [t => S.labNow(t, { open: 0.8, photo: PR.photo(1085, 752, 0.13, X.compose(S.home51(t, { day: 1 }), [380, 1300, 1.3, 0]), { sepia: 1 }) }), [1155, 880, 3.2, 0], 'gDay', none],
+  [t => S.space(t), [540, 960, 1, 0], 'gHall', t => PR.earthNight(540, 1000, 430, t, { lon: -40, dots: 0.7 })],
+  [t => S.lab51(t, { glow: 0.6 }), [700, 1100, 2.0, 0], 'gNight', t => PR.globe(700, 1100, 0.9, t, { lon: -40, overOut: PR.globeArcs([-76.6, 39.3], DESTS.map(d => [d[0], d[1], d[2] + 0.4]), t) })],
+];
+window.renderFrame = async n => {
+  const [set, cam, grade, chars] = views[n], t = T0;
+  X.CAM = cam;
+  const body = X.compose(X.stage(set(t), chars(t)), cam) + C.vignette(0.5);
+  document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/><g filter="url(#${grade})">${body}</g>${X.post(t, n)}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await new Promise(r => setTimeout(r, 80));
+  return true;
+};
+window.READY = true;
+</script></body></html>

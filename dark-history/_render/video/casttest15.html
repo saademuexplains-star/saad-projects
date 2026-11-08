@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast15.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs, DIMS } = RIG, C = CINE, T = QCAST;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const hA = o => T.henriettaArt(o);
+// [maker, kind, extra options, label, head art]
+const hands = { armR: { hand: [-150, -880], dir: [0.2, 1], pose: 'relaxed', facing: 'back' }, armL: { hand: [130, -1150], dir: [0.6, -0.8], pose: 'open', facing: 'back' } };
+const faces = [
+  [T.henrietta, 'woman', { outfit: 'suit', face: { mouth: 'smile' } }, 'henrietta suit', hA], [T.henrietta, 'woman', { outfit: 'home', face: { expr: 'anxious', mouth: 'tight' } }, 'henrietta worried', hA],
+  [T.henrietta, 'woman', { outfit: 'coat', face: { expr: 'neutral', mouth: 'closed' } }, 'henrietta coat', hA],
+  [T.henrietta, 'woman', { outfit: 'gown', face: { lid: 1, mouth: 'closed' } }, 'asleep', hA], [T.henrietta, 'woman', { outfit: 'gown', ill: 0.8, face: { expr: 'tired', lid: 0.45 } }, 'ill', hA],
+  [T.lawrence, 'man', {}, 'lawrence 16', () => T.lawrenceArt], [T.elsie, 'kid', {}, 'elsie 10', () => T.elsieArt], [T.sonny, 'kid', {}, 'sonny 4', () => T.sonnyArt], [T.deborah, 'kid', {}, 'deborah', () => T.deborahArt],
+  [T.day, 'man', {}, 'day', () => T.dayArt], [T.doctor, 'man', {}, 'clinic doctor', () => T.doctorArt], [T.surgeon, 'man', {}, 'surgeon', () => T.surgeonArt],
+  [T.orNurse, 'woman', {}, 'or nurse', () => T.orNurseArt], [T.wardDoc, 'man', { face: { mouth: 'talk', open: 0.15 } }, 'ward doctor', null], [T.wardNurse, 'woman', {}, 'ward nurse', () => T.wardNurseArt],
+  [T.labGirl, 'woman', { face: { expr: 'fear', wide: true, mouth: 'parted', open: 0.12 } }, 'lab assistant', () => T.labGirlArt], [T.schoolNurse, 'woman', {}, 'school nurse', () => T.schoolNurseArt],
+  [T.polioKids[0], 'kid', {}, 'polio girl', null], [T.polioKids[1], 'kid', {}, 'kid b', null], [T.polioKids[2], 'kid', {}, 'kid c', () => T.polioKidArt[2]], [T.polioKids[3], 'kid', {}, 'kid d', null],
+  [T.scientist, 'woman', {}, 'scientist', () => T.scientistArt], [T.sciB, 'man', {}, 'sci b', null], [T.sciC, 'woman', {}, 'sci c', null]
+];
+window.renderFrame = async mode => {
+  let body = '';
+  if (mode === 0 || mode === 3) {
+    const list = mode === 0 ? faces.slice(0, 18) : faces.slice(18);
+    list.forEach(([mkr, k, o, lab, art], i) => {
+      const cx = (i % 3) * 360 + 180, cy = Math.floor(i / 3) * 320 + 175, s = 0.95, hy = DIMS[k].headY;
+      const oo = Object.assign({ x: cx, y: cy - hy * s + 60, s }, o), p = mkr(oo), a = art ? art(oo) : null;
+      body += `<g clip-path="url(#c${i})"><defs><clipPath id="c${i}"><rect x="${cx - 178}" y="${cy - 158}" width="356" height="316"/></clipPath></defs><rect x="${cx - 180}" y="${cy - 160}" width="360" height="320" fill="${i % 2 ? '#6e6a64' : '#7a756e'}"/>${T.withArt(p, oo, a, p.svg)}<text x="${cx - 170}" y="${cy + 150}" fill="#fff" font-size="22" font-family="Arial">${lab}</text></g>`;
+    });
+  } else {
+    const list = mode === 1 ? faces.slice(0, 9) : faces.slice(9, 18);
+    const oos = list.map(([m, k, o], i) => Object.assign({ x: 190 + (i % 3) * 350, y: 860 + Math.floor(i / 3) * 620, s: k === 'kid' ? 0.6 : 0.4 }, hands, o));
+    const ps = list.map(([m], i) => m(oos[i])), parts = ps.map(p => C.lit(p, L));
+    body = `<rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map((p, i) => T.withArt(ps[i], oos[i], list[i][4] ? list[i][4](oos[i]) : null, p.body)).join('')}`;
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

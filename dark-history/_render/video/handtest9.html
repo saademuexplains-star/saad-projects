@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#fff}</style>
+<script>window.VIDEO_FRAMES = 10;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script></head>
+<body><div id="root"></div><script>
+const R = RIG; const hold = '<path d="M0,0 L200,0" stroke="#f00" stroke-width="6"/><circle cx="200" cy="0" r="10" fill="#00f"/>';
+let g = '';
+const cases = [[300, 400, [0, 1], 'R', 'back', 60], [700, 400, [0, 1], 'R', 'back', 0], [300, 1000, [-0.866, 0.5], 'R', 'back', 70], [700, 1000, [0, 1], 'L', 'back', 60], [300, 1500, [0, 1], 'R', 'palm', 60]];
+for (const [x, y, d, side, facing, hr] of cases) { g += R.hand({ x, y, dir: d, side, facing, pose: 'grip', size: 228, skin: '#e0b090', hold, holdRot: hr }) + `<circle cx="${x}" cy="${y}" r="6" fill="#0a0"/><text x="${x - 80}" y="${y - 160}" font-size="28">${side} ${facing} d=${d} hr=${hr}</text>`; }
+window.renderFrame = async n => { document.getElementById('root').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${R.defs()}</defs><rect width="1080" height="1920" fill="#fff"/>${g}</svg>`; await new Promise(r => setTimeout(r, 200)); return true; };
+window.READY = true;
+</script></body></html>

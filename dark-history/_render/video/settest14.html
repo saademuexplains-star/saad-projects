@@ -1,0 +1,42 @@
+﻿<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 3454;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast11.js"></script><script src="props.js"></script><script src="props3.js"></script><script src="props11.js"></script><script src="props11b.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets14.js"></script><script src="sets14b.js"></script>
+<script src="engine.js"></script></head><body><div id="root"></div>
+<script>
+const X = ENG, S = SETS, PR = PROPS, Q = QCAST, C = CINE;
+const LT = { from: [-0.8, -0.6], shadow: '#2a1c10', shadowOp: 0.35, floor: '#4a3a20', floorOp: 0.25, contactOp: 0.3, key: '#fff0d0', keyAdd: 0.07, rims: [{ from: [-1, -0.4], col: '#ffe0a0', w: 7, op: 0.5 }], face: { col: '#fff0d8', op: 0.1 } };
+const lit = P => { const r = C.lit(P, LT); return r.cast + r.body; };
+const cams = [[-300, 1200, 0.45], [4900, 1700, 0.42], [5800, 800, 0.4], [0, -500, 0.42], [4900, 3300, 0.5], [4400, 1950, 1.4], [-600, 1050, 3.2]];
+window.renderFrame = async n => {
+  const t = 14;
+  let body = '';
+  if (n < 7) {
+    const cam = cams[n]; X.CAM = [cam[0], cam[1], cam[2], 0];
+    const run = { x: 300, c: 0.2, g: PR.GAIT.walk }, CO = PR.COACH;
+    const coach = PR.coach({ x: -600, y: 1560, s: 0.3, t, run, glass: 1,
+      passenger: () => lit(Q.you({ x: -10, y: CO.SEAT + 820, s: 1, face: { look: [0.5, 0.1] } })),
+      driver: () => `<g clip-path="url(#drv)"><defs><clipPath id="drv"><rect x="0" y="-4000" width="3000" height="${-1650 + 4000}"/></clipPath></defs>${lit(Q.driver({ x: 840, y: -850, s: 1, armR: { hand: [140, -720], dir: [0.6, 0.5], pose: 'fist', facing: 'back' }, armL: { hand: [190, -740], dir: [0.6, 0.5], pose: 'fist', facing: 'back' } }))}</g>` });
+    const king = PR.rider({ who: 'king', x: -600 + 158, y: 1600, s: 0.3, g: PR.GAIT.walk, c: 0.45, t, lit, pose: { outfit: 'guard', face: { look: [-0.5, -0.1] } }, leg: { legs: '#2e2a26', boot: '#1e1610', hem: '#5a4630' }, horse: { col: '#5a3a24', tack: { bridle: true, saddle: '#3a2414' } } });
+    const set = S.pass(t, { fuse: n === 2 ? 0.4 : 0, boom: 0 });
+    body = X.compose(X.stage(set, coach.svg + king.svg), X.CAM);
+  } else {
+    X.CAM = [540, 960, 1, 0];
+    const k = n - 7;
+    if (k === 0) { const H = S.CH11; X.CAM = [540, 900, 1.25, 0];
+      const ch = lit(Q.chamberlain({ x: H.CHAM[0], y: H.CHAM[1], s: H.CS, face: { look: [0.6, 0] } })) + lit(Q.king({ x: H.KING[0], y: H.KING[1], s: H.KS, face: { look: [0.5, 0.2] } })) + lit(Q.you({ x: H.YOU[0], y: H.YOU[1], s: H.YS, face: { look: [-0.3, 0] } })) + lit(Q.valet({ x: H.VAL[0], y: H.VAL[1], s: H.VS, face: { look: [-0.6, 0] } }));
+      body = X.compose(X.stage(S.chamber(t), ch), X.CAM); }
+    if (k === 1) { X.CAM = [700, 1000, 0.6, 0]; const co = PR.coach({ x: 300, y: 1700, s: 0.36, t, run: { x: 300, c: 0.2, g: PR.GAIT.walk }, passenger: () => lit(Q.you({ x: -10, y: PR.COACH.SEAT + 820, s: 1 })) }); body = X.compose(X.stage(S.gate11(t), co.svg), X.CAM); }
+    if (k === 2) { const I = S.IN11; const you = lit(Q.you({ x: I.YOU[0], y: I.YOU[1] + 800 * I.YS, s: I.YS, face: { look: [0.3, -0.1] } })); body = X.compose(X.stage(S.inside(t, { view: { town: 0.3, mount: 0.7 }, hole: 0.5 }), `<g clip-path="url(#ycl)"><defs><clipPath id="ycl"><rect x="-1000" y="-1000" width="3000" height="${I.SEAT + 1000}"/></clipPath></defs>${you}</g>`), X.CAM); }
+    if (k === 3) { const R = S.RG11; X.CAM = [600, 1200, 0.8, 0]; body = X.compose(X.stage(S.ridge(t), lit(Q.brother({ x: R.BRO[0], y: R.BRO[1], s: R.BS, face: { look: [0.3, 0.3] } }))), X.CAM); }
+    if (k === 4) { body = X.compose(X.stage(S.gibbet(t), ''), X.CAM); }
+    if (k === 5) { const V = S.VL11; body = X.compose(X.stage(S.village(t, { fire: 0.8 }), lit(Q.wife({ x: V.WIFE[0], y: V.WIFE[1], s: 0.7 })) + lit(Q.daughter({ x: V.DAU[0], y: V.DAU[1], s: 0.8 }))), X.CAM); }
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${X.defs()}</defs><rect width="1080" height="1920" fill="#000"/>${body}${X.post(t, n)}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await new Promise(r => setTimeout(r, 60));
+  return true;
+};
+window.READY = true;
+</script></body></html>

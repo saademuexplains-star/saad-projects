@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast14.js"></script><script src="props.js"></script></head><body><div id="root"></div>
+<script>
+const { defs, DIMS } = RIG, C = CINE, T = QCAST;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const par = i => o => T.parents[i].mk(o), parArt = i => T.parents[i].art;
+// [maker, kind, extra options, label, head art]
+const faces = [
+  [T.you, 'woman', {}, 'you', p => T.youArt(p)], [T.you, 'woman', { face: { expr: 'neutral', mouth: 'smile', lid: 0.3, brows: [-2, 2] } }, 'you relief', p => T.youArt(p)],
+  [T.you, 'woman', { decl: 0.85, face: { expr: 'fear', wide: true, sweat: 0.8, mouth: 'tight', brows: [9, -2] } }, 'you withdrawal', p => T.youArt(p)],
+  [T.child, 'kid', { sick: 1, face: { expr: 'tired', mouth: 'parted', open: 0.14, lid: 0.4, brows: [6, 0] } }, 'child cough', () => T.childArt], [T.child, 'kid', { sick: 0.3, face: { lid: 1, mouth: 'smile', open: 0 } }, 'child asleep', () => T.childArt],
+  [T.child, 'kid', { wd: 1, face: { expr: 'grief', mouth: 'cry', open: 0.2, tears: 1, brows: [10, -1] } }, 'child screaming', () => T.childArt],
+  [T.pharmacist, 'man', { face: { mouth: 'smile', lid: 0.3 } }, 'pharmacist', () => T.pharmArt], [T.pharmacist, 'man', { face: { expr: 'grim', mouth: 'tight' } }, 'pharmacist grim', () => T.pharmArt],
+  [par(0), 'woman', {}, 'parent A', () => parArt(0)], [par(1), 'man', {}, 'parent B', () => parArt(1)], [par(2), 'woman', {}, 'parent C', () => parArt(2)],
+  [par(3), 'man', {}, 'parent D', () => parArt(3)], [par(4), 'woman', {}, 'parent E', () => parArt(4)], [par(5), 'man', {}, 'parent F', () => parArt(5)],
+  [T.docA, 'man', {}, 'doctor A', () => T.docArt.a], [T.docB, 'man', {}, 'doctor B', () => T.docArt.b], [T.docC, 'man', {}, 'doctor C', () => T.docArt.c],
+  [T.docA, 'man', { face: { expr: 'grief', mouth: 'tight', lid: 0.5 } }, 'doctor A guilt', () => T.docArt.a]
+];
+window.renderFrame = async mode => {
+  let body = '';
+  if (mode === 0) {
+    faces.forEach(([mkr, k, o, lab, art], i) => {
+      const cx = (i % 3) * 360 + 180, cy = Math.floor(i / 3) * 320 + 175, s = 0.95, hy = DIMS[k].headY;
+      const oo = Object.assign({ x: cx, y: cy - hy * s + 60, s }, o), p = mkr(oo), a = art ? art(oo) : null;
+      body += `<g clip-path="url(#c${i})"><defs><clipPath id="c${i}"><rect x="${cx - 178}" y="${cy - 158}" width="356" height="316"/></clipPath></defs><rect x="${cx - 180}" y="${cy - 160}" width="360" height="320" fill="${i % 2 ? '#6e6a64' : '#7a756e'}"/>${T.withArt(p, oo, a, p.svg)}<text x="${cx - 170}" y="${cy + 150}" fill="#fff" font-size="22" font-family="Arial">${lab}</text></g>`;
+    });
+  } else {
+    const list = mode === 1 ? faces.slice(0, 9) : faces.slice(9);
+    const oos = list.map(([m, k, o], i) => Object.assign({ x: 190 + (i % 3) * 350, y: 860 + Math.floor(i / 3) * 620, s: k === 'kid' ? 0.6 : 0.4 }, o));
+    const ps = list.map(([m], i) => m(oos[i])), parts = ps.map(p => C.lit(p, L));
+    body = `<rect width="1080" height="1920" fill="#8a8680"/>${parts.map(p => p.cast).join('')}${parts.map((p, i) => T.withArt(ps[i], oos[i], list[i][4] ? list[i][4](oos[i]) : null, p.body)).join('')}`;
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

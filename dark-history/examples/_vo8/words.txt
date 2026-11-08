@@ -1,0 +1,206 @@
+﻿# total 47.2s; chunks:
+#   0.00-  1.61 [1] Genial to 40 lead
+#   1.61-  2.52 [1] Wouldn't a
+#   2.52-  4.33 [1] Every night to confess as soon as
+#   4.33-  5.57 [1] New law says
+#   5.57-  7.69 [1] It has single word he tells you
+#   7.69-  9.35 [1] Tom little to
+#   9.35- 10.42 [1] Aunt on why
+#  10.42- 11.04 [0] 
+#  11.04- 14.24 [1] It rhymes of the empire inside your head in silence
+#  14.24- 15.25 [1] One evening
+#  15.25- 17.75 [1] Jean Claude confesses that daunts a moral
+#  17.75- 21.66 [1] Dues ordering his army to burn an entire repel east village to the grout
+#  21.66- 22.91 [1] Industry or to
+#  22.91- 24.07 [1] All mothers leads
+#  24.07- 25.65 [1] 10 minutes after the king leafs
+#  25.65- 28.90 [1] It lean meals on the other side of the screen trembling
+#  28.90- 30.33 [1] It let
+#  30.33- 31.42 [1] Little
+#  31.54- 35.66 [1] Losses nurse and slides glass vial through the grief for you to destroy
+#  35.66- 37.40 [1] You tell the boy his sins are for tiff
+#  37.40- 41.29 [1] Or the entire violin to the secret and union won the king takes before sleet
+#  41.41- 42.91 [1] And watch the tyrant shot to
+#  42.91- 43.70 [1] Your feet
+#  43.70- 43.87 [0] 
+#  43.87- 44.40 [0] 
+#  44.40- 45.12 [1] Also
+#  45.12- 45.64 [0] 
+#  45.64- 46.19 [1] The house and
+#  46.19- 47.20 [1] Innocent lives
+your 0.000 0.000 
+king 0.000 0.420 
+kneels 0.420 0.580 
+before 0.580 0.960 
+you 0.960 1.250 
+in 1.720 2.020 
+a 2.020 2.230 
+dark 2.230 2.327 
+wooden 2.327 2.423 
+booth 2.423 2.520 
+every 2.520 2.660 
+night 2.660 2.910 
+to 2.910 3.010 
+confess 3.010 3.470 
+his 3.470 3.590 
+sins 3.590 3.880 ,
+knowing 3.940 4.040 
+the 4.325 4.265 
+law 4.325 4.755 
+says 4.755 5.065 
+if 5.065 5.233 
+you 5.233 5.402 
+ever 5.402 5.570 
+repeat 5.570 5.860 
+a 5.860 6.210 
+single 6.210 6.640 
+word 6.640 6.850 
+he 6.850 6.970 
+tells 6.970 7.280 
+you 7.280 7.280 ,
+your 7.280 7.280 
+tongue 7.280 7.280 
+will 7.280 7.280 
+be 7.280 7.280 
+cut 7.280 7.280 
+out 7.280 7.280 
+and 7.280 7.280 
+you 7.280 7.430 
+will 7.430 7.715 
+be 7.715 8.005 
+burned 8.005 9.025 
+alive 9.025 9.115 .
+you 9.345 9.495 
+carry 9.495 9.665 
+the 9.665 9.985 
+darkest 11.040 11.260 
+crimes 11.260 11.520 
+of 11.520 11.590 
+the 11.590 11.690 
+empire 11.690 12.140 
+inside 12.140 12.610 
+your 12.610 12.730 
+head 12.730 12.990 
+in 12.990 13.170 
+silence 13.170 13.830 ,
+until 13.830 14.445 
+one 14.445 14.655 
+evening 14.655 15.025 
+the 15.025 15.250 
+king 15.250 15.370 
+coldly 15.370 15.820 
+confesses 15.820 16.410 
+that 16.410 16.680 
+at 16.680 16.680 
+dawn 16.680 17.010 
+tomorrow 17.010 17.060 ,
+he 17.060 17.440 
+is 17.745 17.855 
+ordering 17.855 18.205 
+his 18.205 18.355 
+army 18.355 18.655 
+to 18.655 18.805 
+burn 18.805 19.045 
+an 19.075 19.175 
+entire 19.175 19.755 
+rebellious 20.145 20.345 
+village 20.345 20.705 
+to 20.705 20.815 
+the 20.815 20.905 
+ground 20.905 21.395 ,
+including 21.395 21.525 
+the 21.525 21.655 
+street 21.655 22.135 
+where 22.175 22.295 
+your 22.295 22.425 
+own 22.905 22.875 
+mother 22.905 23.415 
+lives 23.415 23.805 .
+ten 24.065 24.115 
+minutes 24.115 24.375 
+after 24.375 24.635 
+the 24.635 24.715 
+king 24.715 24.965 
+leaves 24.965 25.375 ,
+his 25.375 25.510 
+young 25.510 25.645 
+kitchen 25.645 26.285 
+boy 26.285 26.485 
+kneels 26.485 26.825 
+on 26.825 26.915 
+the 26.915 27.045 
+other 27.045 27.265 
+side 27.265 27.505 
+of 27.505 27.595 
+the 27.595 27.675 
+screen 27.675 28.055 
+trembling 28.055 28.655 
+and 28.655 28.682 
+confesses 28.682 28.708 
+that 28.708 28.735 
+he 28.735 28.762 
+bought 28.762 28.788 
+rat 28.788 28.815 
+poison 28.815 28.842 
+to 28.842 28.868 
+kill 28.868 28.895 
+the 28.895 29.905 
+king 29.905 30.155 ,
+but 30.325 30.885 
+lost 31.535 31.995 
+his 31.995 31.995 
+nerve 31.995 32.375 
+and 32.415 32.545 
+slides 32.545 32.975 
+the 32.975 32.975 
+glass 32.975 33.395 
+vial 33.395 33.705 
+through 33.705 33.965 
+the 33.965 34.065 
+grate 34.065 34.355 
+for 34.355 34.515 
+you 34.515 34.775 
+to 34.775 34.885 
+destroy 34.885 35.395 .
+you 35.655 35.625 
+tell 35.655 35.845 
+the 35.845 35.935 
+boy 35.935 36.175 
+his 36.175 36.385 
+sins 36.385 36.675 
+are 36.675 36.765 
+forgiven 36.765 36.915 ,
+pour 37.395 37.505 
+the 37.505 37.605 
+entire 37.605 38.115 
+vial 38.115 38.565 
+into 38.565 38.655 
+the 38.655 38.755 
+sacred 39.225 39.315 
+communion 39.315 39.635 
+wine 39.635 39.865 
+the 39.865 39.965 
+king 39.965 40.215 
+takes 40.215 40.505 
+before 40.505 40.825 
+sleep 40.825 41.115 ,
+and 41.405 41.405 
+watch 41.405 41.705 
+the 41.705 41.805 
+tyrant 41.805 42.265 
+choke 42.265 42.585 
+to 42.585 42.715 
+death 42.715 42.815 
+at 42.815 42.915 
+your 42.915 43.115 
+feet 43.115 43.365 ,
+trading 43.365 43.624 
+your 43.624 43.883 
+own 43.883 44.141 
+soul 44.141 44.400 
+to 44.400 44.880 
+save 45.635 45.655 
+a 45.655 45.865 
+thousand 45.865 46.025 
+innocent 46.185 46.355 
+lives 46.355 46.935 .

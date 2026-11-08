@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="cast.js"></script><script src="cast3.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script></head><body><div id="root"></div>
+<script>
+const R = RIG, C = CINE, T = TCAST, PR = PROPS;
+const L = { from: [-1, -0.6], shadow: '#3a3040', shadowOp: 0.45, floorOp: 0.35, contactOp: 0.35, rims: [{ from: [1, -0.5], col: '#ffe0b0', w: 6, op: 0.6 }], face: { col: '#fff1e0', op: 0.15 } };
+const cell = (i, svg) => { const cx = (i % 2) * 540, cy = Math.floor(i / 2) * 960; return `<g clip-path="url(#k${i})"><defs><clipPath id="k${i}"><rect x="${cx + 2}" y="${cy + 2}" width="536" height="956"/></clipPath></defs><rect x="${cx}" y="${cy}" width="540" height="960" fill="${i % 3 ? '#6e6a64' : '#7a756e'}"/>${svg}</g>`; };
+window.renderFrame = async n => {
+  const ph = n / 10;
+  let body = '';
+  // 1 taster lifts the spoon toward his mouth
+  {
+    const o = { x: 270, y: 2050, s: 1.15 };
+    const p = T.taster(Object.assign(o, { face: { mouth: 'parted', open: 0.2, look: [0.3, 0.3] },
+      armR: { hand: R.toLocal(o, [120 + ph * 90, 1000 - ph * 330]), pose: 'grip', hold: PR.spoon({ food: true }), dir: [-0.2, -1], facing: 'back' } }));
+    body += cell(0, C.lit(p, L).body);
+  }
+  // 2 the King with a roast leg
+  {
+    const o = { x: 810, y: 2150, s: 1.0 };
+    const p = T.king(Object.assign(o, { face: { mouth: 'grin', look: [0.4, 0.2] },
+      armL: { hand: R.toLocal(o, [920, 740]), pose: 'grip', hold: PR.leg({ bite: ph }), dir: [-0.7, -0.7], facing: 'back' } }));
+    body += cell(1, C.lit(p, L).body);
+  }
+  // 3 the brother: hand on the dagger at his hip
+  {
+    const o = { x: 230, y: 960 + 1450 * 0.62 - 20, s: 0.62 };
+    const dg = [74, -800], d = ph * 0.6, ang = 14;
+    const gp = PR.daggerGrip(dg[0], dg[1], 1, d, ang), a = ang * Math.PI / 180;
+    const dir = [-Math.cos(a), -Math.sin(a)], W = [gp[0] - dir[0] * 0.33 * 110, gp[1] - dir[1] * 0.33 * 110];
+    const p = T.brother(Object.assign(o, { face: { look: [0, 0] }, props: PR.dagger(dg[0], dg[1], 1, d, ang, 0),
+      armL: { hand: W, pose: 'grip', dir, facing: 'back' } }));
+    body += cell(2, C.lit(p, L).body);
+  }
+  // 4 the brother raises the crown onto his own head with both hands
+  {
+    const o = { x: 810, y: 960 + 1460 * 0.9 + 80, s: 0.9 };
+    const lift = 120 - ph * 100, fx = { w: 0.89, len: 1.11 };
+    const hy = -144 + 32 - lift; // crown base (head units, before morph scale)
+    const gR = R.headPt(o, 'man', [-80 * fx.w, (hy - 16) * fx.len]), gL = R.headPt(o, 'man', [80 * fx.w, (hy - 16) * fx.len]);
+    const gy = 0.33 * 110;
+    const p = T.brother(Object.assign(o, { crown: true, crownLift: lift, face: { look: [0, -0.6], mouth: 'smirk' },
+      armR: { hand: [gR[0] - gy, gR[1]], pose: 'grip', dir: [1, 0], facing: 'back' }, armL: { hand: [gL[0] + gy, gL[1]], pose: 'grip', dir: [-1, 0], facing: 'back' } }));
+    body += cell(3, C.lit(p, L).body);
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${R.defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

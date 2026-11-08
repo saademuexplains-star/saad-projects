@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="props.js"></script><script src="props14.js"></script></head><body><div id="root"></div>
+<script>
+const P = PROPS, C = CINE;
+window.renderFrame = async mode => {
+  let body = '<rect width="1080" height="1920" fill="#6a645c"/>';
+  if (mode === 0) {
+    [0, 35, 70, 110, 180, 300].forEach((r, i) => { body += P.heroinBottle(110 + (i % 3) * 330 + 60, 420 + Math.floor(i / 3) * 460, 0.95, 0, { rot: r, level: 0.7 }) + `<text x="${60 + (i % 3) * 330}" y="${470 + Math.floor(i / 3) * 460}" fill="#fff" font-size="22" font-family="Arial">rot ${r}</text>`; });
+    body += P.heroinBottle(250, 1420, 0.95, 0, { lie: 90, rot: 0, level: 0, cork: false }) + P.heroinBottle(700, 1420, 0.95, 0, { lie: 90, rot: 140, level: 0, cork: false });
+    body += `<g transform="translate(360,1760) rotate(-110)">${P.bottleG(0, { tilt: 110 + 90, level: 0.55, cork: false })}</g>` + `<g transform="translate(760,1760)">${P.spoonG({ fill: 0.8 })}</g>` + P.syrupStream(300, 1700, 900, 1760, 0, 1);
+  } else {
+    body += P.globe(300, 360, 0.8, 0, { lon: -20, red: [1, 0.5, 0, 0, 0, 0, 0] }) + P.carton(800, 560, 1.4) + P.morphineBottle(800, 900, 1.2);
+    body += P.showGlobe(220, 1180, 0.9, 0, '#b01e2a') + P.register(560, 1180, 0.9) + P.balance(900, 1180, 0.9, 0, 0.3);
+    body += P.oilLamp(160, 1650, 0.9, 0, 1) + P.kettle(420, 1650, 0.9, 1.2, 1) + P.ragDoll(700, 1650, 1.4) + P.woodHorse(900, 1650, 0.9) + P.calendarX(900, 1350, 1, 7);
+  }
+  document.getElementById('root').innerHTML = `<svg width="1080" height="1920" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"><defs>${RIG.defs()}${C.defs()}${ENV.defs()}</defs>${body}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  return true;
+};
+window.READY = true;
+</script></body></html>

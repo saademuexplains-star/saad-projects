@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 582;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast5.js"></script><script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script>
+<script src="sets1.js"></script><script src="sets8.js"></script></head>
+<body><div id="root"></div>
+<script>
+// leech + cast test sheet: frame 0 = leeches at several poses, frame 1 = cast faces
+const root = document.getElementById('root'), PR = PROPS, R = RIG;
+window.renderFrame = async n => {
+  let g = `<rect width="1080" height="1920" fill="#d8b49a"/>`;
+  if (n === 0) {
+    g += PR.leech(PR.leechHangPts(200, 200, 300, 95, 0, 0.4, 0.28), 70, { fat: 0 });
+    g += PR.leech(PR.leechHangPts(520, 200, 300, 85, 1, 1.4, 0.28), 70, { fat: 0.65 });
+    g += PR.leech(PR.leechSwimPts(980, 700, 340, 180, 0.5, 0), 60, {});
+    g += PR.leech(PR.leechHangPts(300, 900, 80, 95, 0, 0.4, 0.3), 16, { fat: 0.3 });
+    g += PR.leech(PR.leechHangPts(400, 900, 50, 95, 0, 0.4, 0.3), 13, { fat: 0.3 });
+    g += PR.leechJar(700, 1700, 1.6, 0.7);
+  } else {
+    const Q = QCAST;
+    g += `<rect width="1080" height="1920" fill="#6a6a70"/>`;
+    g += Q.you({ x: 290, y: 1850, s: 1.15, face: { expr: 'anxious', brows: [-12, 4], look: [0.1, 0.6], lid: 0.42, mouth: 'tight' } }).svg;
+    g += Q.doctor({ x: 800, y: 1850, s: 1.15, face: { mouth: 'smile', look: [-0.6, 0.3] } }).svg;
+  }
+  root.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"><defs>${R.defs()}${CINE.defs()}${ENV.defs()}</defs>${g}</svg>`;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await new Promise(r => setTimeout(r, 40));
+  return true;
+};
+window.READY = true;
+</script></body></html>

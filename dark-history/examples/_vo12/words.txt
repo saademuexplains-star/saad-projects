@@ -1,0 +1,199 @@
+﻿# total 46.9s; chunks:
+#   0.00-  3.26 [1] It's it has a you're mad man wandering the streets of
+#   3.26-  3.84 [0] 
+#   3.84-  7.45 [1] And the Kings Dr. Decides to cure you would think half split intervene
+#   7.45-  7.70 [0] 
+#   7.70- 10.55 [1] It handles blood will make your gentle to
+#  10.55- 12.76 [1] It has a silver to ensure or
+#  12.76- 13.97 [1] And warm animal club
+#  13.97- 14.62 [1] Horse and
+#  14.75- 14.96 [0] 
+#  14.96- 15.34 [0] 
+#  15.34- 15.97 [0] 
+#  15.97- 17.95 [1] Team to her cert are backing are hard
+#  17.95- 18.59 [1] How has
+#  18.59- 19.63 [1] Dawson's stock
+#  19.63- 21.69 [1] That night your urine comes up black
+#  21.69- 23.70 [1] I'm a whole house weeks for you to tie
+#  23.70- 24.77 [1] The next morning
+#  24.77- 25.32 [1] Home
+#  25.32- 25.86 [1] Client
+#  25.86- 26.73 [1] Clearheaded
+#  26.73- 28.28 [1] But Harris calls it a miracle
+#  28.28- 30.21 [1] It later as the madness comes back
+#  30.21- 32.55 [1] It you win for second docs
+#  32.55- 33.75 [1] The Dr. has it takes
+#  33.75- 34.33 [1] But a white
+#  34.33- 34.87 [0] 
+#  34.87- 37.10 [1] And the silver tube slides back and your are
+#  37.21- 38.52 [1] Glaister Suchinda
+#  38.52- 39.39 [1] And this time
+#  39.39- 39.99 [1] You got
+#  39.99- 41.63 [1] The dodgers dragged into court
+#  41.63- 42.84 [1] Charged with murder
+#  42.84- 45.34 [1] Until the court finds out your wife had been feeding
+#  45.34- 46.90 [1] Arsenic whole time
+it's 0.000 0.050 ,
+you're 0.550 0.850 
+a 0.850 1.010 
+madman 1.470 1.840 
+wandering 2.090 2.520 
+the 2.520 2.590 
+streets 2.590 2.940 
+of 2.940 3.010 
+paris 3.010 3.835 ,
+and 3.835 3.815 
+the 3.835 3.875 
+king's 3.875 4.215 
+doctor 4.215 4.575 
+decides 4.575 4.965 
+to 4.965 5.065 
+cure 5.065 5.445 
+you 5.445 5.565 
+by 5.565 5.775 
+putting 5.775 6.045 
+calf's 6.045 6.325 
+blood 6.325 6.645 
+into 6.645 7.255 
+your 7.255 7.343 
+veins 7.343 7.431 .
+he 7.431 7.519 
+thinks 7.519 7.607 
+a 7.607 7.695 
+gentle 7.695 8.505 
+animal's 8.505 8.885 
+blood 8.885 9.145 
+will 9.145 9.255 
+make 9.255 9.415 
+you 9.435 9.645 
+gentle 9.645 9.995 
+too 9.995 9.995 ,
+so 9.995 10.325 
+he 10.545 10.905 
+pushes 10.905 11.035 
+a 11.035 11.115 
+silver 11.115 11.555 
+tube 11.555 11.555 
+into 11.555 11.805 
+your 11.805 12.255 
+arm 12.255 12.525 ,
+and 12.755 12.765 
+warm 12.765 13.155 
+animal 13.195 13.555 
+blood 13.555 13.555 
+pours 13.555 13.555 
+in 13.555 13.555 .
+your 13.555 13.555 
+arm 13.555 13.785 
+burns 13.970 14.140 .
+pain 14.140 14.240 
+tears 15.965 16.135 
+through 16.135 16.285 
+your 16.285 16.505 
+back 16.505 16.755 
+and 16.755 16.845 
+your 16.845 17.285 
+heart 17.285 17.365 
+pounds 17.365 17.715 ,
+but 17.950 18.020 
+he 18.020 18.250 
+doesn't 18.585 18.865 
+stop 18.865 19.235 .
+that 19.625 19.735 
+night 19.735 19.985 
+your 19.985 20.175 
+urine 20.175 20.515 
+comes 20.515 20.795 
+out 20.795 20.965 
+black 20.965 21.345 ,
+and 21.685 21.685 
+the 21.685 21.715 
+whole 21.715 22.075 
+house 22.075 22.495 
+waits 22.495 22.775 
+for 22.775 22.925 
+you 22.925 23.015 
+to 23.015 23.135 
+die 23.135 23.135 .
+but 23.135 23.515 
+the 23.695 23.755 
+next 23.755 24.035 
+morning 24.035 24.445 
+you're 24.445 24.605 
+calm 24.605 24.765 ,
+quiet 24.765 25.005 
+and 25.315 25.635 
+clear 25.860 26.280 -
+headed 26.280 26.725 ,
+and 26.725 26.795 
+paris 26.795 27.185 
+calls 27.185 27.465 
+it 27.465 27.535 
+a 27.535 27.575 
+miracle 27.575 28.085 .
+weeks 28.275 28.495 
+later 28.495 28.755 
+the 28.835 28.915 
+madness 28.915 29.405 
+comes 29.405 29.665 
+back 29.665 30.015 ,
+so 30.015 30.080 
+your 30.080 30.145 
+wife 30.145 30.210 
+drags 30.210 30.980 
+you 30.980 31.130 
+in 31.130 31.320 
+for 31.320 31.540 
+a 31.540 31.540 
+second 31.540 31.970 
+dose 31.970 32.370 .
+the 32.545 32.485 
+doctor 32.545 32.815 
+hesitates 33.035 33.125 .
+but 33.125 33.545 
+your 33.745 33.775 
+wife 33.775 33.845 
+begs 33.845 34.095 ,
+and 34.865 34.795 
+the 34.865 34.855 
+silver 34.865 35.245 
+tube 35.245 35.555 
+slides 35.555 36.055 
+back 36.055 36.315 
+into 36.315 36.315 
+your 36.315 36.315 
+arm 36.315 36.435 .
+your 36.435 36.695 
+body 36.695 36.695 
+starts 36.695 36.875 
+to 37.205 37.695 
+shake 37.695 38.295 
+and 38.515 38.565 
+this 38.565 38.805 
+time 38.805 39.155 
+you 39.385 39.385 
+die 39.385 39.695 .
+the 39.985 39.965 
+doctor 39.965 39.985 
+is 39.985 40.435 
+dragged 40.435 40.845 
+into 40.845 41.025 
+court 41.025 41.445 ,
+charged 41.625 42.005 
+with 42.005 42.125 
+murder 42.125 42.675 ...
+until 42.835 43.045 
+the 43.045 43.135 
+court 43.135 43.385 
+finds 43.385 43.755 
+out 43.755 43.865 
+your 43.865 44.075 
+wife 44.075 44.435 
+had 44.435 44.545 
+been 44.545 44.695 
+feeding 44.695 45.045 
+you 45.045 45.340 
+arsenic 45.340 45.670 
+the 45.670 45.670 
+whole 45.670 46.170 
+time 46.170 46.620 .

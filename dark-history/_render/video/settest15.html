@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script>window.VIDEO_FRAMES = 1200;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script>
+<script src="cast.js"></script><script src="cast12.js"></script><script src="props.js"></script><script src="props3.js"></script><script src="props12.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets14.js"></script><script src="sets14b.js"></script><script src="sets15.js"></script>
+<script src="engine.js"></script>
+<script>
+// one second per set view (frame n*60+30 shows view n): wide cameras on each set and mode, plus the props
+(() => {
+  const X = ENG, S = SETS, PR = PROPS, C = CINE;
+  const views = [
+    ['paris night', t => S.paris(t, { mode: 'night' }), [560, 1100, 0.62], 'gNight'],
+    ['paris day crowd', t => S.paris(t, { mode: 'day', crowd: 1, doorOpen: 1 }), [700, 1300, 0.7], 'gDay'],
+    ['paris dusk', t => S.paris(t, { mode: 'dusk', doorOpen: 0.6 }), [760, 1350, 0.85], 'gDusk'],
+    ['study', t => S.study(t, {}), [450, 1150, 0.8], 'gHall'],
+    ['surgery eve', t => S.surgery(t, { mode: 'eve' }), [450, 1250, 0.7], 'gHall'],
+    ['surgery night', t => S.surgery(t, { mode: 'night' }), [450, 1250, 0.7], 'gNight'],
+    ['home night', t => S.home(t, { mode: 'night', dawn: 0 }), [-500, 1300, 0.75], 'gNight'],
+    ['home dawn', t => S.home(t, { mode: 'night', dawn: 1 }), [-500, 1300, 0.75], 'gDusk'],
+    ['home day', t => S.home(t, { mode: 'day' }), [800, 1300, 0.6], 'gDay'],
+    ['court', t => S.court(t, {}), [550, 1300, 0.62], 'gHall'],
+    ['surgery eve', t => S.surgery(t, { mode: 'eve' }), [300, 1100, 1.6], 'gHall'],
+    ['surgery eve', t => S.surgery(t, { mode: 'eve' }), [420, 1050, 3.2], 'gHall'],
+  ];
+  views.forEach(([name, set, cam, grade], i) => X.shot('V' + i, i, i + 1, t => {
+    X.CAM = cam;
+    let extra = '';
+    if (name === 'surgery eve') { const [cx, cy] = S.SU.CALF, c = PR.calf({ x: cx, y: cy, s: S.SU.CS, dir: 1, t, blink: 0 }); extra = S.suTable() + c.svg + S.suBoard() + PR.tube(c.neck, [660, 1290], t, { fill: 0.7 }) + S.suChairBack(860, 1080) + S.suChairArms(860, 1420); }
+    if (name === 'home night') extra = S.hmBedBack() + S.hmBlanket(-760, -160, 1420) + PR.chamberPot(-60, 1700, 1, {});
+    if (name === 'home day') extra = S.hmTable() + PR.soupBowl(400, 1400, 1, t, { powder: 1, swirl: 0.5, stir: t * 3 });
+    if (name === 'court') extra = S.ctBench() + S.ctDesk(1150, 1700);
+    if (name === 'paris night') extra = S.paWinFront('night', 0.5, t);
+    return X.compose(X.stage(set(t), extra), cam) + C.vignette(0.5);
+  }, { grade }));
+})();
+</script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root');
+window.renderFrame = async n => {
+  root.innerHTML = ENG.svgFrame(n);
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r)))));
+  await new Promise(r => setTimeout(r, 120));
+  return true;
+};
+window.READY = true;
+</script></body></html>
