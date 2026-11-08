@@ -16,6 +16,14 @@
     return `<g transform="translate(${o.x || 0},${o.y || 0}) rotate(${o.sway || 0}) scale(${sx},${sy})"><g transform="translate(0,${P.D.headY + (1 - hsc) * 110}) rotate(${o.tilt || 0}) scale(${hsc})">${svg}</g></g>`;
   };
   Q.withArt = (P, o, art, body) => (art && art.back ? Q.headArt(P, o, art.back) : '') + body + (art && art.front ? Q.headArt(P, o, art.front) : '');
+  // the figure lit TOGETHER with its hair (back art + body + front art, then extra - a held prop and its detached fist -
+  // through ONE light pass), so the hair takes the same key, rim and face light as the head; hair drawn outside the
+  // pass read as a cut-out laid on top ("not matching", 2026-11-08). The light's box takes in the hair's volume.
+  Q.litHair = (P, o, art, L, extra = '', ext = null) => {
+    const s = o.s || 1, E = [o.x - 340 * s, o.y - 1520 * s, o.x + 340 * s, o.y + 20 * s];
+    const e2 = ext ? [Math.min(E[0], ext[0]), Math.min(E[1], ext[1]), Math.max(E[2], ext[2]), Math.max(E[3], ext[3])] : E;
+    return G.STAGE.litWith(P, L, (art && art.back ? Q.headArt(P, o, art.back) : '') + P.svg + (art && art.front ? Q.headArt(P, o, art.front) : '') + extra, e2);
+  };
 
   // ======================================================= YOU: Ignaz Semmelweis at twenty-nine. A round open face, full
   // cheeks, a soft square chin, warm brown eyes under straight brows, a straight nose, a full moustache; brown hair

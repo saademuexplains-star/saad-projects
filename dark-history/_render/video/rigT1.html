@@ -25,15 +25,14 @@
       const P = Q[c.who](Object.assign(o, { face: c.face,
         armR: { hand: R.restHand(c.kind, 'R'), dir: [0.02, 1], pose: 'relaxed', facing: 'back' },
         armL: { hand: R.restHand(c.kind, 'L'), dir: [-0.02, 1], pose: 'relaxed', facing: 'back' } }));
-      const body = X.lit(P, L);
       const art = { mother: Q.motherArt, semm: Q.semmArt, klein: Q.kleinArt }[c.who]();
-      g += Q.withArt(P, o, art, body) + S.TXT(c.x, c.y + 46, 19, '#d8c8a8', c.name, { ls: 3, w: 'bold' });
+      g += Q.litHair(P, o, art, L) + S.TXT(c.x, c.y + 46, 19, '#d8c8a8', c.name, { ls: 3, w: 'bold' });
     }
     // the mother waist-up at full scale (cell 4): the face, the hair, the nightgown's neck
     const o = ST.still(810, 2560, 0.98);
     const P = ST.up(Q.mother(Object.assign(o, { noLegs: true, face: { expr: 'fear', look: [-0.3, 0.05], lid: 0.12, sweat: 0.18, blush: 0.4, bags: 0.4 },
       armR: { hand: [-150, -700], dir: [0.1, 1], pose: 'relaxed', facing: 'back' }, armL: { hand: [150, -700], dir: [-0.1, 1], pose: 'relaxed', facing: 'back' } })), o);
-    g += `<defs><clipPath id="c4"><rect x="545" y="963" width="540" height="960"/></clipPath></defs><g clip-path="url(#c4)">${C.radial(760, 1300, 520, '#ffe0b0', 0.16)}${Q.withArt(P, o, Q.motherArt(), ST.lit(P, L))}</g>`;
+    g += `<defs><clipPath id="c4"><rect x="545" y="963" width="540" height="960"/></clipPath></defs><g clip-path="url(#c4)">${C.radial(760, 1300, 520, '#ffe0b0', 0.16)}${Q.litHair(P, o, Q.motherArt(), L)}</g>`;
     return X.compose([{ p: 1, svg: g }], cam) + C.vignette(0.35, '#060302', 0.5);
   }, { grade: 'gHall' });
 })(window);

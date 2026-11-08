@@ -23,7 +23,7 @@
     // the blanket goes over her body but never over her forearms and hands (they stay in the body's one light pass);
     // a soft contact shadow under each hand on the sheet, toward the dark side
     const Lh = Q.HAND.mother * R.HAND_K * o.s, sh = [[hR, dR], [hL, dL]].map(([h, d]) => { const w = R.toWorld(o, h), c = [w[0] + d[0] * Lh * 0.5 - 8, w[1] + d[1] * Lh * 0.5 + 10]; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(Lh * 0.36)}" ry="${f(Lh * 0.5)}" fill="#1a0c04" opacity="0.32" filter="url(#b8)"/>`; }).join('');
-    const chars = Q.headArt(P, o, art.back) + lit(P, LW) + behind(P, 't1wq', S.t1Quilt(t) + sh) + Q.headArt(P, o, art.front);
+    const chars = Q.litHair(P, o, art, LW) + behind(P, 't1wq', S.t1Quilt(t) + sh);
     const layers = S.t1Ward(t);
     layers.push({ p: 1, svg: S.t1WardBed(t) + chars }, { p: 1.02, svg: S.t1WardLight(t) }, { p: 1.25, svg: S.t1WardFg(t) });
     return X.compose(layers, cam) + C.vignette(0.55, '#060302', 0.4);
@@ -42,7 +42,7 @@
     const P = up(Q.semm(Object.assign(o, { noLegs: true, face: { expr: 'grim', look: [0.05, 0.5], lid: 0.22, brows: [7, -3], mouth: 'tight', sweat: 0.1 },
       armR: { hand: R.toLocal(o, wR), dir: [0.12, 1], pose: 'open', facing: 'back' },
       armL: { hand: R.toLocal(o, wL), dir: [-0.12, 1], pose: 'open', facing: 'back' } })), o);
-    const body = clipTop('t1bTop' + (opts.id || ''), S.T1B.TOP, Q.withArt(P, o, Q.semmArt(), lit(P, LB)));
+    const body = clipTop('t1bTop' + (opts.id || ''), S.T1B.TOP, Q.litHair(P, o, Q.semmArt(), LB));
     // the bowl's far side and the far half of the water go over the body but never over the forearms (one light pass
     // for the whole figure); the near half of the water and the bowl's front wall then go over the arms
     const wr = [[wR[0] - 2, 0], [wL[0] + 2, 9]];
@@ -82,9 +82,9 @@
     const P = up(Q.klein(Object.assign(o, { noLegs: true, face: { expr: 'stern', mouth: 'closed', cd: -1.4, look: [-0.62, 0.1], lid: 0.42, brows: [10, -4], bags: 0.5 },
       armR: gripAt(o, Q.HAND.klein, gC, [1, 0.04], { facing: 'back', detachHand: true }),
       armL: { hand: [172, -840], dir: [-0.7, 0.7], pose: 'relaxed', facing: 'back', fs: 1, elbow: 'free' } })), o);
-    // body, cane and the fist on it lit in ONE pass (a hand lit on its own gets a rim round its own outline and reads
-    // as pasted on); the light's box widened to take in the crook and the shaft
-    const chars = Q.withArt(P, o, Q.kleinArt(), litWith(P, LK, P.svg + cane(gC[0], gC[1]) + P.handR, [gC[0] - 130, gC[1] - 140, gC[0] + 40, 2100]));
+    // body, hair, cane and the fist on it lit in ONE pass (a hand or hair lit on its own gets a rim round its own
+    // outline and reads as pasted on); the light's box widened to take in the crook and the shaft
+    const chars = Q.litHair(P, o, Q.kleinArt(), LK, cane(gC[0], gC[1]) + P.handR, [gC[0] - 130, gC[1] - 140, gC[0] + 40, 2100]);
     const light = C.radial(1180, 520, 900, '#ffb060', 0.2) + `<rect x="-200" y="-200" width="1480" height="2320" fill="url(#t1kFall)"/>`;
     const fall = S.lg('t1kFall', [[0, '#000', 0.35], [0.4, '#000', 0.12], [1, '#000', 0]], 0, 0, 1, 0);
     return back + X.compose([{ p: 1, svg: fall + chars }, { p: 1.02, svg: light }], cam) + C.vignette(0.55, '#060302', 0.4);
