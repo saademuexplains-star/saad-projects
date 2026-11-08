@@ -5,21 +5,25 @@
 // The clean rig (G.RIG_CRISP), the cast dressed with tailor.js, the shot helpers of stage.js, the rig's own hands.
 (function (G) {
   const X = G.ENG, Q = G.QCAST, S = G.SETS, C = G.CINE, R = G.RIG, ST = G.STAGE, { f, ol } = G.RIG;
-  const { lit, up, armsOver, handsLit, gripAt, still, clipTop } = ST;
+  const { lit, up, behind, litWith, gripAt, still, clipTop } = ST;
 
   // ======================================================= WARD: the mother, the candle at her right
   const LW = { from: [1, 0.05], shadow: '#0a0604', shadowOp: 0.6, floor: '#140c06', floorOp: 0.5, contactOp: 0, key: '#ffd8a0', keyAdd: 0.12,
     rims: [{ from: [1, -0.1], col: '#ffb060', w: 6, op: 0.5 }, { from: [-0.8, -0.6], col: '#b0b2b0', w: 4, op: 0.12 }], face: { col: '#ffd0a0', op: 0.2 } };
   X.shot('WARD', 0, 1, t => {
     const cam = [540, 960, 1, 0]; X.CAM = cam;
-    // sitting up against the pillows, the blanket to her waist, both fists clutching the turned-down sheet; her eyes on
-    // the door at the right, where the doctors come in
+    // sitting up against the pillows, the blanket to her waist, both hands resting on the turned-down sheet, the fingers
+    // over its fold; her eyes on the door at the right, where the doctors come in
     const o = still(500, 2330, 1.2, { tilt: 4, breath: 0.5 });
+    const hR = [-70, -836], hL = [92, -846], dR = [0.22, 0.97], dL = [-0.18, 0.98];
     const P = up(Q.mother(Object.assign(o, { noLegs: true, face: { expr: 'fear', look: [0.55, -0.04], lid: 0.12, brows: [-10, -2], mouth: 'parted', open: 0.1, sweat: 0.18, blush: 0.22, bags: 0.4 },
-      armR: { hand: [-58, -838], dir: [0.3, 0.95], pose: 'fist', facing: 'back' },
-      armL: { hand: [75, -843], dir: [-0.3, 0.95], pose: 'fist', facing: 'back' } })), o);
+      armR: { hand: hR, dir: dR, pose: 'relaxed', facing: 'back' },
+      armL: { hand: hL, dir: dL, pose: 'relaxed', facing: 'back' } })), o);
     const art = Q.motherArt(0.5);
-    const chars = Q.headArt(P, o, art.back) + lit(P, LW) + S.t1Quilt(t) + armsOver(P, LW, 'RL') + Q.headArt(P, o, art.front);
+    // the blanket goes over her body but never over her forearms and hands (they stay in the body's one light pass);
+    // a soft contact shadow under each hand on the sheet, toward the dark side
+    const Lh = Q.HAND.mother * R.HAND_K * o.s, sh = [[hR, dR], [hL, dL]].map(([h, d]) => { const w = R.toWorld(o, h), c = [w[0] + d[0] * Lh * 0.5 - 8, w[1] + d[1] * Lh * 0.5 + 10]; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(Lh * 0.36)}" ry="${f(Lh * 0.5)}" fill="#1a0c04" opacity="0.32" filter="url(#b8)"/>`; }).join('');
+    const chars = Q.headArt(P, o, art.back) + lit(P, LW) + behind(P, 't1wq', S.t1Quilt(t) + sh) + Q.headArt(P, o, art.front);
     const layers = S.t1Ward(t);
     layers.push({ p: 1, svg: S.t1WardBed(t) + chars }, { p: 1.02, svg: S.t1WardLight(t) }, { p: 1.25, svg: S.t1WardFg(t) });
     return X.compose(layers, cam) + C.vignette(0.55, '#060302', 0.4);
@@ -30,17 +34,19 @@
     rims: [{ from: [1, -0.3], col: '#ffb868', w: 6, op: 0.5 }, { from: [-1, -0.2], col: '#c8a888', w: 4, op: 0.16 }], face: { col: '#ffd0a0', op: 0.2 } };
   // the whole scene as layers (KLEIN draws it again, small and hazed, behind the professor)
   const basinScene = (t, opts = {}) => {
-    const o = still(540, 2330, 1.2, { tilt: -3 });
-    // both wrists at the waterline, the hands down in the chlorine water, backs to camera
-    const wR = [455, 1392], wL = [625, 1392];
+    // (a little lower than the first draft, so the arms reach down far enough for the cuffs to go into the water: no bare
+    // wrist between the sleeve and the waterline)
+    const o = still(540, 2380, 1.2, { tilt: -3 });
+    // both wrists under the waterline, the hands down in the chlorine water, backs to camera
+    const wR = [452, 1430], wL = [628, 1430];
     const P = up(Q.semm(Object.assign(o, { noLegs: true, face: { expr: 'grim', look: [0.05, 0.5], lid: 0.22, brows: [7, -3], mouth: 'tight', sweat: 0.1 },
       armR: { hand: R.toLocal(o, wR), dir: [0.12, 1], pose: 'open', facing: 'back' },
       armL: { hand: R.toLocal(o, wL), dir: [-0.12, 1], pose: 'open', facing: 'back' } })), o);
     const body = clipTop('t1bTop' + (opts.id || ''), S.T1B.TOP, Q.withArt(P, o, Q.semmArt(), lit(P, LB)));
-    // the hands go below the bowl's front wall: cut the redrawn arms at its foot so no fingertip shows under it
-    const arms = clipTop('t1aTop' + (opts.id || ''), S.T1B.BOWL[1] + 100, armsOver(P, LB, 'RL'));
-    const wr = [[wR[0] - 4, 0], [wL[0] + 4, 9]];
-    const front = S.t1Stand(t) + S.t1BowlBack() + S.t1Water(t, wr, 'back') + arms + S.t1Water(t, wr, 'front') + S.t1BowlFront() + S.t1StandProps(t) + S.t1Towel();
+    // the bowl's far side and the far half of the water go over the body but never over the forearms (one light pass
+    // for the whole figure); the near half of the water and the bowl's front wall then go over the arms
+    const wr = [[wR[0] - 2, 0], [wL[0] + 2, 9]];
+    const front = S.t1Stand(t) + behind(P, 't1bb' + (opts.id || ''), S.t1BowlBack() + S.t1Water(t, wr, 'back')) + S.t1Water(t, wr, 'front') + S.t1BowlFront() + S.t1StandProps(t) + S.t1Towel();
     const layers = S.t1Door(t, opts);
     layers.push({ p: 1, svg: body + front }, { p: 1.02, svg: S.t1DoorLight(t) });
     if (!opts.noFg) layers.push({ p: 1.25, svg: S.t1DoorFg(t) });
@@ -76,7 +82,9 @@
     const P = up(Q.klein(Object.assign(o, { noLegs: true, face: { expr: 'stern', mouth: 'closed', cd: -1.4, look: [-0.62, 0.1], lid: 0.42, brows: [10, -4], bags: 0.5 },
       armR: gripAt(o, Q.HAND.klein, gC, [1, 0.04], { facing: 'back', detachHand: true }),
       armL: { hand: [172, -840], dir: [-0.7, 0.7], pose: 'relaxed', facing: 'back', fs: 1, elbow: 'free' } })), o);
-    const chars = Q.withArt(P, o, Q.kleinArt(), lit(P, LK)) + cane(gC[0], gC[1]) + handsLit(P, LK, 'R');
+    // body, cane and the fist on it lit in ONE pass (a hand lit on its own gets a rim round its own outline and reads
+    // as pasted on); the light's box widened to take in the crook and the shaft
+    const chars = Q.withArt(P, o, Q.kleinArt(), litWith(P, LK, P.svg + cane(gC[0], gC[1]) + P.handR, [gC[0] - 130, gC[1] - 140, gC[0] + 40, 2100]));
     const light = C.radial(1180, 520, 900, '#ffb060', 0.2) + `<rect x="-200" y="-200" width="1480" height="2320" fill="url(#t1kFall)"/>`;
     const fall = S.lg('t1kFall', [[0, '#000', 0.35], [0.4, '#000', 0.12], [1, '#000', 0]], 0, 0, 1, 0);
     return back + X.compose([{ p: 1, svg: fall + chars }, { p: 1.02, svg: light }], cam) + C.vignette(0.55, '#060302', 0.4);

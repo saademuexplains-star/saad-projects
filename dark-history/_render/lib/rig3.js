@@ -261,9 +261,14 @@
     const thumbG = thumbOver ? `<g>${outl(`<path d="${thumb}"/>`)}<path d="${thumb}" fill="url(#${id})"/></g>` : '';
     // (the outline runs down both sides of the wrist but not across it: the hand is drawn over its sleeve and meets the
     // wrist below the cuff, where a line across would read as the edge of a glove)
-    const mk = `<mask id="${id}m" maskUnits="userSpaceOnUse" x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}"><rect x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}" fill="#fff"/><rect x="${f(-0.138 * L)}" y="${f(-0.4 * L)}" width="${f(0.276 * L)}" height="${f(0.405 * L)}" fill="#000"/></mask>`;
+    // (o.joinWrist, with G.RIG_CRISP on a sleeved arm: the hand's top dissolves over a short band into the wrist piece
+    // drawn under it (wristBridge), and its side outlines start just below where the wrist's take over, so no flat top
+    // edge, corner or line across the wrist shows - the joint reads as one limb, not a hand pinned to a sleeve)
+    const join = !!o.joinWrist;
+    const mk = `<mask id="${id}m" maskUnits="userSpaceOnUse" x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}"><rect x="${f(-2 * L)}" y="${f(-2 * L)}" width="${f(4 * L)}" height="${f(4 * L)}" fill="#fff"/><rect x="${f((join ? -0.26 : -0.138) * L)}" y="${f(-0.4 * L)}" width="${f((join ? 0.52 : 0.276) * L)}" height="${f((join ? 0.43 : 0.405) * L)}" fill="#000"/></mask>` +
+      (join ? `<linearGradient id="${id}fg" gradientUnits="userSpaceOnUse" x1="0" y1="${f(-0.05 * L)}" x2="0" y2="${f(0.035 * L)}"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient><mask id="${id}f" maskUnits="userSpaceOnUse" x="${f(-L)}" y="${f(-L)}" width="${f(2 * L)}" height="${f(2.6 * L)}"><rect x="${f(-L)}" y="${f(-L)}" width="${f(2 * L)}" height="${f(2.6 * L)}" fill="url(#${id}fg)"/></mask>` : '');
     let g = `<defs>${grd}${mk}<clipPath id="${id}c">${body}</clipPath></defs>` + objBack;
-    g += `<g mask="url(#${id}m)">${outl(body)}</g><g fill="url(#${id})">${body}</g><g clip-path="url(#${id}c)">${sh}</g>${det}${thumbG}`;
+    g += `<g mask="url(#${id}m)">${outl(body)}</g>` + (join ? `<g mask="url(#${id}f)">` : '') + `<g fill="url(#${id})">${body}</g><g clip-path="url(#${id}c)">${sh}</g>` + (join ? '</g>' : '') + `${det}${thumbG}`;
     g += objFront;
     return `<g transform="translate(${f(o.x)},${f(o.y)}) rotate(${f(a * 180 / Math.PI)})">${g}</g>`;
   }
@@ -340,7 +345,9 @@
     const id = uid('sv');
     let body = `<defs><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><g filter="url(#clothN)"><path d="${shape}" fill="${sl}"/><g clip-path="url(#${id}c)">${shd}<g filter="url(#b1)">${box}${fo}</g>${band}<g filter="url(#b1)">${box}<path d="M${Q(add(add(C0, dn, cb * 0.35), nF, w2 * 0.5))} L${Q(add(add(C0, dn, cb * 0.35), nF, -w2 * 0.5))}" stroke="${shade(sl, 0.32)}" stroke-width="${f(sw * 0.03)}" opacity="0.45"/></g></g></g><path d="${outline}" fill="none" ${ol()}/>`;
     // a forearm coming toward the lens (drawn short) shows the open end of its sleeve, deepening with the foreshortening
-    if (fsK > 0) {
+    // (not with G.RIG_CRISP: half-transparent over light cloth it read as a glassy bubble on the cuff; the wrist piece
+    // now leaves the cuff cleanly at any angle)
+    if (fsK > 0 && !G.RIG_CRISP) {
       const rx = w2 * 0.48, ry = w2 * 0.48 * (0.28 + 0.5 * fsK), r = Math.atan2(dn[1], dn[0]) * 180 / Math.PI + 90, oc = add(Wc, dn, -ry * 0.25);
       body += `<g opacity="${f(0.6 * fsK)}"><ellipse cx="${f(oc[0])}" cy="${f(oc[1])}" rx="${f(rx)}" ry="${f(ry)}" transform="rotate(${f(r)},${f(oc[0])},${f(oc[1])})" fill="${shade(sl, -0.42)}" stroke="${shade(sl, -0.6)}" stroke-width="1.2" ${NS}/></g>`;
     }
@@ -366,6 +373,23 @@
     const d = `M${f(a1[0])},${f(a1[1])} L${f(b1[0])},${f(b1[1])} A${f(w2 / 2)},${f(w2 / 2)} 0 0 0 ${f(b2[0])},${f(b2[1])} L${f(a2[0])},${f(a2[1])} A${f(w1 / 2)},${f(w1 / 2)} 0 0 0 ${f(a1[0])},${f(a1[1])}Z`;
     const r = Math.atan2(-dx, dy) * 180 / Math.PI;
     return `<defs>${g}</defs><path d="${d}" fill="url(#${id})" ${ol()}/>` + (extra ? `<g transform="translate(${f(A[0])},${f(A[1])}) rotate(${f(r)})">${extra}</g>` : '');
+  }
+  // (G.RIG_CRISP) the wrist as one smooth piece from inside the cuff to the back of the hand. Its sides leave the cuff
+  // along the forearm and curve into the hand's own line, as wide as the cuff opening at one end and as the back of the
+  // hand at the other, so a hand bent at the wrist never shows the corner of its flat top edge standing out past a
+  // straight wrist (a capsule laid along the forearm did: the hand read as a cut-out pinned on - the user, 2026-11-08:
+  // "they look like cutted pngs"). Outlined along its two sides only; the hand is drawn over its lower end.
+  function wristBridge(Wc, dn, W, hn, wIn, cw, HL, col) {
+    const add = (p, v, k) => [p[0] + v[0] * k, p[1] + v[1] * k], Q = p => `${f(p[0])},${f(p[1])}`;
+    const nF = [-dn[1], dn[0]]; let nH = [-hn[1], hn[0]]; if (nF[0] * nH[0] + nF[1] * nH[1] < 0) nH = [-nH[0], -nH[1]];
+    const a0 = add(Wc, dn, -wIn), wa = cw * 0.46, wb = HL * 0.152, b0 = add(W, hn, -0.045 * HL), b1 = add(W, hn, 0.12 * HL);
+    const k = 0.5 * Math.hypot(b0[0] - Wc[0], b0[1] - Wc[1]) + 0.5;
+    const S = s => { const p1 = add(Wc, nF, s * wa), q0 = add(b0, nH, s * wb); return { p0: add(a0, nF, s * wa), p1, q0, q1: add(b1, nH, s * wb * 0.98), c1: add(p1, dn, k), c2: add(q0, hn, -k) }; };
+    const A = S(1), B = S(-1), id = uid('wb'), g1 = add(W, nH, wb), g2 = add(W, nH, -wb);
+    const d = `M${Q(A.p0)} L${Q(A.p1)} C${Q(A.c1)} ${Q(A.c2)} ${Q(A.q0)} L${Q(A.q1)} L${Q(B.q1)} L${Q(B.q0)} C${Q(B.c2)} ${Q(B.c1)} ${Q(B.p1)} L${Q(B.p0)}Z`;
+    const grd = `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f(g1[0])}" y1="${f(g1[1])}" x2="${f(g2[0])}" y2="${f(g2[1])}"><stop offset="0" stop-color="${shade(col, -0.22)}"/><stop offset="0.4" stop-color="${shade(col, 0.05)}"/><stop offset="0.7" stop-color="${col}"/><stop offset="1" stop-color="${shade(col, -0.2)}"/></linearGradient>`;
+    const side = s => `M${Q(s.p1)} C${Q(s.c1)} ${Q(s.c2)} ${Q(s.q0)} L${Q(s.q1)}`;
+    return `<defs>${grd}</defs><path d="${d}" fill="url(#${id})"/><path d="${side(A)} ${side(B)}" fill="none" ${ol()}/>`;
   }
   // the sore on the front of a bare shin just above the ankle (person-local), shared by the drawing and the shots
   function woundPt(D, s) { return [s * D.legX - s * D.legW * 0.06, -D.foot * 0.98]; }
@@ -560,7 +584,8 @@
     const wSkin = hSkin === C.skin ? mix(C.skin, '#c97a62', 0.14) : hSkin;
     const wrist = bare ? '' : V2 ? limb([W[0] - dn[0] * (cutB + sw * 0.3), W[1] - dn[1] * (cutB + sw * 0.3)], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin)
       : limb([W[0] - dn[0] * sw * 0.4, W[1] - dn[1] * sw * 0.4], [W[0] + hn[0] * D.hand * 0.06, W[1] + hn[1] * D.hand * 0.06], D.hand * 0.36, D.hand * 0.34, wSkin);
-    const handSvg = o.pose === 'none' ? '' : (V2 ? handV2 : hand)({ x: W[0], y: W[1], dir, side, facing: o.facing || 'back', thumb: o.thumb || 'auto', pose: o.pose || 'relaxed', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails) });
+    const joinWrist = !!(G.RIG_CRISP && V2 && !bare);
+    const handSvg = o.pose === 'none' ? '' : (V2 ? handV2 : hand)({ x: W[0], y: W[1], dir, side, facing: o.facing || 'back', thumb: o.thumb || 'auto', pose: o.pose || 'relaxed', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails), joinWrist });
     const cuffShadow = V2 && !bare ? (() => { const c = add(Wc, dn, HLn * 0.06), r = Math.atan2(-dn[0], dn[1]) * 180 / Math.PI; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(fw2 * 0.5)}" ry="${f(HLn * 0.075)}" transform="rotate(${f(r)},${f(c[0])},${f(c[1])})" fill="#1e0c04" opacity="0.34" filter="url(#b4)"/>`; })()
       : `<ellipse cx="${f(W[0] + hn[0] * sw * 0.18)}" cy="${f(W[1] + hn[1] * sw * 0.18)}" rx="${f(sw * 0.36)}" ry="${f(sw * 0.26)}" fill="#1e0c04" opacity="0.35" filter="url(#b4)"/>`;
     const up = `<g filter="url(#clothN)">${upper}</g>${upperLines}${innerShade}`;
@@ -583,12 +608,13 @@
       if (o.pose2 && o.poseK > 0 && o.poseK < 1 && o.pose !== 'none' && o.pose2 !== 'none') {
         // (between two flat poses - relaxed and open, same side to the lens - the fingers and thumb move in between; any other
         // change of pose dissolves quickly)
-        const hO = { x: W[0], y: W[1], dir, side, thumb: o.thumb || 'auto', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails) }, flat = q => q === 'relaxed' || q === 'open';
+        const hO = { x: W[0], y: W[1], dir, side, thumb: o.thumb || 'auto', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails), joinWrist }, flat = q => q === 'relaxed' || q === 'open';
         if (flat(o.pose) && flat(o.pose2) && (o.facing || 'back') === (o.facing2 || 'back')) handG = `<g filter="url(#skinS)">${handV2(Object.assign({}, hO, { pose: o.pose, facing: o.facing || 'back', morphTo: o.pose2, morphK: o.poseK }))}</g>`;
         else { const h2 = handV2(Object.assign({}, hO, { pose: o.pose2, facing: o.facing2 || 'back' })); handG = `<g filter="url(#skinS)" opacity="${f(1 - o.poseK)}">${handSvg}</g><g filter="url(#skinS)" opacity="${f(o.poseK)}">${h2}</g>`; }
       }
       const gS = { sh, E, Wc, ud, dn, ul, fcl, w0: sw, w1: sw * 0.84, w2: fw2 * (1 + 0.2 * fsK), sl, lat, sw, fsK };
-      const wIn = Math.min(sw * 0.3, fcl * 0.5), wristS = limb([Wc[0] - dn[0] * wIn, Wc[1] - dn[1] * wIn], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin);
+      const wIn = Math.min(sw * 0.3, fcl * 0.5), wristS = G.RIG_CRISP ? wristBridge(Wc, dn, W, hn, wIn, gS.w2, HLn, wSkin)
+        : limb([Wc[0] - dn[0] * wIn, Wc[1] - dn[1] * wIn], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin);
       const upS = sleeveV2(gS, 'all');
       if (!o.detachHand) lo += `<g filter="url(#skinS)">${wristS}</g>${cuffShadow}`;
       lo += sleeveV2(gS, 'fore');

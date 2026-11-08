@@ -221,7 +221,9 @@
   // waterline with rings round it and the hands are only a shadow under the surface
   S.T1B.WET = 1404;
   S.t1Water = (t, wrists = [], part = 'back') => {
-    const [cx, cy, rx, ry] = S.T1B.BOWL, wy = cy + 12, wrx = rx - 30, wry = ry - 16, ye = S.T1B.WET, id = 't1wat' + part;
+    // (filled to the brim: the surface is the bowl's inner rim, so no gap between the water's edge and the rim shows
+    // the forearms behind it)
+    const [cx, cy, rx, ry] = S.T1B.BOWL, wy = cy + 3, wrx = rx - 14, wry = ry - 9, ye = S.T1B.WET, id = 't1wat' + part;
     const ring = (x, rr, op, w2, half) => half ? `<path d="M${f(x - rr)},${ye} A${f(rr)},${f(rr * 0.22)} 0 0 0 ${f(x + rr)},${ye}" fill="none" stroke="#f8f4e8" stroke-width="${f(w2)}" opacity="${f(op)}"/>` : `<ellipse cx="${f(x)}" cy="${ye}" rx="${f(rr)}" ry="${f(rr * 0.22)}" fill="none" stroke="#f8f4e8" stroke-width="${f(w2)}" opacity="${f(op)}"/>`;
     let g = `<defs><clipPath id="${id}"><ellipse cx="${cx}" cy="${wy}" rx="${wrx}" ry="${wry}"/></clipPath><clipPath id="${id}h"><rect x="${cx - rx}" y="${part === 'back' ? cy - ry - 10 : ye}" width="${rx * 2}" height="${part === 'back' ? ye - (cy - ry - 10) : 200}"/></clipPath></defs>`;
     g += `<g clip-path="url(#${id}h)"><g clip-path="url(#${id})">`;
@@ -229,9 +231,10 @@
       g += `<rect x="${cx - rx}" y="${cy - ry}" width="${rx * 2}" height="${ry * 2}" fill="#9a9c90" opacity="0.92"/>`;
       for (const [x, ph] of wrists) for (let i = 0; i < 3; i++) { const rr = 30 + i * 20 + ((t * 30 + ph) % 20); g += ring(x, rr, 0.5 - i * 0.14, 2 - i * 0.5, false); }
     } else {
-      g += lg('t1wG', [[0, '#a8aa9e'], [0.6, '#bfc0b4'], [1, '#d2d2c6']]) + `<rect x="${cx - rx}" y="${ye}" width="${rx * 2}" height="${ry * 2}" fill="url(#t1wG)" opacity="0.93"/>`;
+      // milky and opaque: the hands under it are only a soft shadow (seen through, their edges read as odd wedges)
+      g += lg('t1wG', [[0, '#a8aa9e'], [0.6, '#bfc0b4'], [1, '#d2d2c6']]) + `<rect x="${cx - rx}" y="${ye}" width="${rx * 2}" height="${ry * 2}" fill="url(#t1wG)"/>`;
       g += `<ellipse cx="${cx + 120}" cy="${ye + 10}" rx="74" ry="10" fill="#ffd890" opacity="0.5" filter="url(#b4)"/><path d="M${cx + 66},${ye + 9} q30,-4 60,0 t50,0" stroke="#fff4d8" stroke-width="2.5" fill="none" opacity="0.7"/>`;
-      for (const [x, ph] of wrists) { g += `<ellipse cx="${f(x)}" cy="${ye + 12}" rx="40" ry="10" fill="#5a5448" opacity="0.18" filter="url(#b4)"/>`; for (let i = 0; i < 3; i++) { const rr = 30 + i * 20 + ((t * 30 + ph) % 20); g += ring(x, rr, 0.7 - i * 0.18, 2.4 - i * 0.6, true); } }
+      for (const [x, ph] of wrists) { g += `<ellipse cx="${f(x)}" cy="${ye + 16}" rx="44" ry="15" fill="#5a5040" opacity="0.26" filter="url(#b8)"/>`; for (let i = 0; i < 3; i++) { const rr = 30 + i * 20 + ((t * 30 + ph) % 20); g += ring(x, rr, 0.7 - i * 0.18, 2.4 - i * 0.6, true); } }
     }
     g += `</g></g>`;
     return g;
@@ -239,7 +242,9 @@
   // ... and its outer wall in front (over the hands): white glaze, a gilt band, the lantern's light on the right
   S.t1BowlFront = () => {
     const [cx, cy, rx, ry] = S.T1B.BOWL;
-    let g = lg('t1bF', [[0, '#5e584e'], [0.32, '#a8a294'], [0.74, '#e2dccf'], [1, '#aaa292']], 0, 0, 1, 0);
+    // the near half of the rim's lip (between the outer and the inner rim) is in front of the forearms too
+    let g = `<path d="M${cx - rx},${cy} A${rx},${ry} 0 0 0 ${cx + rx},${cy} L${cx + rx - 14},${cy + 3} A${rx - 14},${ry - 9} 0 0 1 ${cx - rx + 14},${cy + 3}Z" fill="#e2dccf"/>`;
+    g += lg('t1bF', [[0, '#5e584e'], [0.32, '#a8a294'], [0.74, '#e2dccf'], [1, '#aaa292']], 0, 0, 1, 0);
     g += `<path d="M${cx - rx},${cy} A${rx},${ry} 0 0 0 ${cx + rx},${cy} C${cx + rx - 6},${cy + 70} ${cx + 150},${cy + 104} ${cx + 110},${cy + 112} L${cx - 110},${cy + 112} C${cx - 150},${cy + 104} ${cx - rx + 6},${cy + 70} ${cx - rx},${cy}Z" fill="url(#t1bF)" ${ol(1.6)}/>`;
     g += `<path d="M${cx - rx + 14},${cy + 26} Q${cx},${cy + 92} ${cx + rx - 14},${cy + 26}" stroke="#b8902e" stroke-width="5" fill="none" opacity="0.85"/><path d="M${cx - rx + 22},${cy + 36} Q${cx},${cy + 100} ${cx + rx - 22},${cy + 36}" stroke="#b8902e" stroke-width="1.6" fill="none" opacity="0.7"/>`;
     g += `<path d="M${cx + 120},${cy + 40} C${cx + 160},${cy + 60} ${cx + 176},${cy + 80} ${cx + 150},${cy + 100}" stroke="#fff" stroke-width="10" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M${cx - rx},${cy} A${rx},${ry} 0 0 0 ${cx + rx},${cy}" stroke="#fff" stroke-width="3.5" fill="none" opacity="0.65"/>`;
