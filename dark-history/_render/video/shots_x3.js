@@ -93,8 +93,8 @@
     const dk = 1 - lampK;
     // (the dark falls on the bench and on him through a filter on this layer only - a dark rectangle here also covered
     // the wall behind and hid the calendar)
-    const k = 1 - 0.66 * dk, dkF = dk > 0.01 ? `<defs><filter id="r3dk" filterUnits="userSpaceOnUse" x="-1000" y="-500" width="3200" height="3000" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${f(k)} 0 0 0 0  0 ${f(k)} 0 0 0  0 0 ${f(k)} 0 0  0 0 0 1 0"/></filter></defs>` : '';
-    const dark = dk > 0.01 ? C.radial(260, 1180, 820, '#c8a07a', 0.2 * dk) + C.radial(R3.GLASS[0], R3.GLASS[1] - 90, 160, '#e8b880', 0.22 * dk) : '';
+    const k = 1 - 0.5 * dk, dkF = dk > 0.01 ? `<defs><filter id="r3dk" filterUnits="userSpaceOnUse" x="-1000" y="-500" width="3200" height="3000" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${f(k)} 0 0 0 0  0 ${f(k)} 0 0 0  0 0 ${f(k)} 0 0  0 0 0 1 0"/></filter></defs>` : '';
+    const dark = dk > 0.01 ? C.radial(260, 1180, 820, '#c8a07a', 0.3 * dk) + C.radial(R3.GLASS[0], R3.GLASS[1] - 90, 160, '#e8b880', 0.22 * dk) : '';
     const layers = S.backroom(t);
     layers.push({ p: 0.75, svg: S.roomWall(t, { cal: [['1886', 'JULY'], ['1887', 'MARCH'], ['1888', 'AUGUST']], flip, lampK }) });
     const near = S.chair(...R3.CHAIR) + body + S.benchFront(t, { lampK });

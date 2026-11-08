@@ -61,7 +61,7 @@
     let g = diploma();
     if (o.cal) g += `<rect x="104" y="694" width="152" height="202" fill="#24170e"/>` + S.calendar(180, 700, o.cal, o.flip || 0);
     // the dark (inside the blurred group: an opaque fill at partial opacity) ...
-    if (lampK < 1) g += `<rect x="-900" y="-500" width="2900" height="2600" fill="#020101" opacity="${f(0.62 * (1 - lampK))}"/>`;
+    if (lampK < 1) g += `<rect x="-900" y="-500" width="2900" height="2600" fill="#020101" opacity="${f(0.54 * (1 - lampK))}"/>`;
     // ... and the street lamp's glow through the window, which must stay readable on the calendar under it: screened onto
     // the finished wall, OUTSIDE the blurred group (a screen blend inside a filtered, half-transparent group leaves a
     // coloured ring at the edge of every gradient)
