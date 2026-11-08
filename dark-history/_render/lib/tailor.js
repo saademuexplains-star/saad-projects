@@ -27,21 +27,39 @@
   T.star = (x, y, r, col = '#d8b050') => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.42 : r; d += (i ? ' L' : 'M') + f(x + Math.cos(a) * rr) + ',' + f(y + Math.sin(a) * rr); } return `<path d="${d}Z" fill="${col}" stroke="#4a3208" stroke-width="0.8"/>`; };
 
   // ---------------- the shirt front seen in an opening (col: fill the V in that colour; null = the tunic is the shirt)
+  // the cloth weaves (the same patterns and ids as rig3's o.weave, so a lapel matches the coat it is cut from)
+  const WV = {
+    twill: `<pattern id="rgWvTwill" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(38)"><path d="M0,1.2 L5,1.2" stroke="#000" stroke-width="1.3" opacity="0.55"/><path d="M0,3.7 L5,3.7" stroke="#fff" stroke-width="1" opacity="0.4"/></pattern>`,
+    linen: `<pattern id="rgWvLinen" patternUnits="userSpaceOnUse" width="3.6" height="3.6"><path d="M0,0.9 L3.6,0.9" stroke="#000" stroke-width="0.8" opacity="0.4"/><path d="M0.9,0 L0.9,3.6" stroke="#000" stroke-width="0.6" opacity="0.28"/><path d="M0,2.7 L3.6,2.7" stroke="#fff" stroke-width="0.7" opacity="0.35"/></pattern>`
+  };
+  T.WV = WV;
   T.shirt = (o = {}) => {
     const vy = o.vy ?? -1000;
-    let g = o.col ? `<path d="M-46,-1182 L46,-1182 L20,-1036 L0,${vy} L-20,-1036Z" fill="${o.col}"/>` : '';
-    if (o.placket) g += `<path d="M-6,-1150 L-5,${vy - 10} M6,-1150 L5,${vy - 10}" stroke="#dcd8ce" stroke-width="1.4"/>`;
-    if (o.pleats) g += `<path d="M-24,-1170 L-24,-990 M24,-1170 L24,-990 M-12,-1170 L-12,-990 M12,-1170 L12,-990" stroke="#b8b0a0" stroke-width="1.6" opacity="0.6"/>`;
+    const V = `M-46,-1182 L46,-1182 L20,-1036 L0,${vy} L-20,-1036Z`, sid = 'tlS' + (nid++);
+    let g = o.col ? `<path d="${V}" fill="${o.col}"/>` : '';
+    let fr = '';
+    if (o.placket) fr += `<path d="M-6,-1150 L-5,${vy - 10} M6,-1150 L5,${vy - 10}" stroke="#dcd8ce" stroke-width="1.4"/>`;
+    // pressed pleats: each a shadowed fold with a lit edge beside it
+    if (o.pleats) fr += [12, 24, 36].map(x => [-1, 1].map(s => `<path d="M${s * x},-1172 L${s * x},-990" stroke="#a49c8c" stroke-width="1.4" opacity="0.6"/><path d="M${s * (x + 2.4)},-1172 L${s * (x + 2.4)},-990" stroke="#ffffff" stroke-width="1.5" opacity="0.65"/>`).join('')).join('');
+    // a shirt front seen in an opening keeps its pleats inside it (they ran on below the V onto the coat)
+    g += o.col && fr ? `<defs><clipPath id="${sid}"><path d="${V}"/></clipPath></defs><g clip-path="url(#${sid})">${fr}</g>` : fr;
     for (let i = 0; i < (o.studs || 0); i++) g += `<circle cx="0" cy="${-1120 + i * 60}" r="5" fill="#f4f0e8" stroke="#8a8478" stroke-width="1.2"/>`;
     return g;
   };
   // ---------------- the collar and tie (type 'stand' | 'wing'; tie 'bow' | 'none'; y = the knot's height)
   T.collar = (o = {}) => {
     const type = o.type || 'stand', y = o.y ?? -1168, tc = o.tieCol || '#161414';
+    const cid = 'tlC' + (nid++);
     let g = type === 'wing'
       ? `<path d="M-46,-1192 L-6,-1166 L-30,-1150 L-58,-1176Z M46,-1192 L6,-1166 L30,-1150 L58,-1176Z" fill="#f2eee6" stroke="#8a8478" stroke-width="1.4"/>`
-      : `<path d="M-40,-1198 L40,-1198 L37,-1160 L-37,-1160Z" fill="#fbfaf6" stroke="#a8a49a" stroke-width="1.3"/>`;
-    if ((o.tie || 'bow') === 'bow') g += `<path d="M0,${y} L-34,${y - 18} Q-42,${y + 2} -34,${y + 20}Z M0,${y} L34,${y - 18} Q42,${y + 2} 34,${y + 20}Z" fill="${tc}" stroke="#000" stroke-width="1.4"/><rect x="-8" y="${y - 9}" width="16" height="18" rx="4" fill="${shade(tc, 0.1)}" stroke="#000" stroke-width="1.2"/><path d="M-30,${y - 10} Q-20,${y - 3} -10,${y - 4} M30,${y - 10} Q20,${y - 3} 10,${y - 4}" stroke="${shade(tc, 0.4)}" stroke-width="1.5" fill="none" opacity="0.8"/>`;
+      : `<path d="M-40,-1198 L40,-1198 L37,-1160 L-37,-1160Z" fill="#fbfaf6" stroke="#a8a49a" stroke-width="1.3"/><rect x="-40" y="-1198" width="80" height="11" fill="#5a5048" opacity="0.2" filter="url(#b2)"/><path d="M-37,-1191 L37,-1191" stroke="#bdb8ad" stroke-width="0.9" stroke-dasharray="2.4 2" opacity="0.8"/>`;
+    // the bow: silk, lit along its upper edges, two folds in each wing, the knot pinched with creases
+    if ((o.tie || 'bow') === 'bow') {
+      g += `<defs><linearGradient id="${cid}" gradientUnits="userSpaceOnUse" x1="0" y1="${y - 20}" x2="0" y2="${y + 20}"><stop offset="0" stop-color="${shade(tc, 0.5)}"/><stop offset="0.42" stop-color="${tc}"/><stop offset="1" stop-color="${shade(tc, -0.3)}"/></linearGradient></defs>`;
+      g += `<path d="M0,${y} L-34,${y - 18} Q-42,${y + 2} -34,${y + 20}Z M0,${y} L34,${y - 18} Q42,${y + 2} 34,${y + 20}Z" fill="url(#${cid})" stroke="#000" stroke-width="1.4"/>`;
+      g += [-1, 1].map(s => `<path d="M${s * 7},${y - 3} Q${s * 19},${y - 6} ${s * 31},${y - 11} M${s * 7},${y + 4} Q${s * 19},${y + 8} ${s * 31},${y + 13}" stroke="${shade(tc, -0.6)}" stroke-width="1.3" fill="none" opacity="0.8"/><path d="M${s * 9},${y - 6} Q${s * 21},${y - 11} ${s * 31},${y - 15}" stroke="${shade(tc, 0.75)}" stroke-width="1.6" fill="none" opacity="0.55"/>`).join('');
+      g += `<rect x="-8" y="${y - 9}" width="16" height="18" rx="4" fill="url(#${cid})" stroke="#000" stroke-width="1.2"/><path d="M-3,${y - 7} L-3,${y + 7} M3,${y - 7} L3,${y + 7}" stroke="${shade(tc, -0.6)}" stroke-width="1" opacity="0.7"/><path d="M-5,${y - 6} L5,${y - 6}" stroke="${shade(tc, 0.8)}" stroke-width="1.2" opacity="0.5"/>`;
+    }
     return g;
   };
 
@@ -54,7 +72,14 @@
     if ((o.lapel || 'notch') === 'notch') {
       const lap = s => `M${s * 46},-1182 L${s * 96},-1156 L${s * 106},-1120 L${s * 90},-1110 L${s * 114},-1084 L${s * 14},-1002 L${s * 22},-1044Z`;
       g += [-1, 1].map(s => `<path d="M${s * 114},-1082 L${s * 16},-998" stroke="${shade(col, -0.65)}" stroke-width="12" opacity="0.16" filter="url(#b4)" transform="translate(${s * 5},7)"/>`).join('');
-      g += [-1, 1].map(s => `<path d="${lap(s)}" fill="${shade(col, s < 0 ? -0.03 : 0.02)}" ${E2}/><path d="M${s * 50},-1176 L${s * 24},-1050" stroke="#ffffff" stroke-width="2.2" opacity="0.75"/>`).join('');
+      g += [-1, 1].map(s => `<path d="${lap(s)}" fill="${shade(col, s < 0 ? -0.03 : 0.02)}" ${E2}/>`).join('');
+      // the cloth's weave on the lapels too (o.weave: the rig lays the same pattern on the coat's body and sleeves)
+      if (o.weave && WV[o.weave]) { const jid = 'tlJ' + (nid++); g += `<defs>${WV[o.weave]}<clipPath id="${jid}"><path d="${lap(-1)} ${lap(1)}"/></clipPath></defs><rect x="-130" y="-1200" width="260" height="220" fill="url(#rgWv${o.weave === 'twill' ? 'Twill' : 'Linen'})" opacity="${o.weaveOp ?? 0.16}" clip-path="url(#${jid})"/>`; }
+      // (o.velvet: a frock coat's upper collar a shade darker, velvet, with its gorge seam and a soft sheen) pick-stitching
+      // along each lapel's edge; the lit roll line; a buttonhole in the left lapel
+      if (o.velvet) g += [-1, 1].map(s => `<path d="M${s * 46},-1182 L${s * 96},-1156 L${s * 106},-1120 L${s * 90},-1110 L${s * 38},-1136Z" fill="${shade(col, -0.2)}" ${E2}/><path d="M${s * 90},-1110 L${s * 38},-1136" stroke="${shade(col, -0.62)}" stroke-width="1.6"/><path d="M${s * 54},-1175 L${s * 94},-1151" stroke="#ffffff" stroke-width="1.6" opacity="0.28"/>`).join('');
+      g += [-1, 1].map(s => `<path d="M${f(s * 112 - s * 3.8)},${f(-1083 - 4.6)} L${f(s * 16 - s * 3.8)},${f(-1003 - 4.6)}" stroke="${shade(col, 0.45)}" stroke-width="1.1" stroke-dasharray="2.6 2.6" opacity="0.6"/><path d="M${s * 50},-1176 L${s * 24},-1050" stroke="#ffffff" stroke-width="2.2" opacity="0.75"/>`).join('');
+      g += `<path d="M64,-1090 L81,-1078" stroke="${shade(col, -0.65)}" stroke-width="2.4" stroke-linecap="round"/><path d="M64,-1093 L81,-1081" stroke="${shade(col, 0.4)}" stroke-width="1" opacity="0.6"/>`;
     }
     if (o.edge !== false) g += `<path d="M14,-1002 C17,-900 19,-700 21,-470" fill="none" stroke="${shade(col, -0.36)}" stroke-width="1.6"/><path d="M19,-1000 C22,-900 24,-700 26,-470" fill="none" stroke="#ffffff" stroke-width="2.4" opacity="0.65"/>`;
     for (const y of (o.buttons || [-986, -910, -834])) g += T.button(0, y, o.bkind || 'cloth', 8.5, shade(col, 0.05));
@@ -62,6 +87,20 @@
       if ((o.pocket || 'pencil') === 'pencil') g += `<path d="M76,-1016 L96,-1078 L104,-1076 L86,-1014Z" fill="#d8a83a" stroke="#6a4a10" stroke-width="1.1"/><path d="M96,-1078 L99,-1088 L104,-1076Z" fill="#2a2420"/><path d="M82,-1028 L86,-1040" stroke="#c0c4c8" stroke-width="5"/>`;
       g += `<path d="M66,-1018 L150,-1026 L151,-1014 L67,-1006Z" fill="${shade(col, -0.02)}" ${E2}/><path d="M67,-1004 L151,-1012" stroke="${shade(col, -0.65)}" stroke-width="5" opacity="0.18" filter="url(#b2)"/><path d="M67,-1017 L150,-1025" stroke="#ffffff" stroke-width="1.6" opacity="0.8"/>`;
     }
+    return g;
+  };
+
+  // ---------------- a waistcoat seen in a jacket's opening (after T.shirt, before T.collar and T.jacket): its fronts fill
+  // the V below a smaller V of shirt and tie; silk with a fine woven figure, lit edges, three small buttons, a watch chain
+  T.vest = (o = {}) => {
+    const col = o.col || '#5a1e1e', id = 'tlV' + (nid++);
+    const d = 'M-46,-1182 L-30,-1182 L0,-1094 L30,-1182 L46,-1182 L20,-1036 L0,-1000 L-20,-1036Z';
+    let g = `<defs><linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="-46" y1="0" x2="46" y2="0"><stop offset="0" stop-color="${shade(col, -0.35)}"/><stop offset="0.45" stop-color="${shade(col, 0.12)}"/><stop offset="0.62" stop-color="${col}"/><stop offset="1" stop-color="${shade(col, -0.4)}"/></linearGradient><clipPath id="${id}c"><path d="${d}"/></clipPath></defs>`;
+    g += `<path d="${d}" fill="url(#${id}g)" ${OUTL}/>`;
+    if (o.figure !== false) { let fig = ''; for (let y = -1178, r = 0; y < -998; y += 8, r++) for (let x = -46 + (r % 2 ? 4 : 0); x < 48; x += 8) fig += `<path d="M${x},${y - 1.6} L${x + 1.6},${y} L${x},${y + 1.6} L${x - 1.6},${y}Z" fill="${shade(col, 0.4)}"/>`; g += `<g clip-path="url(#${id}c)" opacity="0.4">${fig}</g>`; }
+    g += `<path d="M-30,-1182 L0,-1094 L30,-1182" fill="none" stroke="${shade(col, 0.45)}" stroke-width="1.6" opacity="0.7"/><path d="M0,-1094 L0,-1000" stroke="${shade(col, -0.6)}" stroke-width="1.4" opacity="0.8"/>`;
+    g += T.button(0, -1074, 'horn', 6.5) + T.button(0, -1046, 'horn', 6.5) + T.button(0, -1018, 'horn', 6.5);
+    if (o.chain) g += T.brassDefs() + `<path d="M2,-1046 Q-14,-1026 -34,-1034" stroke="#3a2608" stroke-width="4.2" fill="none"/><path d="M2,-1046 Q-14,-1026 -34,-1034" stroke="${o.chain}" stroke-width="2.6" fill="none" stroke-dasharray="3 2"/>`;
     return g;
   };
 

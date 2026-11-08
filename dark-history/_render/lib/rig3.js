@@ -282,7 +282,7 @@
   // forearm in front of them is in front); 'end' - only the end of the sleeve (for a hand the shot draws on its own).
   // Fresh ids on every call.
   function sleeveV2(g, part = 'all') {
-    const { sh, E, Wc, ud, dn, ul, fcl, w0, w1, w2, sl, lat, sw, fsK } = g;
+    const { sh, E, Wc, ud, dn, ul, fcl, w0, w1, w2, sl, lat, sw, fsK, weave } = g;
     const add = (p, v, k) => [p[0] + v[0] * k, p[1] + v[1] * k], Q = p => `${f(p[0])},${f(p[1])}`;
     const nU = [-ud[1], ud[0]], nF = [-dn[1], dn[0]], cr = ud[0] * dn[1] - ud[1] * dn[0];
     const sIn = cr >= 0 ? 1 : -1, sOut = -sIn, sLat = nU[0] * lat >= 0 ? 1 : -1, sMed = -sLat;
@@ -343,7 +343,7 @@
     let band = `<path d="M${Q(add(C0, nF, w2 * 0.8))} L${Q(add(Cx, nF, w2 * 0.8))} L${Q(add(Cx, nF, -w2 * 0.8))} L${Q(add(C0, nF, -w2 * 0.8))}Z" fill="${shade(sl, -0.14)}" opacity="0.85"/>`;
     band += `<path d="M${Q(add(C0, nF, w2 * 0.6))} L${Q(add(C0, nF, -w2 * 0.6))}" stroke="${shade(sl, -0.55)}" stroke-width="1.2" ${NS} opacity="0.55"/>`;
     const id = uid('sv');
-    let body = `<defs><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><g filter="url(#clothN)"><path d="${shape}" fill="${sl}"/><g clip-path="url(#${id}c)">${shd}<g filter="url(#b1)">${box}${fo}</g>${band}<g filter="url(#b1)">${box}<path d="M${Q(add(add(C0, dn, cb * 0.35), nF, w2 * 0.5))} L${Q(add(add(C0, dn, cb * 0.35), nF, -w2 * 0.5))}" stroke="${shade(sl, 0.32)}" stroke-width="${f(sw * 0.03)}" opacity="0.45"/></g></g></g><path d="${outline}" fill="none" ${ol()}/>`;
+    let body = `<defs><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><g filter="url(#clothN)"><path d="${shape}" fill="${sl}"/><g clip-path="url(#${id}c)">${weaveFill(weave, bx0, by0, bx1 - bx0, by1 - by0)}${shd}<g filter="url(#b1)">${box}${fo}</g>${band}<g filter="url(#b1)">${box}<path d="M${Q(add(add(C0, dn, cb * 0.35), nF, w2 * 0.5))} L${Q(add(add(C0, dn, cb * 0.35), nF, -w2 * 0.5))}" stroke="${shade(sl, 0.32)}" stroke-width="${f(sw * 0.03)}" opacity="0.45"/></g></g></g><path d="${outline}" fill="none" ${ol()}/>`;
     // a forearm coming toward the lens (drawn short) shows the open end of its sleeve, deepening with the foreshortening
     // (not with G.RIG_CRISP: half-transparent over light cloth it read as a glassy bubble on the cuff; the wrist piece
     // now leaves the cuff cleanly at any angle)
@@ -374,6 +374,14 @@
     const r = Math.atan2(-dx, dy) * 180 / Math.PI;
     return `<defs>${g}</defs><path d="${d}" fill="url(#${id})" ${ol()}/>` + (extra ? `<g transform="translate(${f(A[0])},${f(A[1])}) rotate(${f(r)})">${extra}</g>` : '');
   }
+  // (o.weave = { kind: 'twill' | 'linen', op }) the cloth's own weave, laid over the torso and the sleeves under their
+  // shading: a fine, regular thread texture in neutral dark and light threads, so it works on any colour (2026-11-08:
+  // plain flat fills read as "not detailed"). tailor.js lays the same patterns (same ids) on lapels and waistcoats.
+  const WEAVE = {
+    twill: `<pattern id="rgWvTwill" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(38)"><path d="M0,1.2 L5,1.2" stroke="#000" stroke-width="1.3" opacity="0.55"/><path d="M0,3.7 L5,3.7" stroke="#fff" stroke-width="1" opacity="0.4"/></pattern>`,
+    linen: `<pattern id="rgWvLinen" patternUnits="userSpaceOnUse" width="3.6" height="3.6"><path d="M0,0.9 L3.6,0.9" stroke="#000" stroke-width="0.8" opacity="0.4"/><path d="M0.9,0 L0.9,3.6" stroke="#000" stroke-width="0.6" opacity="0.28"/><path d="M0,2.7 L3.6,2.7" stroke="#fff" stroke-width="0.7" opacity="0.35"/></pattern>`
+  };
+  const weaveFill = (w, x, y, W, H) => w && WEAVE[w.kind] ? `<defs>${WEAVE[w.kind]}</defs><rect x="${f(x)}" y="${f(y)}" width="${f(W)}" height="${f(H)}" fill="url(#rgWv${w.kind === 'twill' ? 'Twill' : 'Linen'})" opacity="${w.op ?? 0.16}"/>` : '';
   // (G.RIG_CRISP) the wrist as one smooth piece from inside the cuff to the back of the hand. Its sides leave the cuff
   // along the forearm and curve into the hand's own line, as wide as the cuff opening at one end and as the back of the
   // hand at the other, so a hand bent at the wrist never shows the corner of its flat top edge standing out past a
@@ -612,7 +620,7 @@
         if (flat(o.pose) && flat(o.pose2) && (o.facing || 'back') === (o.facing2 || 'back')) handG = `<g filter="url(#skinS)">${handV2(Object.assign({}, hO, { pose: o.pose, facing: o.facing || 'back', morphTo: o.pose2, morphK: o.poseK }))}</g>`;
         else { const h2 = handV2(Object.assign({}, hO, { pose: o.pose2, facing: o.facing2 || 'back' })); handG = `<g filter="url(#skinS)" opacity="${f(1 - o.poseK)}">${handSvg}</g><g filter="url(#skinS)" opacity="${f(o.poseK)}">${h2}</g>`; }
       }
-      const gS = { sh, E, Wc, ud, dn, ul, fcl, w0: sw, w1: sw * 0.84, w2: fw2 * (1 + 0.2 * fsK), sl, lat, sw, fsK };
+      const gS = { sh, E, Wc, ud, dn, ul, fcl, w0: sw, w1: sw * 0.84, w2: fw2 * (1 + 0.2 * fsK), sl, lat, sw, fsK, weave: C.weave };
       const wIn = Math.min(sw * 0.3, fcl * 0.5), wristS = G.RIG_CRISP ? wristBridge(Wc, dn, W, hn, wIn, gS.w2, HLn, wSkin)
         : limb([Wc[0] - dn[0] * wIn, Wc[1] - dn[1] * wIn], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin);
       const upS = sleeveV2(gS, 'all');
@@ -1115,7 +1123,7 @@
     let D = Object.assign({}, DIMS[kind], o.dims || {});
     if (o.build === 'fat') D = Object.assign(D, { shX: D.shX * 1.18, wX: D.wX * 1.42, hemX: D.hemX * 1.32, belly: 1, sw: D.sw * 1.22, hand: D.hand * 1.08, legX: D.legX * 1.25, legW: D.legW * 1.25 });
     if (o.robe) D = Object.assign(D, { hemY: -10, hemX: D.hemX * 1.22 });
-    const C = { skin: o.skin || '#eec1a2', sleeve: o.sleeve || o.tunic || '#76664e', tunic: o.tunic || '#76664e', nails: o.nails, glove: o.glove };
+    const C = { skin: o.skin || '#eec1a2', sleeve: o.sleeve || o.tunic || '#76664e', tunic: o.tunic || '#76664e', nails: o.nails, glove: o.glove, weave: o.weave };
     const tun = C.tunic, id = uid('p'), u = D.shX / 128; // unit scale for line widths
     let out = '';
     // o.legsW: a woman in a knee-length skirt (raise dims.hemY, give legX/legW) gets legs like everyone else
@@ -1171,6 +1179,8 @@
     const TP = torsoPath(D), tg = id + 't';
     let t = `<defs><linearGradient id="${tg}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${shade(tun, -0.24)}"/><stop offset="0.28" stop-color="${shade(tun, 0.05)}"/><stop offset="0.55" stop-color="${tun}"/><stop offset="1" stop-color="${shade(tun, -0.28)}"/></linearGradient><clipPath id="${tg}c"><path d="${TP}"/></clipPath></defs>`;
     t += `<path d="${TP}" fill="url(#${tg})"/>`;
+    // o.weave: the cloth's thread texture (under the costume, so a shirt front or lapel drawn by it covers it)
+    if (o.weave) t += `<g clip-path="url(#${tg}c)">${weaveFill(o.weave, -D.shX * 1.8, D.shY - 140, D.shX * 3.6, -D.shY + 260)}</g>`;
     // o.costume: patterns sewn on the garment (person-local), cut to the torso's own shape and shaded with it
     if (o.costume) t += `<g clip-path="url(#${tg}c)">${o.costume}</g>`;
     let sh = '';

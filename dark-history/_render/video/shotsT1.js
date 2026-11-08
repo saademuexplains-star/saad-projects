@@ -19,7 +19,7 @@
     const P = up(Q.mother(Object.assign(o, { noLegs: true, face: { expr: 'fear', look: [0.55, -0.04], lid: 0.12, brows: [-10, -2], mouth: 'parted', open: 0.1, sweat: 0.18, blush: 0.22, bags: 0.4 },
       armR: { hand: hR, dir: dR, pose: 'relaxed', facing: 'back' },
       armL: { hand: hL, dir: dL, pose: 'relaxed', facing: 'back' } })), o);
-    const art = Q.motherArt(0.5);
+    const art = Q.motherArt();
     // the blanket goes over her body but never over her forearms and hands (they stay in the body's one light pass);
     // a soft contact shadow under each hand on the sheet, toward the dark side
     const Lh = Q.HAND.mother * R.HAND_K * o.s, sh = [[hR, dR], [hL, dL]].map(([h, d]) => { const w = R.toWorld(o, h), c = [w[0] + d[0] * Lh * 0.5 - 8, w[1] + d[1] * Lh * 0.5 + 10]; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(Lh * 0.36)}" ry="${f(Lh * 0.5)}" fill="#1a0c04" opacity="0.32" filter="url(#b8)"/>`; }).join('');
