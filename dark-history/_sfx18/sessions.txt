@@ -39,3 +39,4 @@ ws_shimmer dXkdv7WxmyRmtFkOwGJo v08tfkzgLlTzgtHXta0L
 ws_final yqRiz0Uh5IPDqZl8CaGK PlGNZoHywk6GyPEogYIt
 ws_fizz OTH1OWjYoKai6m0ROdBf 9r0fykkEHcFwvSxsf1be
 score_main(retry) rBCvOl11fTxIhYNBOUUb nr0lqcEOkg27HNrNt5kL
+score_main(retry2) rBCvOl11fTxIhYNBOUUb UAdCwtSPJoa2bE5XZi8P
