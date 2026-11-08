@@ -7,6 +7,12 @@ SFX: `_sfx18/wav/*.wav` (gitignored; the ElevenLabs session ids are in `_sfx18/s
 flow MfGFpNLswxYkaOy8BAHR with creative_get_flow_run_status if the files are gone; the environment allows
 elevenlabsusercontent.com).
 
+## Unattended chain
+`_tools/chain_coca.sh` (started detached at 19:16 UTC on 8 Nov) finishes pass A, re-renders the WINE frames, scans
+pass A, renders pass B and compares the two; its log and reports are in `_render/qa20/` (`chain.log`, `scanA.txt`,
+`cmpAB.txt`, `chain_done` when finished). If it is not running and `chain_done` is missing, start it again the same
+way: `nohup setsid _tools/chain_coca.sh > _render/qa20/chain.out 2>&1 < /dev/null &` (each step skips work done).
+
 ## Steps (tick as done)
 1. [ ] Pass A: every frame 0..2839 in `_render/frames20a` (resume missing ones:
    `python3 -c` list the missing numbers into a file, then `_tools/render_list.sh _render/frames20a <file> 3`,
