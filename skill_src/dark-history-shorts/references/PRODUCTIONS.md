@@ -315,3 +315,11 @@ The full video continues these files in `main20.html`.
   about 0.6 frames a second) is deterministic: sampled frames were bit-identical. Background commands stop at their
   timeout (30 min by default; pass up to 2 hours) and a session's worker restart kills its children: keep render jobs
   resumable (`_tools/render_list.sh` renders only the frames that are missing).
+- **v2, delivered 9 Nov 2026 (11:00 UTC), still without music.** The user's second review: hand/arm glitches again, the
+  name on screen for a fraction of a second, the voice "too rigid". Fixed: the soda clerk's floating hand (the elbow out,
+  the forearm down into the hand, the glass on the marble, the tap in front); the old man's arms (one piece and one colour:
+  the bench's lamplight had been masked off his forearm, the bench cut his elbow, the forearm pointed at the lens; the
+  elbow crease's dark disc removed; the pestle fist above the bowl's rim); near-black far-side hands hidden; foreground
+  blades off the hands; the take's own pauses back (`_tools/twarp.py`: the picture eased through each pause, the mix on
+  the same map); the name held ~2 s. 3264 frames, 54.40 s. Every hand audited from the final frames
+  (`_tools/handaudit.js`, `_tools/handcrops.py`), 0 spikes, loop seam 1.56, spot re-render bit-identical.
