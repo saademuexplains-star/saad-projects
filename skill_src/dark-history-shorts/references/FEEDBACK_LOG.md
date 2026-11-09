@@ -952,3 +952,19 @@ renders those frames, `_tools/handcrops.py` tiles every hand wrist-to-elbow, lab
   (`window.TWARP_T`, read by `ENG.tOf(n)`; the mix uses the same map): the picture eases through each pause.
 - **The last title holds.** The name was written in at the very end and the loop morph took it at once. A final title
   stays complete on screen at least 2 s before any loop transition.
+- **Same review, the "fixed" frames (2026-11-09): "its still cutted and color is differebt", "??? its cutted .. not
+  joined", "hand is also glitching with bowl".** Judge joints at 3x zoom, never on half-size comparisons.
+  - **A light inside furniture that is masked round an arm lights only the unmasked part of the arm.** The bench's
+    lamplight (a screen-blended radial in `S.benchTop`) lay over the figure; the bench is masked round his forearm,
+    so the glow warmed the upper arm and stopped at the elbow: a cream sleeve above, a grey one below, a seam. Clip a
+    furniture light to the furniture's own surface (or draw it over the whole picture, unmasked).
+  - **Mask furniture round the WHOLE arm** (`armRfull`, shoulder to hand), not the forearm: an elbow dipping below
+    the bench's far edge was covered and the forearm lay on the bench as a separate piece with a straight cut end.
+  - **No forearm pointing at the lens**: drawn short, it is a grey box with the cuff on the elbow and the hand stuck
+    on its end. Put the held thing where the forearm lies in the picture (across the belly, level, from an elbow
+    hanging at the side). An upper arm angled out opens a gap under the arm; on a dark wall it reads see-through.
+  - **The elbow crease is two thin light lines** (rig3 under RIG_CRISP) - its dark disc read as a stain on white sleeves.
+  - **A tool held over a vessel**: the fist rides above the rim (a long enough handle: `PR.PESTLE_HEAD`), or the
+    vessel's front wall cuts across the wrist.
+  - The arms' contact shadow (`Q.armAO`) is for light-on-light only (white sleeve on a white jacket); on a white
+    sleeve over a dark vest it lays a brown smudge.
