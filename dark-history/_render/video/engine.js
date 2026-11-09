@@ -412,7 +412,15 @@
   X.TR = TR;
 
   // ---------------- frame ----------------
-  X.FRAMES = G.VIDEO_FRAMES || 2743; X.T_END = X.FRAMES / FPS;   // 45.7167 s: the voice ends inside the last frame, frame 2743 == frame 0
+  // X.tOf(n): the (animation) time of frame n. G.TWARP_T (a page's time warp: the old time of every frame) lets a film
+  // whose shots were timed to one voice-over play against another take of it - the picture eases through the pauses
+  X.tOf = n => {
+    const T = G.TWARP_T; if (!T) return n / FPS;
+    if (n <= 0) return T[0] + n / FPS;
+    const i = Math.floor(n); if (i >= T.length - 1) return T[T.length - 1] + (n - (T.length - 1)) / FPS;
+    return T[i] + (T[i + 1] - T[i]) * (n - i);
+  };
+  X.FRAMES = G.VIDEO_FRAMES || 2743; X.T_END = X.tOf(X.FRAMES);   // the voice ends inside the last frame, frame FRAMES == frame 0
   // the transition running at t (with its progress u), or null
   X.transAt = t => { for (const T of X.trans) { const a = T.end ? T.at - T.d : T.at - T.d / 2; if (t >= a && t < a + T.d) return { T, u: (t - a) / T.d }; } return null; };
   X.vexpFor = T => T.vexp ? T.vexp : T.type === 'push' ? Math.max(1, 1 / Math.min(T.zb ?? 0.55, 1)) * 1.1
@@ -457,7 +465,7 @@
     C.gradeFilter('gFeast', 0.95, '0.02 0.1 0.26 0.48 0.69 0.86 0.97', [1.04, 0.99, 0.94]);
 
   X.svgFrame = n => {
-    const t = n / FPS;
+    const t = X.tOf(n);
     fid = 0;
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs>${X.defs()}</defs><rect width="${W}" height="${H}" fill="#000"/>${X.frameBody(t)}${X.post(t, n)}</svg>`;
   };

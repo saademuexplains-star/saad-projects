@@ -603,7 +603,8 @@
     const wSkin = hSkin === C.skin ? mix(C.skin, '#c97a62', 0.14) : hSkin;
     const wrist = bare ? '' : V2 ? limb([W[0] - dn[0] * (cutB + sw * 0.3), W[1] - dn[1] * (cutB + sw * 0.3)], [W[0] + hn[0] * HLn * 0.08, W[1] + hn[1] * HLn * 0.08], HLn * 0.3, HLn * 0.285, wSkin)
       : limb([W[0] - dn[0] * sw * 0.4, W[1] - dn[1] * sw * 0.4], [W[0] + hn[0] * D.hand * 0.06, W[1] + hn[1] * D.hand * 0.06], D.hand * 0.36, D.hand * 0.34, wSkin);
-    const joinWrist = !!(G.RIG_CRISP && V2 && !bare);
+    // (not for a detached hand: drawn on its own over a prop, a faded top showed the prop through the wrist - a smear)
+    const joinWrist = !!(G.RIG_CRISP && V2 && !bare && !o.detachHand);
     const handSvg = o.pose === 'none' ? '' : (V2 ? handV2 : hand)({ x: W[0], y: W[1], dir, side, facing: o.facing || 'back', thumb: o.thumb || 'auto', pose: o.pose || 'relaxed', size: D.hand, skin: hSkin, hold: o.hold, holdFront: o.holdFront, holdRot: o.holdRot, nails: (o.glove ?? C.glove) ? null : (o.nails ?? C.nails), joinWrist });
     const cuffShadow = V2 && !bare ? (() => { const c = add(Wc, dn, HLn * 0.06), r = Math.atan2(-dn[0], dn[1]) * 180 / Math.PI; return `<ellipse cx="${f(c[0])}" cy="${f(c[1])}" rx="${f(fw2 * 0.5)}" ry="${f(HLn * 0.075)}" transform="rotate(${f(r)},${f(c[0])},${f(c[1])})" fill="#1e0c04" opacity="0.34" filter="url(#b4)"/>`; })()
       : `<ellipse cx="${f(W[0] + hn[0] * sw * 0.18)}" cy="${f(W[1] + hn[1] * sw * 0.18)}" rx="${f(sw * 0.36)}" ry="${f(sw * 0.26)}" fill="#1e0c04" opacity="0.35" filter="url(#b4)"/>`;
@@ -1309,7 +1310,7 @@
     // its edge, a hand reduced to a thumb - the box now takes in both hands and both elbows)
     { const hl = D.hand * (G.RIG_HANDS === 1 ? 1 : HAND_K) * s * 1.15, ew = D.sw * s; let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const A of [armR, armL]) { const w = toWorld(o, A.W), e = toWorld(o, A.E); x0 = Math.min(x0, w[0] - hl, e[0] - ew); y0 = Math.min(y0, w[1] - hl, e[1] - ew); x1 = Math.max(x1, w[0] + hl, e[0] + ew); y1 = Math.max(y1, w[1] + hl, e[1] + ew); } info.ext = [x0, y0, x1, y1]; }
     // armRsvg / armLsvg: the forearm and hand only (redrawn over a tabletop the hand rests on; the shoulder stays put)
-    return { svg: wrap(out), handR: armR.hand ? wrap(armR.hand) : '', handL: armL.hand ? wrap(armL.hand) : '', armRsvg: wrap(armR.lo), armLsvg: wrap(armL.lo), D, shR, shL, info, jR: { W: armR.W, E: armR.E }, jL: { W: armL.W, E: armL.E } };
+    return { svg: wrap(out), handR: armR.hand ? wrap(armR.hand) : '', handL: armL.hand ? wrap(armL.hand) : '', armRsvg: wrap(armR.lo), armLsvg: wrap(armL.lo), armRfull: wrap((armR.up || '') + armR.lo), armLfull: wrap((armL.up || '') + armL.lo), D, shR, shL, info, jR: { W: armR.W, E: armR.E }, jL: { W: armL.W, E: armL.E } };
   }
 
   // exact person-local <-> world mapping (translate, sway rotation, breathing scale) so hands meet world props precisely

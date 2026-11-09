@@ -235,6 +235,9 @@
     // the foam head, piling up on the surface
     if (foam > 0.02 && lev > 0.05) { const fh = 14 * foam; g += `<path d="M-38,${f(yl)} Q-30,${f(yl - fh)} -16,${f(yl - fh * 0.8)} Q-6,${f(yl - fh * 1.3)} 6,${f(yl - fh)} Q20,${f(yl - fh * 1.2)} 30,${f(yl - fh * 0.8)} Q40,${f(yl - fh * 0.5)} 38,${f(yl)}Z" fill="#dcc6a2"/><path d="M-30,${f(yl - fh * 0.6)} Q0,${f(yl - fh * 1.1)} 30,${f(yl - fh * 0.6)}" stroke="#fff4e0" stroke-width="2.4" fill="none" opacity="0.7"/>`; }
     g += `</g>`;
+    // o.jet {flow, t}: the stream from the tap inside the glass, from the rim down into the liquid (behind the front
+    // wall, so a hand round the glass is in front of it; S.jet draws the stream above the rim)
+    if (o.jet && o.jet.flow > 0.01) { const w = 7 * o.jet.flow / s, ye = Math.min(-16, yl + 4), rj = rng(633); g += `<path d="M${f(-w)},-160 L${f(w)},-160 L${f(w * 0.8)},${f(ye)} L${f(-w * 0.8)},${f(ye)}Z" fill="#e8f2f0" opacity="${f(0.55 * o.jet.flow)}"/><path d="M${f(-w * 0.3)},-160 L${f(-w * 0.2)},${f(ye)}" stroke="#fff" stroke-width="2" opacity="${f(0.8 * o.jet.flow)}"/>`; for (let i = 0; i < 6; i++) { const u = ((o.jet.t * 3 + i / 6) % 1); g += `<circle cx="${f((rj() - 0.5) * w * 1.6)}" cy="${f(-160 + (ye + 160) * u)}" r="${f(1 + rj() * 2)}" fill="#fff" opacity="${f(0.7 * o.jet.flow)}"/>`; } }
     g += `<path d="M-32,0 L-39,-160 L39,-160 L32,0Z" fill="#e8f0f0" fill-opacity="0.14" ${ol(1.5)}/><rect x="-32" y="-14" width="64" height="14" fill="#e8f0f0" opacity="0.3"/><path d="M-39,-160 L39,-160" stroke="#f4f8f8" stroke-width="3" opacity="0.8"/>`;
     g += `<path d="M-27,-8 L-32,-150" stroke="#fff" stroke-width="3.5" opacity="0.5" stroke-linecap="round"/><path d="M26,-10 L30,-120" stroke="#fff" stroke-width="2" opacity="0.3"/>`;
     return g + `</g>`;

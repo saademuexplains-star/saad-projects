@@ -200,7 +200,9 @@
   S.battleFg = (t) => {
     const r = rng(83);
     let g = '';
-    for (let i = 0; i < 26; i++) { const x = -60 + r() * 1200, y = 1850 + r() * 120, h = 90 + r() * 160, a = (r() - 0.5) * 0.5; g += `<path d="M${f(x)},${f(y)} q${f(Math.sin(a) * h * 0.5)},${f(-h * 0.6)} ${f(Math.sin(a) * h)},${f(-h)}" stroke="#0a0604" stroke-width="${f(6 + r() * 8)}" fill="none" stroke-linecap="round"/>`; }
+    // (the blades stand at the two sides only: across the middle, blurred dark streaks lay over the hands hanging there
+    // and read as dirt on them)
+    for (let i = 0; i < 26; i++) { const u = r(), x = u < 0.5 ? -80 + u * 2 * 250 : 910 + (u - 0.5) * 2 * 250, y = 1850 + r() * 120, h = 90 + r() * 160, a = (r() - 0.5) * 0.5; g += `<path d="M${f(x)},${f(y)} q${f(Math.sin(a) * h * 0.5)},${f(-h * 0.6)} ${f(Math.sin(a) * h)},${f(-h)}" stroke="#0a0604" stroke-width="${f(6 + r() * 8)}" fill="none" stroke-linecap="round"/>`; }
     g += `<ellipse cx="200" cy="1880" rx="420" ry="110" fill="#2a1a12" opacity="0.5" filter="url(#b14)"/><ellipse cx="980" cy="1900" rx="360" ry="90" fill="#2a1a12" opacity="0.4" filter="url(#b14)"/>`;
     return `<g filter="url(#dof2)">${g}</g>`;
   };
@@ -377,9 +379,10 @@
     g += `<rect x="-240" y="${NEAR + 380}" width="1560" height="16" rx="8" fill="#c8963a" ${ol(1.2)}/>`;
     // the nickel (o.noNickel: a shot that drops its own)
     if (!o.noNickel) g += `<g transform="translate(700,1468)"><ellipse rx="34" ry="13" fill="#3a3a38" opacity="0.45" transform="translate(4,5)" filter="url(#b2)"/><ellipse rx="34" ry="13" fill="#c8ccce" ${ol(1.2)}/><ellipse rx="27" ry="9.5" fill="none" stroke="#8a8e90" stroke-width="1.5"/>` + `<g transform="scale(1,0.38)">` + TXT(0, 12, 32, '#6a6e72', 'V', { w: 'bold' }) + `</g><ellipse cx="-10" cy="-4" rx="12" ry="3" fill="#fff" opacity="0.7"/></g>`;
-    // a tray of clean glasses upside down at the right end
-    g += `<ellipse cx="1010" cy="1420" rx="120" ry="26" fill="#b8b4ac" ${ol(1.2)}/>`;
-    for (const gx of [950, 1010, 1070, 980, 1040]) { const gy = gx % 20 ? 1414 : 1400; g += `<path d="M${gx - 26},${gy} L${gx - 22},${gy - 90} L${gx + 22},${gy - 90} L${gx + 26},${gy}Z" fill="#eef4f4" fill-opacity="0.22" ${ol(1.1)}/><path d="M${gx - 18},${gy - 8} L${gx - 16},${gy - 82}" stroke="#fff" stroke-width="3" opacity="0.6"/>`; }
+    // a tray of clean glasses upside down at the right end (o.trayX: moved clear of a soda tap standing there)
+    const TX = o.trayX ?? 1010;
+    g += `<ellipse cx="${TX}" cy="1420" rx="120" ry="26" fill="#b8b4ac" ${ol(1.2)}/>`;
+    for (const gx0 of [950, 1010, 1070, 980, 1040]) { const gx = gx0 + TX - 1010, gy = gx0 % 20 ? 1414 : 1400; g += `<path d="M${gx - 26},${gy} L${gx - 22},${gy - 90} L${gx + 22},${gy - 90} L${gx + 26},${gy}Z" fill="#eef4f4" fill-opacity="0.22" ${ol(1.1)}/><path d="M${gx - 18},${gy - 8} L${gx - 16},${gy - 82}" stroke="#fff" stroke-width="3" opacity="0.6"/>`; }
     return g;
   };
   S.fountLight = (t) => {

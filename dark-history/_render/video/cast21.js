@@ -18,10 +18,13 @@
   Q.headArt = (P, o, svg) => `<g transform="${Q.headT(P, o)}">${svg}</g>`;
   // the figure lit TOGETHER with its hair (back art + body + front art, then extra - a held prop and its detached fist -
   // through ONE light pass), so the hair takes the same key, rim and face light as the head (castT1.js)
-  Q.litHair = (P, o, art, L, extra = '', ext = null) => {
+  // cut {id, y, under}: the body (and `under`, e.g. the arms' shadow on it) is cut off below y - behind a counter - in
+  // the same light pass, while `extra` (a glass standing on the counter in front of that edge, the hand round it) is not
+  Q.litHair = (P, o, art, L, extra = '', ext = null, cut = null) => {
     const s = o.s || 1, E = [o.x - 340 * s, o.y - 1520 * s, o.x + 340 * s, o.y + 20 * s];
     const e2 = ext ? [Math.min(E[0], ext[0]), Math.min(E[1], ext[1]), Math.max(E[2], ext[2]), Math.max(E[3], ext[3])] : E;
-    return G.STAGE.litWith(P, L, (art && art.back ? Q.headArt(P, o, art.back) : '') + P.svg + (art && art.front ? Q.headArt(P, o, art.front) : '') + extra, e2);
+    const body = (art && art.back ? Q.headArt(P, o, art.back) : '') + P.svg + (art && art.front ? Q.headArt(P, o, art.front) : '');
+    return G.STAGE.litWith(P, L, (cut ? G.STAGE.clipTop(cut.id, cut.y, body + (cut.under || '')) : body) + extra, e2);
   };
   // ---------------- the arm's contact shadow on the body (the user, 2026-11-08: "arm is invisible and blending with
   // shirt"): in ONE light pass an arm in front of the torso gets no edge, and a white sleeve on a white jacket (or grey on
@@ -36,12 +39,15 @@
     const bx0 = Math.min(...xs) - 120, by0 = Math.min(...ys) - 120, bw = Math.max(...xs) - bx0 + 120, bh = Math.max(...ys) - by0 + 120;
     const BB = `x="${f(bx0)}" y="${f(by0)}" width="${f(bw)}" height="${f(bh)}"`;
     const lx = (L.from && L.from[0]) || 0, dx = -Math.sign(lx) * 7 * s, dy = 10 * s;
+    // the shadow is cast by the forearms and hands; the mask keeps it off the WHOLE arm (shoulder to hand) - with only
+    // the forearm in the mask the shadow lay over the upper arm and the elbow and turned the sleeve grey and see-through
     const arms = (which.includes('R') ? (P.armRsvg || '') + (P.handR || '') : '') + (which.includes('L') ? (P.armLsvg || '') + (P.handL || '') : '');
+    const whole = (which.includes('R') ? (P.armRfull || P.armRsvg || '') + (P.handR || '') : '') + (which.includes('L') ? (P.armLfull || P.armLsvg || '') + (P.handL || '') : '');
     if (!arms) return '';
     const torso = `M${pts.map(p => f(p[0]) + ',' + f(p[1])).join(' L')}Z`;
     return `<defs><filter id="${id}k" filterUnits="userSpaceOnUse" ${BB} color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 3 -1"/></filter>` +
       `<filter id="${id}s" filterUnits="userSpaceOnUse" ${BB} color-interpolation-filters="sRGB"><feFlood flood-color="#120804"/><feComposite in2="SourceAlpha" operator="in" result="a"/><feMorphology in="a" operator="dilate" radius="${f(2.5 * s)}" result="d"/><feGaussianBlur in="d" stdDeviation="${f(7 * s)}" result="b"/><feOffset in="b" dx="${f(dx)}" dy="${f(dy)}"/></filter>` +
-      `<mask id="${id}m" maskUnits="userSpaceOnUse" ${BB}><path d="${torso}" fill="#fff"/><g filter="url(#${id}k)">${arms}</g></mask></defs>` +
+      `<mask id="${id}m" maskUnits="userSpaceOnUse" ${BB}><path d="${torso}" fill="#fff"/><g filter="url(#${id}k)">${whole}</g></mask></defs>` +
       `<g mask="url(#${id}m)" opacity="${op}"><g filter="url(#${id}s)">${arms}</g></g>`;
   };
   // soot on your face after the fight (head-local)

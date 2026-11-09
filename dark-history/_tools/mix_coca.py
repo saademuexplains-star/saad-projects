@@ -2,7 +2,8 @@
 """Coca-Cola mix (Linux port of the mix_*.ps1 + arrangement pattern).
 
 VO + one-shot SFX (each placed by the time of its loudest moment) + ambience beds (looped, crossfaded) + music,
-48 kHz stereo, every stem exactly the video length (2840 frames at 60 fps). The music ducks under the voice
+48 kHz stereo, every stem exactly the video length (twarp.FRAMES at 60 fps). The voice is the take with its own
+pauses (_vo18/vo_nat.wav); every time in the arrangement is the picture's old time, mapped through twarp.fwd. The music ducks under the voice
 (-8 dB), the ambiences less (-5 dB), the SFX a little (-2.5 dB). The loop seam: the battle ambience that opens the
 film is faded in under the last 0.6 s, and every other bed fades out by the last frame, so the end runs into frame 0.
 
@@ -14,10 +15,14 @@ import sys, os, wave
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import twarp   # noqa: E402  the picture's time warp: every time below is written in the old (tight-voice) time
+W = twarp.fwd
 SR = 48000
-FRAMES, FPS = 2840, 60
+FRAMES, FPS = twarp.FRAMES, 60
 N = int(round(FRAMES / FPS * SR))
 DUR = N / SR
+OLD_END = twarp.inv(DUR)        # the end of the film in the picture's old time
 SFX = os.path.join(ROOT, '_sfx18', 'wav')
 
 
@@ -160,7 +165,7 @@ def env_follow(x, att=0.03, rel=0.25):
 
 
 def build(music_mode):
-    vo = read(os.path.join(ROOT, '_vo18', 'vo_tight.wav'))
+    vo = read(os.path.join(ROOT, '_vo18', 'vo_nat.wav'))
     VO = np.zeros((N, 2), np.float32); VO[: min(N, len(vo))] = vo[:N]
     # the voice up front: +5 dB, its peaks held under -1.5 dBFS by a smooth limiter (the take's median speech level
     # was -25 dBFS, too low to sit over the effects)
@@ -170,14 +175,17 @@ def build(music_mode):
     M = np.zeros((N, 2), np.float32)    # music
 
     # ---------------- ambiences (one per place); the battle bed also fades in under the last 0.6 s for the loop
-    bed(A, 'wa_battle', 0.0, 7.63, -6, xin=0.0, xout=0.5)
+    wb = lambda n, t0, t1, *a, **k: bed(A, n, W(t0), W(t1), *a, **k)
+    wb('wa_battle', 0.0, 7.63, -6, xin=0.0, xout=0.5)
     bed(A, 'wa_battle', DUR - 0.6, DUR, -6, xin=0.0, xout=0.0, off=0.0)
-    bed(A, 'wa_room', 7.63, 9.85, -9, xin=0.5, xout=0.4)
-    bed(A, 'wa_street', 9.8, 11.4, -7, xin=0.4, xout=0.35)
-    bed(A, 'wa_room', 11.32, 28.2, -9, xin=0.35, xout=0.3, off=2.0)
-    bed(A, 'wa_room', 28.2, 29.6, -13, xin=0.1, xout=0.3, off=5.0)
-    bed(A, 'wa_fount', 31.62, 35.45, -9, xin=0.4, xout=0.4)
-    bed(A, 'wa_room', 35.4, 43.1, -12, xin=0.4, xout=0.5, off=1.0)
+    wb('wa_room', 7.63, 9.85, -9, xin=0.5, xout=0.4)
+    wb('wa_street', 9.8, 11.4, -7, xin=0.4, xout=0.35)
+    wb('wa_room', 11.32, 28.2, -9, xin=0.35, xout=0.3, off=2.0)
+    wb('wa_room', 28.2, 29.6, -13, xin=0.1, xout=0.3, off=5.0)
+    wb('wa_fount', 31.62, 35.45, -9, xin=0.4, xout=0.4)
+    wb('wa_room', 35.4, 43.1, -12, xin=0.4, xout=0.5, off=1.0)
+    # the name on the fountain card, held: the fountain's murmur, low, gone before the seam
+    wb('wa_fount', 45.95, OLD_END - 0.45, -15, xin=0.5, xout=0.4, off=1.5)
 
     # ---------------- one-shots: actions, vocals, transitions (deep hits and risers, no thin whooshes)
     E = [
@@ -210,11 +218,13 @@ def build(music_mode):
         ('ws_sign', 39.7, -9, 'start'), ('ws_fizz', 41.4, -9, 'start'), ('ws_riser', 43.1, -9), ('ws_dive', 43.12, -3),
         # MAP / NAME
         ('ws_shimmer', 43.6, -9, 'start'), ('ws_shimmer', 44.7, -8, 'start'), ('ws_whoosh', 45.9, -7),
-        ('ws_final', 46.56, -2), ('ws_fizz', 46.95, -12, 'start'), ('ws_whoosh', 47.08, -9),
+        ('ws_final', 46.56, -2), ('ws_fizz', 46.95, -12, 'start'), ('ws_fizz', 48.25, -14, 'start'),
+        # the loop morph into the embers of frame 0
+        ('ws_whoosh', OLD_END - 0.25, -9),
     ]
     for e in E:
         name, t, g = e[0], e[1], e[2]
-        shot(S, name, t, g, at=e[3] if len(e) > 3 else 'peak')
+        shot(S, name, W(t), g, at=e[3] if len(e) > 3 else 'peak')
 
     # ---------------- music
     if music_mode == 'full':
@@ -222,13 +232,13 @@ def build(music_mode):
         mm = np.zeros((N, 2), np.float32); mm[: min(N, len(m))] = m[:N]
         M += fade(mm, 0.03, 0.35) * db(-4)
     elif music_mode == 'cues':
-        cue = lambda n, t0, t1, g, xin=0.3, xout=0.5, off=0.0: bed(M, n, t0, t1, g, xin, xout, off)
+        cue = lambda n, t0, t1, g, xin=0.3, xout=0.5, off=0.0: bed(M, n, W(t0), W(t1), g, xin, xout, off)
         cue('cue_war', 0.0, 7.63, -6, xin=0.0, xout=0.6)
         cue('cue_parlour', 7.63, 28.15, -7, xin=0.4, xout=0.5)
         cue('cue_build', 28.15, 35.3, -6, xin=0.3, xout=0.25)
         cue('cue_lament', 36.2, 43.1, -6, xin=0.5, xout=0.4)
-        cue('cue_swell', 43.1, DUR, -4, xin=0.3, xout=0.35)
-        cue('cue_war', DUR - 0.5, DUR, -6, xin=0.0, xout=0.0)
+        cue('cue_swell', 43.1, OLD_END, -4, xin=0.3, xout=0.35)
+        bed(M, 'cue_war', DUR - 0.5, DUR, -6, xin=0.0, xout=0.0)
 
     # ---------------- ducking under the voice
     e = env_follow(VO)

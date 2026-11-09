@@ -1,5 +1,6 @@
 <!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};window.renderFrame=async()=>{throw new Error("PAGE ERR: "+(window.__E||[]).join(" | "))};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
 <script>window.VIDEO_FRAMES = 2840; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
+<script src="twarp_coca.js"></script>
 <script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script><script src="../lib/hairkit.js"></script>
 <script src="cast.js"></script><script src="cast21.js"></script>
 <script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
@@ -7,7 +8,8 @@
 <script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script><script src="shots_x.js"></script><script src="shots_x2.js"></script><script src="shots_x3.js"></script></head>
 <body><div id="root"></div>
 <script>
-// The Coca-Cola video (2840 frames, 60 fps; VO _vo18). Frames outside transitions are drawn as they are. Inside a transition the two shots are never rasterised together:
+// The Coca-Cola video (3264 frames, 60 fps; VO _vo18/vo_nat.wav, the shots timed to the tight cut and eased through the
+// take's own pauses by twarp_coca.js - _tools/twarp.py). Frames outside transitions are drawn as they are. Inside a transition the two shots are never rasterised together:
 // first the transition is laid out with a measuring rectangle in each shot's place, to read off which part of each shot
 // it will show and at what magnification; then each shot is drawn on its own into an image of just that part (at that
 // sharpness), and the transition is composed from the two images. (Two heavy shots in one frame made Chrome drop whole
@@ -47,7 +49,7 @@ const rasterShot = async (id, tt, R, vexp) => {
 };
 window.renderFrame = async n => {
   for (const u of urls) URL.revokeObjectURL(u); urls = [];
-  const t = n / X.FPS, tr = X.transAt(t);
+  const t = X.tOf(n), tr = X.transAt(t);
   X.SHOTIMG = null;
   if (tr && !G_NOIMG) {
     X.SHOTIMG = 'probe';

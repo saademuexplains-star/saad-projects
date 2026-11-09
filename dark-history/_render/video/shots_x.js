@@ -208,31 +208,38 @@
   V.b2Cam = (() => { const lab = V.labelOf([474, 1300], BA.HB), lab2 = V.labelOf([452, 1286], BA.HB); return V.cam([[4.6, [lab[0] - 1, lab[1] - 2, 2.66, -0.5]], [4.95, [lab[0], lab[1], 2.64, -0.5]], [5.2, [lab[0] - 12, lab[1] - 40, 2.6, -0.3]], [5.9, [430, 1180, 2.0, 0.2]], [6.7, [404, 1130, 1.84, 0.5]], [7.4, [424, 1230, 2.1, 0.4]], [8.0, [lab2[0], lab2[1] - 10, 2.5, 0.2]]]); })();
 
   // ======================================================= ROOM1: twenty years on, the same bottle in the lamplight
-  V.r1Bottle = t => L2([372, 1010], [384, 1002], ss(7.4, 9.6, t));
+  // (after the review: the bottle stands on the bench in front of him, his hand round its neck - the same hold as on the
+  // night he dies (ROOM3). Held up to the lamp, the solver could only fold the forearm back over the upper arm, or put the
+  // elbow straight out at the side; both drew a broken arm)
+  V.r1Bottle = t => [520, 1470 - BA.HB * 0.92 * S.MORPH_GRIP];
   const OLD = { X: 560, Y: 2430, S: 1.2 };
   X.shot('ROOM1', 7.33, 10.15, t => {
     const c = hh(V.r1Cam(t), t, 0.8, 4);
     const id = idle(t, 11, 0.5), o = { x: OLD.X, y: OLD.Y, s: OLD.S, sway: id.sway * 0.6, tilt: 5 - 3 * ss(8.5, 9.6, t), breath: id.breath, blink: id.blink };
     const gB = V.r1Bottle(t);
     const F = V.faceAt(t, [
-      [7.3, { expr: 'tired', look: [-0.7, -0.15], lid: 0.42, mouth: 'closed', brows: [-8, 4], bags: 0.7, age: true, sweat: 0.08 }],
-      [8.7, { expr: 'tired', look: [-0.5, 0.35], lid: 0.55, mouth: 'tight', brows: [-11, 5], bags: 0.7, age: true, sweat: 0.08 }],
+      [7.3, { expr: 'tired', look: [-0.25, 0.7], lid: 0.42, mouth: 'closed', brows: [-8, 4], bags: 0.7, age: true, sweat: 0.08 }],
+      [8.7, { expr: 'tired', look: [-0.2, 0.62], lid: 0.55, mouth: 'tight', brows: [-11, 5], bags: 0.7, age: true, sweat: 0.08 }],
       [9.7, { expr: 'grim', look: [-0.75, -0.5], lid: 0.4, mouth: 'closed', brows: [-6, 3], bags: 0.7, age: true }]], 0.6);
     const P = up(Q.pembOld(Object.assign(o, { noLegs: true, face: F,
       armR: gripAt(o, Q.HAND.pembOld, gB, [1, 0.04], { facing: 'back', detachHand: true }),
-      armL: { hand: R.toLocal(o, [756, 1334]), dir: [-0.45, 0.9], pose: 'relaxed', facing: 'back' } })), o);
+      // (the other arm hangs at his side behind the bench - the hand that rested on the mortar's far side, away from
+      // the lamp, was shaded almost black)
+      armL: { hand: R.toLocal(o, [748, 1500]), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
     // the bottle turning in his fingers: a glint sliding across the glass
     const gl = (t * 0.6) % 1, bot = morphW(gB, BA.HB * 0.92) + `<path d="M${f(gB[0] - 30 + 60 * gl)},${f(gB[1] + 40)} l0,110" stroke="#fff4d0" stroke-width="5" opacity="${f(0.35 * Math.sin(Math.PI * gl))}" stroke-linecap="round"/>`;
     const body = clipTop('r1Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + bot + P.handR, [gB[0] - 90, gB[1] - 80, gB[0] + 90, gB[1] + 240]));
-    const top = behind(P, 'r1bt', S.benchTop(t, { morph: false }));
+    // (no mortar on the bench here: the bottle stands where it was; the bench top is masked round the arm, the hand and
+    // the bottle standing on it)
+    const top = V.behindAlso(P, 'r1bt', S.benchTop(t, { morph: false, mortar: false }), P.handR + bot, 'R');
     const layers = S.backroom(t);
     layers.push({ p: 0.75, svg: S.roomWall(t, {}) });
-    layers.push({ p: 1, svg: body + top + S.mortarFront() + S.benchFront(t) }, { p: 1.02, svg: S.roomLight(t) }, { p: 1.25, svg: S.roomFg(t) });
+    layers.push({ p: 1, svg: body + top + S.benchFront(t) }, { p: 1.02, svg: S.roomLight(t) }, { p: 1.25, svg: S.roomFg(t) });
     return X.compose(layers, c) + C.vignette(0.55, '#060302', 0.4);
   }, { grade: 'gHall' });
   // from the label (the morph lands here) back to his face, then a drift up to the window and its street lamp
   V.R1WIN = [110, 347];   // the street lamp in the window, on the wall layer (p 0.75)
-  V.r1Cam = (() => { const lab = V.labelOf([372, 1010], BA.HB * 0.92), w = camOn(V.R1WIN, 0.75); return V.cam([[7.2, [lab[0], lab[1] + 6, 2.6, -0.4]], [7.9, [lab[0] + 30, lab[1] - 30, 2.2, -0.2]], [8.7, [470, 930, 1.62, 0.3]], [9.4, [380, 840, 1.36, 0.5]], [10.2, [w[0] * 0.55 + 380 * 0.45, w[1] * 0.55 + 840 * 0.45, 1.42, 0.6]]]); })();
+  V.r1Cam = (() => { const lab = V.labelOf(V.r1Bottle(7.2), BA.HB * 0.92), w = camOn(V.R1WIN, 0.75); return V.cam([[7.2, [lab[0], lab[1] + 6, 2.6, -0.4]], [7.9, [lab[0] + 30, lab[1] - 30, 2.2, -0.2]], [8.7, [470, 930, 1.62, 0.3]], [9.4, [380, 840, 1.36, 0.5]], [10.2, [w[0] * 0.55 + 380 * 0.45, w[1] * 0.55 + 840 * 0.45, 1.42, 0.6]]]); })();
 
   // ======================================================= STREET: the shop front at night, rain
   X.shot('STREET', 9.45, 11.62, t => {

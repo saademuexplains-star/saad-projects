@@ -13,11 +13,11 @@
   const { up, behind, gripAt, clipTop, nrm, fingersFor } = ST;
   const { cl, env, bump, idle, hh, scr, camOn, L2 } = V;
   // ST.behind with more in the mask than the arms (a detached fist, a rod, a paddle)
-  const behindAlso = (P, id, svg, extraMask) => {
+  const behindAlso = (P, id, svg, extraMask, which = 'RL') => {
     const E = P.info && P.info.ext, m = 160, [x0, y0, x1, y1] = E ? [E[0] - m, E[1] - m, E[2] + m, E[3] + m] : [-1500, -1500, 4000, 4000];
     const Rr = `x="${Math.round(x0)}" y="${Math.round(y0)}" width="${Math.round(x1 - x0)}" height="${Math.round(y1 - y0)}"`;
     return `<defs><filter id="${id}k" filterUnits="userSpaceOnUse" ${Rr} color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 3 -1"/></filter>` +
-      `<mask id="${id}" maskUnits="userSpaceOnUse" x="-1500" y="-1500" width="5500" height="5500"><rect x="-1500" y="-1500" width="5500" height="5500" fill="#fff"/><g filter="url(#${id}k)">${P.armRsvg}${P.armLsvg}${extraMask || ''}</g></mask></defs><g mask="url(#${id})">${svg}</g>`;
+      `<mask id="${id}" maskUnits="userSpaceOnUse" x="-1500" y="-1500" width="5500" height="5500"><rect x="-1500" y="-1500" width="5500" height="5500" fill="#fff"/><g filter="url(#${id}k)">${which.includes('R') ? P.armRsvg : ''}${which.includes('L') ? P.armLsvg : ''}${extraMask || ''}</g></mask></defs><g mask="url(#${id})">${svg}</g>`;
   };
   V.behindAlso = behindAlso;
   const OLD = { X: 560, Y: 2430, S: 1.2 };
@@ -44,9 +44,11 @@
       [17.1, { expr: 'anxious', look: [0.7, -0.62], lid: 0.12, mouth: 'parted', open: 0.06, brows: [6, 8], sweat: 0.22, bags: 0.6, age: true }]], 0.22);
     const P = up(Q.pembOld(Object.assign(o, { noLegs: true, face: F,
       armR: gripAt(o, Q.HAND.pembOld, gp, fingersFor('R', 'back', u), { hold: G.PROPS.pestleG() }),
-      armL: { hand: R.toLocal(o, L2([756, 1334], [748, 1326], lean)), dir: [-0.45, 0.9], pose: 'relaxed', facing: 'back' } })), o);
+      // (the other arm hangs at his side behind the bench: the hand on the mortar's far side, away from the lamp, was
+      // shaded almost black)
+      armL: { hand: R.toLocal(o, L2([748, 1500], [742, 1494], lean)), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
     const body = clipTop('r2Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2)));
-    const top = behind(P, 'r2bt', S.benchTop(t, { morph: [290, 1408], steam: true }));
+    const top = behind(P, 'r2bt', S.benchTop(t, { morph: [290, 1408], steam: true }), 'R');
     const layers = S.backroom(t);
     layers.push({ p: 0.75, svg: S.roomWall(t, {}) });
     layers.push({ p: 1, svg: body + top + S.mortarFront() + S.benchFront(t) }, { p: 1.02, svg: S.roomLight(t) }, { p: 1.25, svg: S.roomFg(t) });
@@ -87,7 +89,7 @@
   // (restaged after the review, 2026-11-08: the stirring fist had crossed his face) the jar at his left side, the wine
   // running into it from the tap of a cask beside it; he stirs with his left hand out at his side, the right hand resting
   // on the bench; the bottles and the handbill to the right
-  const JAR = [790, 1456, 196];     // the jar on the bench: x, base, height
+  const JAR = [566, 1458, 196];     // the jar on the bench, in front of him: x, base, height
   const CASK = [1018, 1336];        // the cask's cradle on the bench (behind the jar, to its right)
   const WC = [[1120, 1440], [1210, 1446], [1300, 1440], [1390, 1436]];
   const HBP = [1250, 1500];         // the handbill's foot
@@ -95,26 +97,27 @@
   X.shot('WINE', 23.15, 28.43, t => {
     const c = hh(V.wnCam(t), t, 0.85, 8);
     const guilt = ss(27.2, 27.9, t);
-    const o = oldAt(t, 31, { x: 470, tilt: 4 + 6 * guilt, sway: idle(t, 31).sway * 0.6 - 1.2 * guilt });
-    // stirring: the rod's top in his left fist circling just above the jar's mouth, the rod pivoting at the lip
-    const a = t * 3.4, [jx, jb, jh] = JAR, mouth = [jx, jb - jh + 10], top = [jx + 26 + 18 * Math.cos(a), mouth[1] - 52 + 5 * Math.sin(a)];
-    const rodDir = nrm([mouth[0] - top[0] - 12 * Math.cos(a), mouth[1] - top[1]]), rodLen = jh + 30, rodEnd = [top[0] + rodDir[0] * rodLen, top[1] + rodDir[1] * rodLen];
+    const o = oldAt(t, 31, { x: 520, tilt: 4 + 6 * guilt, sway: idle(t, 31).sway * 0.6 - 1.2 * guilt });
+    // (restaged after the review: the jar in front of him and his right hand stirring at chest height - the arm the
+    // same as the approved pestle pose; a jar at his side folded the arm into a pinched V)
+    const a = t * 3.4, [jx, jb, jh] = JAR, mouth = [jx, jb - jh + 10], top = [jx - 34 + 16 * Math.cos(a), mouth[1] - 58 + 5 * Math.sin(a)];
+    const rodDir = nrm([mouth[0] + 10 * Math.cos(a + Math.PI) - top[0], mouth[1] + 30 - top[1]]), rodLen = jh + 40, rodEnd = [top[0] + rodDir[0] * rodLen, top[1] + rodDir[1] * rodLen];
     const F = V.faceAt(t, [
-      [23.2, { expr: 'grim', look: [0.7, 0.55], lid: 0.4, mouth: 'tight', brows: [-8, 4], sweat: 0.1, bags: 0.6, age: true }],
+      [23.2, { expr: 'grim', look: [0.1, 0.8], lid: 0.42, mouth: 'tight', brows: [-8, 4], sweat: 0.1, bags: 0.6, age: true }],
       [24.9, { expr: 'grim', look: [0.85, 0.3], lid: 0.32, mouth: 'closed', brows: [-4, 3], sweat: 0.1, bags: 0.6, age: true }],
       [27.6, { expr: 'tired', look: [-0.55, 0.62], lid: 0.62, mouth: 'tight', brows: [-15, 8], sweat: 0.2, bags: 0.7, age: true }]], 0.5);
     const P = up(Q.pembOld(Object.assign(o, { noLegs: true, face: F,
-      armL: gripAt(o, Q.HAND.pembOld, top, fingersFor('L', 'back', rodDir), { facing: 'back', detachHand: true }),
-      armR: { hand: R.toLocal(o, [330, 1352]), dir: [0.45, 0.9], pose: 'relaxed', facing: 'back' } })), o);
-    const rodTop = `<path d="M${f(top[0] - rodDir[0] * 30)},${f(top[1] - rodDir[1] * 30)} L${f(mouth[0] + rodDir[0] * 4)},${f(mouth[1] + rodDir[1] * 4)}" stroke="#e8f0ec" stroke-width="9" stroke-linecap="round" opacity="0.75"/><path d="M${f(top[0] - rodDir[0] * 30 - 2)},${f(top[1] - rodDir[1] * 30)} L${f(mouth[0] - 2)},${f(mouth[1])}" stroke="#fff" stroke-width="2.5" opacity="0.8"/>`;
-    const body = clipTop('wnTop', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + rodTop + P.handL, [top[0] - 90, top[1] - 90, top[0] + 90, top[1] + 90]));
-    // the cask's tap open, the wine running into the jar, the level rising
-    const open = env(t, 22.9, 23.15, 24.25, 24.6), lev = 0.25 + 0.6 * ss(23.15, 24.6, t), swirl = t * 1.2;
-    const ck = S.cask(CASK[0], CASK[1], open);
+      armR: gripAt(o, Q.HAND.pembOld, top, fingersFor('R', 'back', [-rodDir[0], -rodDir[1]]), { facing: 'back', detachHand: true }),
+      // (the other arm hangs at his side behind the bench - a hand left on the bench's far side, away from the lamp, was
+      // shaded almost black and seemed to hover over the leaves)
+      armL: { hand: R.toLocal(o, [790, 1500]), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
+    const rodTop = `<path d="M${f(top[0] - rodDir[0] * 34)},${f(top[1] - rodDir[1] * 34)} L${f(mouth[0] + rodDir[0] * 4)},${f(mouth[1] + rodDir[1] * 4)}" stroke="#e8f0ec" stroke-width="9" stroke-linecap="round" opacity="0.75"/><path d="M${f(top[0] - rodDir[0] * 34 - 2)},${f(top[1] - rodDir[1] * 34)} L${f(mouth[0] - 2)},${f(mouth[1])}" stroke="#fff" stroke-width="2.5" opacity="0.8"/>`;
+    const body = clipTop('wnTop', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + rodTop + P.handR, [top[0] - 90, top[1] - 90, top[0] + 90, top[1] + 90]));
+    // the jar: red wine with the leaves and kola turning in it as he stirs; the cask beside it (its tap shut)
+    const lev = 0.82, swirl = t * 1.2;
+    const ck = S.cask(CASK[0], CASK[1], 0);
     let jarS = S.wineJar(jx, jb, jh, t, lev, swirl) + `<path d="M${f(mouth[0] + rodDir[0] * 4)},${f(mouth[1] + rodDir[1] * 4)} L${f(rodEnd[0])},${f(rodEnd[1])}" stroke="#d8c0c0" stroke-width="8" stroke-linecap="round" opacity="0.45"/>`;
-    const sy1 = jb - 14 - (jh - 70) * lev;
-    if (open > 0.02) { const [sx, sy0] = ck.noz, w = 6.5 * open, mx = (sx + jx + 30) / 2; jarS += `<path d="M${f(sx - w)},${f(sy0)} Q${f(mx - w)},${f((sy0 + sy1) / 2)} ${f(jx + 30 - w * 0.6)},${f(sy1)} L${f(jx + 30 + w * 0.6)},${f(sy1)} Q${f(mx + w)},${f((sy0 + sy1) / 2)} ${f(sx + w)},${f(sy0)}Z" fill="#7a0c14" opacity="${f(0.92 * open)}"/><path d="M${f(sx - w * 0.3)},${f(sy0)} Q${f(mx - w * 0.3)},${f((sy0 + sy1) / 2)} ${f(jx + 28)},${f(sy1)}" stroke="#ff8a7a" stroke-width="2" fill="none" opacity="${f(0.5 * open)}"/><ellipse cx="${f(jx + 30)}" cy="${f(sy1)}" rx="${f(28 * open)}" ry="${f(6 * open)}" fill="none" stroke="#e86a6a" stroke-width="2" opacity="${f(0.6 * open)}"/>`; }
-    const front = behindAlso(P, 'wnbt', S.benchTop(t, { morph: false, coca: true, kola: true, flask: false, notebook: false, mortar: false }) + ck.svg + jarS, P.handL + rodTop);
+    const front = behindAlso(P, 'wnbt', S.benchTop(t, { morph: false, coca: true, kola: false, flask: false, notebook: false, mortar: false }) + ck.svg + jarS, P.handR + rodTop, 'R');
     const hi = [env(t, 25.4, 25.65, 26.1, 26.4), env(t, 26.15, 26.35, 26.8, 27.1), env(t, 26.95, 27.2, 28.2, 28.6)];
     const bills = WC.map(([x, y], i) => S.wcBottle(x, y, 300 + (i % 2) * 10, i)).join('') + S.handbill(HBP[0], HBP[1], { hi });
     const rk = ss(27.55, 28.1, t), bl = 7 * rk;
@@ -150,7 +153,9 @@
     const id = idle(t, 41, 0.5), ph = t * 2.6, o = { x: 540, y: 2290, s: 1.15, sway: id.sway * 0.5 + 1.4 * Math.sin(ph), tilt: 6, breath: id.breath, blink: id.blink };
     // the paddle: its blade down in the syrup at B, the shaft up past your left shoulder to T; both fists on it
     const { RIM, CX } = S.KT, B = [CX - 40 + 110 * Math.cos(ph), RIM + 12 + 16 * Math.sin(ph)], T0 = [CX + 250 + 40 * Math.cos(ph), 1000 + 12 * Math.sin(ph)];
-    const ax = nrm([T0[0] - B[0], T0[1] - B[1]]), hL = L2(B, T0, 0.8), hR = L2(B, T0, 0.44);
+    // (after the review: the hands lower on the shaft, both at the belly - the upper fist up under the left shoulder
+    // folded that forearm flat back over the upper arm, and the sleeve showed its crease through it)
+    const ax = nrm([T0[0] - B[0], T0[1] - B[1]]), hL = L2(B, T0, 0.62), hR = L2(B, T0, 0.4);
     const P = up(Q.pembOld(Object.assign(o, { noLegs: true, face: V.faceAt(t, [[29.2, { expr: 'grim', look: [-0.1, 0.8], lid: 0.42, mouth: 'tight', brows: [-8, 5], sweat: 0.3, bags: 0.6, age: true }], [30.6, { expr: 'grim', look: [0.0, 0.9], lid: 0.48, mouth: 'tight', brows: [-11, 6], sweat: 0.35, bags: 0.6, age: true }]], 0.5),
       armR: gripAt(o, Q.HAND.pembOld, hR, fingersFor('R', 'back', ax), { facing: 'back', detachHand: true }),
       armL: gripAt(o, Q.HAND.pembOld, hL, fingersFor('L', 'back', ax), { facing: 'back', detachHand: true }) })), o);
