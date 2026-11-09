@@ -22,10 +22,13 @@
     return g;
   };
   // a pestle: porcelain head (toward the little finger, down in the bowl), a turned wooden handle, a knob at the thumb
-  PR.pestleG = () => `<path d="M-62,-9 L54,-6.5 L54,6.5 L-62,9Z" fill="#6e4424" ${ol(1.2)}/><path d="M-58,-4 L52,-2.5" stroke="#b58552" stroke-width="2.6" opacity="0.55"/>` +
+  // (the handle is long - the head 129 below the grip, not 83 - so the fist rides above the mortar's rim: lower, the
+  // bowl's front wall cut across the wrist and the hand seemed sunk in the bowl. The user, 2026-11-09)
+  PR.PESTLE_HEAD = 129;
+  PR.pestleG = () => `<path d="M-108,-10 L54,-6.5 L54,6.5 L-108,10Z" fill="#6e4424" ${ol(1.2)}/><path d="M-104,-4.5 L52,-2.5" stroke="#b58552" stroke-width="2.6" opacity="0.55"/>` +
     `<circle cx="62" cy="0" r="11" fill="#5e3a1e" ${ol(1.2)}/><circle cx="58.5" cy="-3.5" r="3.6" fill="#c89a68" opacity="0.6"/>` +
-    `<path d="M-60,-12 C-72,-22 -102,-21 -106,0 C-102,21 -72,22 -60,12Z" fill="#e9e3d6" ${ol(1.3)}/><path d="M-70,-12 C-84,-16 -97,-12 -100,-3" stroke="#fff" stroke-width="3.5" fill="none" opacity="0.75" stroke-linecap="round"/>` +
-    `<path d="M-104,5 C-100,14 -86,18 -72,15" stroke="#3e4a22" stroke-width="5" fill="none" opacity="0.75" stroke-linecap="round"/>`;
+    `<path d="M-106,-12 C-118,-22 -148,-21 -152,0 C-148,21 -118,22 -106,12Z" fill="#e9e3d6" ${ol(1.3)}/><path d="M-116,-12 C-130,-16 -143,-12 -146,-3" stroke="#fff" stroke-width="3.5" fill="none" opacity="0.75" stroke-linecap="round"/>` +
+    `<path d="M-150,5 C-146,14 -132,18 -118,15" stroke="#3e4a22" stroke-width="5" fill="none" opacity="0.75" stroke-linecap="round"/>`;
   // a soda glass of the new drink: dark brown, red-brown where the light comes through, a head of foam toward the thumb
   PR.sodaGlassG = (o = {}) => {
     let g = `<defs><linearGradient id="sgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0a04"/><stop offset="0.35" stop-color="#5a2a0e"/><stop offset="0.62" stop-color="#7a3a14"/><stop offset="1" stop-color="#1a0a04"/></linearGradient></defs>`;
@@ -210,7 +213,9 @@
   // ======================================================= THE BACK ROOM, ATLANTA, 1885 (lamplight)
   // world: the bench's far edge at y 1330 (you are cut off behind it), its near edge at 1520; the lamp on the bench at
   // the left; shelves of bottles behind, a window onto the wet night street, the calendar for 1885
-  S.BR = { TOP: 1330, NEAR: 1520, LAMP: [176, 1456], MORTAR: [560, 1350] };
+  // (MORTAR x 620: right of his middle, so the grinding forearm comes across his belly from an elbow at his side - under
+  // his shoulder the solver swung the elbow out and a gap opened between the arm and the body, the arm read as see-through)
+  S.BR = { TOP: 1330, NEAR: 1520, LAMP: [176, 1456], MORTAR: [620, 1350] };
   const nightWindow = (x0, y0, x1, y1, t) => {
     const w = x1 - x0, h = y1 - y0, r = rng(13);
     let g = `<rect x="${x0 - 30}" y="${y0 - 30}" width="${w + 60}" height="${h + 60}" fill="#1a1008" ${ol(1.4)}/>`;

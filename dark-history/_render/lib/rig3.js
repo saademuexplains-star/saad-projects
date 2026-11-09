@@ -336,7 +336,13 @@
     // elbow and across the forearm toward the cuff
     const bend = Math.min(1, Math.abs(cr) * 1.25);
     let fo = '';
-    if (bend > 0.1) {
+    // (G.RIG_CRISP: the crease is two thin, light fold lines - the dark disc at the crease point and the heavy lines read
+    // as a grey stain on every bent elbow, worst on a white sleeve: the user, 2026-11-09, "cant u see it man?")
+    if (bend > 0.1 && G.RIG_CRISP) {
+      const fc = shade(sl, -0.45);
+      fo += `<path d="M${Q(X)} Q${Q(add(add(X, dn, w1 * 0.25), nF, sOut * w1 * 0.08))} ${Q(add(add(X, dn, w1 * 0.5), nF, sOut * w1 * 0.2))}" stroke="${fc}" stroke-width="${f(sw * 0.03)}" fill="none" stroke-linecap="round" opacity="${f(0.3 * bend)}"/>`;
+      fo += `<path d="M${Q(X)} Q${Q(add(add(X, ud, -w1 * 0.25), nU, sOut * w1 * 0.08))} ${Q(add(add(X, ud, -w1 * 0.45), nU, sOut * w1 * 0.2))}" stroke="${fc}" stroke-width="${f(sw * 0.026)}" fill="none" stroke-linecap="round" opacity="${f(0.22 * bend)}"/>`;
+    } else if (bend > 0.1) {
       const fc = shade(sl, -0.6);
       fo += `<path d="M${Q(X)} Q${Q(add(add(X, dn, w1 * 0.25), nF, sOut * w1 * 0.08))} ${Q(add(add(X, dn, w1 * 0.55), nF, sOut * w1 * 0.22))}" stroke="${fc}" stroke-width="${f(sw * 0.05)}" fill="none" stroke-linecap="round" opacity="${f(0.55 * bend)}"/>`;
       fo += `<path d="M${Q(X)} Q${Q(add(add(X, ud, -w1 * 0.25), nU, sOut * w1 * 0.08))} ${Q(add(add(X, ud, -w1 * 0.55), nU, sOut * w1 * 0.24))}" stroke="${fc}" stroke-width="${f(sw * 0.045)}" fill="none" stroke-linecap="round" opacity="${f(0.45 * bend)}"/>`;

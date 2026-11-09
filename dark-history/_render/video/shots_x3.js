@@ -79,7 +79,7 @@
 
   // ======================================================= ROOM3
   // (BOT: the morphine bottle's base, standing on the bench in front of him - and left there when he is gone)
-  const R3 = { BOT: [560, 1470], SALE: [820, 1452], GLASS: [330, 1482], CHAIR: [560, 1322], CAL: [180, 795] };
+  const R3 = { BOT: [640, 1470], SALE: [870, 1452], GLASS: [330, 1482], CHAIR: [560, 1322], CAL: [180, 795] };
   V.r3Gone = 37.75;
   V.r3O = t => { const id = idle(t, 61, 0.4), die = ss(36.55, 37.05, t); return { x: 560, y: 2430, s: 1.2, sway: id.sway * 0.4 * (1 - die) + 3 * die, tilt: 4 + 18 * die, breath: id.breath * (1 - 0.85 * die), blink: 0 }; };
   X.shot('ROOM3', 35.05, 43.4, t => {
@@ -102,7 +102,7 @@
         armR: gripAt(o, Q.HAND.pembOld, gB, [1, 0.04], { facing: 'back', detachHand: true }),
         armL: { hand: R.toLocal(o, L2([748, 1500], [744, 1508], die)), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
       const bot = S.morphineBottle(R3.BOT[0], R3.BOT[1], 190);
-      body = clipTop('r3Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + bot + P.handR, [gB[0] - 90, gB[1] - 80, gB[0] + 90, gB[1] + 230]));
+      body = clipTop('r3Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, bot + P.handR, [gB[0] - 90, gB[1] - 80, gB[0] + 90, gB[1] + 230]));
       body += V.behindAlso(P, 'r3bt', S.benchTop(t, { morph: false, coca: false, kola: false, flask: false, notebook: false, mortar: false, sale: { x: R3.SALE[0], y: R3.SALE[1] }, glass: { x: R3.GLASS[0], y: R3.GLASS[1], h: 170, lit: 0.7 }, lampK, lampOut }), P.handR + bot, 'R');
     } else body = S.benchTop(t, { morph: false, coca: false, kola: false, flask: false, notebook: false, mortar: false, sale: { x: R3.SALE[0], y: R3.SALE[1] }, glass: { x: R3.GLASS[0], y: R3.GLASS[1], h: 170, lit: 0.7 }, lampK, lampOut }) + S.morphineBottle(R3.BOT[0], R3.BOT[1], 190);
     // the dark coming down over the bench as the lamp dies, the street lamp's glow from the window left on it

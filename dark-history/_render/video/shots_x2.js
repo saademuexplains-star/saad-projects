@@ -17,8 +17,11 @@
     const E = P.info && P.info.ext, m = 160, [x0, y0, x1, y1] = E ? [E[0] - m, E[1] - m, E[2] + m, E[3] + m] : [-1500, -1500, 4000, 4000];
     const Rr = `x="${Math.round(x0)}" y="${Math.round(y0)}" width="${Math.round(x1 - x0)}" height="${Math.round(y1 - y0)}"`;
     return `<defs><filter id="${id}k" filterUnits="userSpaceOnUse" ${Rr} color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 3 -1"/></filter>` +
-      `<mask id="${id}" maskUnits="userSpaceOnUse" x="-1500" y="-1500" width="5500" height="5500"><rect x="-1500" y="-1500" width="5500" height="5500" fill="#fff"/><g filter="url(#${id}k)">${which.includes('R') ? P.armRsvg : ''}${which.includes('L') ? P.armLsvg : ''}${extraMask || ''}</g></mask></defs><g mask="url(#${id})">${svg}</g>`;
+      `<mask id="${id}" maskUnits="userSpaceOnUse" x="-1500" y="-1500" width="5500" height="5500"><rect x="-1500" y="-1500" width="5500" height="5500" fill="#fff"/><g filter="url(#${id}k)">${which.includes('R') ? P.armRfull || P.armRsvg : ''}${which.includes('L') ? P.armLfull || P.armLsvg : ''}${extraMask || ''}</g></mask></defs><g mask="url(#${id})">${svg}</g>`;
   };
+  // (masked round the WHOLE arm, shoulder to hand: masked round the forearm only, the bench covered the elbow where it
+  // dipped below the bench's far edge and the forearm lay on the bench as a separate piece with a straight cut end -
+  // the user, 2026-11-09: "its cutted .. not joined")
   V.behindAlso = behindAlso;
   const OLD = { X: 560, Y: 2430, S: 1.2 };
   const oldAt = (t, seed, extra = {}) => { const id = idle(t, seed, 0.5); return Object.assign({ x: OLD.X, y: OLD.Y, s: OLD.S, sway: id.sway * 0.6, tilt: 5, breath: id.breath, blink: id.blink }, extra); };
@@ -33,7 +36,7 @@
     const c = hh(V.r2Cam(t), t, 0.85, 6);
     const lean = env(t, 12.95, 13.4, 14.5, 14.95), look = ss(16.8, 17.5, t);
     const o = oldAt(t, 21, { tilt: 5 + 5 * lean - 9 * look, sway: idle(t, 21).sway * 0.6 + 1.5 * lean, blink: (t > 12.5 && t < 13.05) || t > 16.9 ? 0 : idle(t, 21).blink });
-    const { H, u } = grind(t, V.r2Grind(t)), gp = [H[0] + u[0] * 83 * o.s, H[1] + u[1] * 83 * o.s];
+    const { H, u } = grind(t, V.r2Grind(t)), gp = [H[0] + u[0] * G.PROPS.PESTLE_HEAD * o.s, H[1] + u[1] * G.PROPS.PESTLE_HEAD * o.s];
     const F = V.faceAt(t, [
       [11.0, { expr: 'grim', look: [0.08, 0.85], lid: 0.4, mouth: 'tight', brows: [-9, 5], sweat: 0.12, bags: 0.6, age: true }],
       [12.62, { expr: 'anxious', look: [-0.75, 0.55], lid: 0.26, mouth: 'tight', brows: [-12, 6], sweat: 0.18, bags: 0.6, age: true }],
@@ -47,8 +50,8 @@
       // (the other arm hangs at his side behind the bench: the hand on the mortar's far side, away from the lamp, was
       // shaded almost black)
       armL: { hand: R.toLocal(o, L2([748, 1500], [742, 1494], lean)), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
-    const body = clipTop('r2Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2)));
-    const top = behind(P, 'r2bt', S.benchTop(t, { morph: [290, 1408], steam: true }), 'R');
+    const body = clipTop('r2Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, ''));
+    const top = behindAlso(P, 'r2bt', S.benchTop(t, { morph: [290, 1408], steam: true }), '', 'R');
     const layers = S.backroom(t);
     layers.push({ p: 0.75, svg: S.roomWall(t, {}) });
     layers.push({ p: 1, svg: body + top + S.mortarFront() + S.benchFront(t) }, { p: 1.02, svg: S.roomLight(t) }, { p: 1.25, svg: S.roomFg(t) });
@@ -112,7 +115,7 @@
       // shaded almost black and seemed to hover over the leaves)
       armL: { hand: R.toLocal(o, [790, 1500]), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
     const rodTop = `<path d="M${f(top[0] - rodDir[0] * 34)},${f(top[1] - rodDir[1] * 34)} L${f(mouth[0] + rodDir[0] * 4)},${f(mouth[1] + rodDir[1] * 4)}" stroke="#e8f0ec" stroke-width="9" stroke-linecap="round" opacity="0.75"/><path d="M${f(top[0] - rodDir[0] * 34 - 2)},${f(top[1] - rodDir[1] * 34)} L${f(mouth[0] - 2)},${f(mouth[1])}" stroke="#fff" stroke-width="2.5" opacity="0.8"/>`;
-    const body = clipTop('wnTop', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + rodTop + P.handR, [top[0] - 90, top[1] - 90, top[0] + 90, top[1] + 90]));
+    const body = clipTop('wnTop', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, rodTop + P.handR, [top[0] - 90, top[1] - 90, top[0] + 90, top[1] + 90]));
     // the jar: red wine with the leaves and kola turning in it as he stirs; the cask beside it (its tap shut)
     const lev = 0.82, swirl = t * 1.2;
     const ck = S.cask(CASK[0], CASK[1], 0);
@@ -155,12 +158,12 @@
     const { RIM, CX } = S.KT, B = [CX - 40 + 110 * Math.cos(ph), RIM + 12 + 16 * Math.sin(ph)], T0 = [CX + 250 + 40 * Math.cos(ph), 1000 + 12 * Math.sin(ph)];
     // (after the review: the hands lower on the shaft, both at the belly - the upper fist up under the left shoulder
     // folded that forearm flat back over the upper arm, and the sleeve showed its crease through it)
-    const ax = nrm([T0[0] - B[0], T0[1] - B[1]]), hL = L2(B, T0, 0.62), hR = L2(B, T0, 0.4);
+    const ax = nrm([T0[0] - B[0], T0[1] - B[1]]), hL = L2(B, T0, 0.5), hR = L2(B, T0, 0.28);
     const P = up(Q.pembOld(Object.assign(o, { noLegs: true, face: V.faceAt(t, [[29.2, { expr: 'grim', look: [-0.1, 0.8], lid: 0.42, mouth: 'tight', brows: [-8, 5], sweat: 0.3, bags: 0.6, age: true }], [30.6, { expr: 'grim', look: [0.0, 0.9], lid: 0.48, mouth: 'tight', brows: [-11, 6], sweat: 0.35, bags: 0.6, age: true }]], 0.5),
       armR: gripAt(o, Q.HAND.pembOld, hR, fingersFor('R', 'back', ax), { facing: 'back', detachHand: true }),
       armL: gripAt(o, Q.HAND.pembOld, hL, fingersFor('L', 'back', ax), { facing: 'back', detachHand: true }) })), o);
     const shaft = `<path d="M${f(B[0])},${f(B[1])} L${f(T0[0] + ax[0] * 40)},${f(T0[1] + ax[1] * 40)}" stroke="#2a1608" stroke-width="20" stroke-linecap="round"/><path d="M${f(B[0])},${f(B[1])} L${f(T0[0] + ax[0] * 40)},${f(T0[1] + ax[1] * 40)}" stroke="#8a5a2e" stroke-width="13" stroke-linecap="round"/><path d="M${f(B[0] - 3)},${f(B[1])} L${f(T0[0] + ax[0] * 40 - 3)},${f(T0[1] + ax[1] * 40)}" stroke="#e8a868" stroke-width="3" opacity="0.6"/>`;
-    const body = Q.litHair(P, o, Q.pembOldArt(), LK, Q.armAO(P, o, 'RL', LK) + shaft + P.handR + P.handL, [Math.min(B[0], T0[0]) - 80, T0[1] - 120, Math.max(B[0], T0[0]) + 80, B[1] + 40]);
+    const body = Q.litHair(P, o, Q.pembOldArt(), LK, shaft + P.handR + P.handL, [Math.min(B[0], T0[0]) - 80, T0[1] - 120, Math.max(B[0], T0[0]) + 80, B[1] + 40]);
     const ripple = `<ellipse cx="${f(B[0])}" cy="${f(B[1] + 2)}" rx="34" ry="9" fill="none" stroke="#d88a40" stroke-width="3" opacity="0.6"/><ellipse cx="${f(B[0])}" cy="${f(B[1] + 2)}" rx="${f(52 + 8 * Math.sin(t * 6))}" ry="13" fill="none" stroke="#a8622a" stroke-width="2" opacity="0.4"/>`;
     const kb = behindAlso(P, 'sykb', S.kettleBack(t, ph * 0.5), P.handR + P.handL + shaft);
     const layers = S.yard(t);

@@ -211,7 +211,9 @@
   // (after the review: the bottle stands on the bench in front of him, his hand round its neck - the same hold as on the
   // night he dies (ROOM3). Held up to the lamp, the solver could only fold the forearm back over the upper arm, or put the
   // elbow straight out at the side; both drew a broken arm)
-  V.r1Bottle = t => [520, 1470 - BA.HB * 0.92 * S.MORPH_GRIP];
+  // (x 640: right of his middle, so the forearm lies level across his belly to it - the full forearm in the picture,
+  // not a stub pointing at the lens with the cuff on the elbow, the hand stuck on its end)
+  V.r1Bottle = t => [640, 1470 - BA.HB * 0.92 * S.MORPH_GRIP];
   const OLD = { X: 560, Y: 2430, S: 1.2 };
   X.shot('ROOM1', 7.33, 10.15, t => {
     const c = hh(V.r1Cam(t), t, 0.8, 4);
@@ -228,7 +230,7 @@
       armL: { hand: R.toLocal(o, [748, 1500]), dir: [-0.05, 1], pose: 'relaxed', facing: 'back' } })), o);
     // the bottle turning in his fingers: a glint sliding across the glass
     const gl = (t * 0.6) % 1, bot = morphW(gB, BA.HB * 0.92) + `<path d="M${f(gB[0] - 30 + 60 * gl)},${f(gB[1] + 40)} l0,110" stroke="#fff4d0" stroke-width="5" opacity="${f(0.35 * Math.sin(Math.PI * gl))}" stroke-linecap="round"/>`;
-    const body = clipTop('r1Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, Q.armAO(P, o, 'RL', V.LR2) + bot + P.handR, [gB[0] - 90, gB[1] - 80, gB[0] + 90, gB[1] + 240]));
+    const body = clipTop('r1Top', S.BR.NEAR, Q.litHair(P, o, Q.pembOldArt(), V.LR2, bot + P.handR, [gB[0] - 90, gB[1] - 80, gB[0] + 90, gB[1] + 240]));
     // (no mortar on the bench here: the bottle stands where it was; the bench top is masked round the arm, the hand and
     // the bottle standing on it)
     const top = V.behindAlso(P, 'r1bt', S.benchTop(t, { morph: false, mortar: false }), P.handR + bot, 'R');

@@ -220,7 +220,10 @@
     for (let i = 1; i < 6; i++) { const y = TOP + (NEAR - TOP) * (i / 6) ** 1.15; g += `<path d="M-240,${f(y)} L1320,${f(y)}" stroke="#1e1006" stroke-width="2" opacity="0.5"/>`; }
     for (let i = 0; i < 9; i++) { const x = r() * 1100, y = TOP + 20 + r() * 160; g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(22 + r() * 30)}" ry="${f(6 + r() * 6)}" fill="none" stroke="#1a0c04" stroke-width="${f(2 + r() * 3)}" opacity="0.35"/>`; }
     for (let i = 0; i < 18; i++) { const x = r() * 1100, y = TOP + 10 + r() * 180; g += `<path d="M${f(x)},${f(y)} l${f(20 + r() * 50)},${f((r() - 0.5) * 6)}" stroke="#a87a4a" stroke-width="1.2" opacity="0.3"/>`; }
-    g += C.radial(lx + 40, ly - 30, 640, '#ffb050', 0.34 * k);
+    // the lamplight on the bench: clipped to the bench top. (Unclipped it lay over the figure too - drawn after him, with
+    // the bench masked round his forearm and hand - so it warmed his upper arm but not his forearm: a cream sleeve above
+    // the elbow, a grey one below, a seam at the elbow. The user, 2026-11-09: "its still cutted and color is different")
+    g += `<defs><clipPath id="bnTopClip"><path d="M-200,${TOP} L1280,${TOP} L1320,${NEAR} L-240,${NEAR}Z"/></clipPath></defs><g clip-path="url(#bnTopClip)">` + C.radial(lx + 40, ly - 30, 640, '#ffb050', 0.34 * k) + `</g>`;
     g += `<rect x="-240" y="${NEAR}" width="1560" height="30" fill="#5a3a1e" ${ol(1.4)}/><rect x="-240" y="${NEAR}" width="1560" height="5" fill="#e8b878" opacity="${f(0.1 + 0.25 * (o.lampK ?? 1))}"/>`;
     if (o.coca !== false) {
       g += `<path d="M740,1380 L1010,1372 L1050,1478 L760,1490Z" fill="#9a7a50" ${ol(1.2)}/>`;
