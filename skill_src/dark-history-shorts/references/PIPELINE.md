@@ -13,8 +13,9 @@ Copy-Item "C:\Users\<user>\Downloads\<elevenlabs file>.mp3" _vo5\vo.mp3
 Set-Content _vo5\script.txt -Encoding utf8 -Value '<script text>'
 $root = (Get-Location).Path
 & .\_tools\towavhq.ps1 -Src "$root\_vo5\vo.mp3" -OutDir "$root\_vo5" -OutName vo_hq.wav
-# cut every pause longer than 0.11 s
-& .\_tools\audiotool.ps1 -Mode trim -In "$root\_vo5\vo_hq.wav" -Out "$root\_vo5\vo_tight.wav"
+# trim the lead-in, the tail and only pauses over 0.6 s (to 0.5 s): KEEP the narrator's own pauses - cut to 0.11 s the
+# voice sounded "too rigid" (FEEDBACK_LOG 2026-11-09). Linux: python3 -I _tools/audiotool.py trim in.wav out.wav --maxgap 0.5 --mingap 0.6
+& .\_tools\audiotool.ps1 -Mode trim -In "$root\_vo5\vo_hq.wav" -Out "$root\_vo5\vo_tight.wav" -MaxGap 0.5 -MinGap 0.6
 # word times -> words.txt
 & .\_tools\align2.ps1 -Wav "$root\_vo5\vo_tight.wav" -ScriptFile _vo5\script.txt -OutFile _vo5\words.txt
 ```

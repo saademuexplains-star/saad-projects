@@ -63,7 +63,9 @@ This skill reproduces a finished production pipeline. Eighteen videos were made 
 Work in this order and don't skip the review steps. The user values momentum, emotion and zero visual mistakes over speed.
 
 1. **VO prep.**
-   - Convert the mp3 to 48 kHz WAV, then trim the silences (`audiotool.ps1 -Mode trim`).
+   - Convert the mp3 to 48 kHz WAV, then trim only the lead-in, the tail and pauses over 0.6 s (`audiotool trim
+     --maxgap 0.5 --mingap 0.6`). **Keep the narrator's own pauses (0.15-0.5 s)**: cut to 0.11 s the user found the
+     voice "too rigid ... he ends one word and other appear instantly" (FEEDBACK_LOG 2026-11-09).
    - Word-align it against the script (`align2.ps1`).
    - The trimmed VO length sets the frame count: `frames = ceil(seconds * 60)`. The voice ends inside the last frame.
 2. **Beat sheet.**

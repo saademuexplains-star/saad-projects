@@ -921,3 +921,34 @@ What the Coca-Cola look test taught (rig3):
   installed as system fonts: the transitions rasterise each shot into an SVG image, and images cannot use web fonts.
 - **ElevenLabs on Linux**: the generated files are served from elevenlabsusercontent.com, which the cloud environment's
   network must allow. The 48 s music-model score costs 720 credits; sound effects cost about 3-4 credits a second.
+
+### The Coca-Cola video, second review (2026-11-09): "see alll these glitches ... these hands and arm visual glitches ARE TOO MUCH .. 100 OF TIMES IVE METIONED THIS THING", "the coca cola appear just for a fraction of secand", "too rigid cut .... he ends one word and other appear instatntly"
+**Before ANY delivery, audit every hand at full size** - not contact sheets, not spot checks: `_tools/handaudit.js`
+(through `_tools/jseval.cjs`) lists every arm's wrist and elbow on screen every 20 frames, `_tools/render_list.sh`
+renders those frames, `_tools/handcrops.py` tiles every hand wrist-to-elbow, labelled. Look at every tile. Then run
+`_tools/armscan.js` over every frame for flips. What the audit found, and the rules:
+- **A forearm must lead INTO its hand.** A detached hand on a prop with its fingers pointing back across the body,
+  while the solver hung the elbow under the shoulder, ran the forearm away from the hand (or behind a counter): a
+  floating hand. Check the hand's direction against the forearm's (log `__HANDLOG`); take the outer elbow
+  (`elbowM: 1, elbowMK: 1`) so the forearm comes down into the hand, or change the hand's direction.
+- **Never fold a forearm back over its upper arm.** A hand held up near the shoulder on its own side (a bottle at the
+  chest, the upper fist on a paddle) makes the forearm lie on the upper arm; the sleeve is one shape and its forearm
+  copy is cut from it, so the upper arm's folds, the crease and a pale patch show through: a grey, see-through forearm.
+  Hold things at the belly or stand them on a surface (the hand round a bottle's neck on the bench), keep both fists on
+  a pole at belly height. Rough test: the wrist must not be above the elbow by more than a third of the forearm.
+  (The `fwd` elbow does not cure it: the forearm becomes a stub with skin showing beside the cuff.)
+- **A hand on the far side from the key goes nearly black** (the light pass shades the far edge of the figure: a white
+  cuff stays light, skin turns dark brown). Put resting hands in the light, or let that arm hang behind the furniture
+  (`behind(P, id, svg, 'R')` masks only the arm in front).
+- **A figure behind a counter**: cut the body at the counter edge INSIDE its light pass and leave what stands on the
+  counter and the hand round it uncut (`Q.litHair(P, o, art, L, extra, ext, { id, y, under })`); a glass cut at that
+  edge stood behind the counter. Draw the counter's furniture that stands in front of him (the tap) after him.
+- **Nothing blurred crosses a hand**: foreground depth-of-field blades over a hanging hand read as dirt on it. Keep
+  foreground clutter at the frame's sides.
+- **A background figure's hands must not sit beside a foreground hand** (extra fingers next to the clerk's hand on the
+  glass): move or lower the background figure so they are hidden.
+- **Keep the narrator's pauses.** The voice was cut to 0.11 s at every pause (47.3 s): "too rigid". Keep the take's own
+  pauses (0.15-0.5 s). When a film was timed to the tight cut, `_tools/twarp.py` maps its old times to the take
+  (`window.TWARP_T`, read by `ENG.tOf(n)`; the mix uses the same map): the picture eases through each pause.
+- **The last title holds.** The name was written in at the very end and the loop morph took it at once. A final title
+  stays complete on screen at least 2 s before any loop transition.
