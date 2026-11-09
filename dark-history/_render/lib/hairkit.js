@@ -103,6 +103,16 @@
       br += [-1, 1].map(k => `<path d="M${Q(e)} q${f(k * 14)},-9 ${f(k * 16)},4 q${f(-k * 4)},9 ${f(-k * 16)},-4Z" fill="${rb}" stroke="${shade(rb, -0.5)}" stroke-width="1.1"/><path d="M${Q([e[0] + k * 4, e[1] - 2])} q${f(k * 6)},-4 ${f(k * 10)},-3" stroke="${shade(rb, 0.5)}" stroke-width="1.1" fill="none" opacity="0.7"/>`).join('') + `<circle cx="${f(e[0])}" cy="${f(e[1])}" r="4" fill="${shade(rb, -0.15)}" stroke="${shade(rb, -0.5)}" stroke-width="1"/>`;
       front += br;
     }
+    // o.bun (1910s): the hair taken up into a soft knot at the back of the crown - behind the head, its top showing
+    // above the parting as a rounded mass of a few wide locks, in the same gradient, a pin's glint
+    if (o.bun) {
+      const k = o.bun === true ? 1 : o.bun, by = -146 - 10 * k, rx = 56 * k, ry = 34 * k;
+      let bn = `<path d="${path(m, [['M', [-rx, by]], ['C', [-rx, by - ry * 1.3], [rx, by - ry * 1.3], [rx, by]], ['C', [rx, by + ry * 0.9], [-rx, by + ry * 0.9], [-rx, by]]])}Z" fill="url(#${id}g)" ${OUTL}/>`;
+      for (let i = 0; i < 4; i++) { const a = -0.9 + i * 0.6; bn += `<path d="${path(m, [['M', [-rx * 0.85 + i * rx * 0.42, by + ry * 0.5]], ['Q', [-rx * 0.5 + i * rx * 0.45, by - ry * (0.9 + 0.1 * Math.sin(a))], [rx * (0.2 + i * 0.25), by - ry * 0.2]]])}" stroke="${shade(col, i % 2 ? 0.3 : -0.35)}" stroke-width="${i % 2 ? 2.2 : 1.6}" fill="none" opacity="${i % 2 ? 0.35 : 0.4}" stroke-linecap="round"/>`; }
+      bn += `<path d="${path(m, [['M', [-rx * 0.5, by - ry * 0.7]], ['Q', [0, by - ry * 1.05], [rx * 0.55, by - ry * 0.7]]])}" stroke="${shade(col, 0.6)}" stroke-width="7" fill="none" opacity="0.22" filter="url(#b2)" stroke-linecap="round"/>`;
+      bn += `<path d="${path(m, [['M', [-rx * 0.8, by + ry * 0.45]], ['Q', [0, by + ry * 0.9], [rx * 0.8, by + ry * 0.45]]])}" stroke="${shade(col, -0.5)}" stroke-width="6" fill="none" opacity="0.35" filter="url(#b2)"/>`;
+      back = bn + back;
+    }
     return { back: `<defs>${grad(id + 'g', col, G0, G1)}</defs>` + back, front };
   };
 

@@ -810,7 +810,7 @@
     const cdE = F.cd ?? (M.cd !== undefined ? M.cd : X.cd ?? 1);
     const cdL = M.cdL ?? cdE, cdR = M.cdR ?? cdE, raise = M.raise || 0;
     const open = Math.max(0, F.open ?? M.open ?? 0), gap = open * (kind === 'kid' ? 15 : 19);
-    const lip = mix(shade(skin, -0.2), '#a8564a', kind === 'man' ? 0.28 : 0.4), dark = '#2a0e08', teethC = '#e9e1d2';
+    const lip = mix(shade(skin, -0.2), '#a8564a', kind === 'man' ? 0.28 : 0.4), dark = '#2a0e08', teethC = F.teeth || '#e9e1d2'; // (F.teeth: a colour - the Radium Girls' painted, glowing teeth)
     const yl = y + cdL, yr = y + cdR, lt = (P.fx && P.fx.lipT) ?? 1;
     let g = `<path d="M-4,${f(y - 22)} Q-3,${f(y - 14)} -4,${f(y - 7)} M4,${f(y - 22)} Q3,${f(y - 14)} 4,${f(y - 7)}" stroke="${shade(skin, -0.25)}" stroke-width="1.2" ${NS} fill="none" opacity="0.5"/>`;
     const upper = (dy) => `M${f(-w)},${f(yl + dy)} Q${f(-w * 0.5)},${f(y - 6 * lt - raise + dy)} -3,${f(y - 5 * lt - raise + dy)} Q0,${f(y - 3.5 * lt - raise + dy)} 3,${f(y - 5 * lt - raise + dy)} Q${f(w * 0.5)},${f(y - 6 * lt - raise + dy)} ${f(w)},${f(yr + dy)} Q0,${f(y + 0.5 - raise + dy)} ${f(-w)},${f(yl + dy)}Z`;

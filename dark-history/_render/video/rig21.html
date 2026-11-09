@@ -1,0 +1,55 @@
+<!doctype html><html><head><meta charset="utf-8"><script>window.onerror=(m,s,l,c)=>{(window.__E=window.__E||[]).push(m+" @"+(s||"").split("/").pop()+":"+l+":"+c)};</script><style>html,body{margin:0;background:#000;overflow:hidden}svg{display:block}#root svg{height:100vh;width:auto;margin:0 auto}</style>
+<script>window.VIDEO_FRAMES = 60; window.SETS = window.SETS || {}; window.RIG_CRISP = true;</script>
+<script src="../lib/rig3.js"></script><script src="../lib/cine.js"></script><script src="../lib/env.js"></script><script src="../lib/tailor.js"></script><script src="../lib/stage.js"></script><script src="../lib/hairkit.js"></script>
+<script src="cast.js"></script><script src="cast21.js"></script><script src="cast22.js"></script>
+<script src="props.js"></script><script src="props2.js"></script><script src="props3.js"></script><script src="props4.js"></script><script src="props5.js"></script><script src="props7.js"></script>
+<script src="sets1.js"></script><script src="sets2.js"></script><script src="sets24.js"></script>
+<script src="engine.js"></script><script>ENG.GRAIN = 0.025;</script>
+<script>
+// Cast sheet for The Radium Girls (cast22.js): eight waist-up cells (540 x 480) in a warm studio light from the upper
+// left - you at work, you dressed for the dance, the two friends, the boss, the dentist, the chemist, a grave digger.
+(function (G) {
+  const X = G.ENG, Q = G.QCAST, R = G.RIG, C = G.CINE, ST = G.STAGE, S = G.SETS;
+  const L = { from: [-0.8, -0.5], shadow: '#2a1a10', shadowOp: 0.5, floor: '#3a2a1a', floorOp: 0.3, contactOp: 0, key: '#fff0dc', keyAdd: 0.08, rims: [{ from: [1, -0.3], col: '#ffe0b0', w: 5, op: 0.35 }], face: { col: '#fff0e0', op: 0.14 } };
+  const CELLS = [
+    ['you', 'youArt', 'woman', 'YOU, 19 - AT THE DIALS', { expr: 'neutral', look: [0.25, 0.05], lid: 0.16 }],
+    ['youDress', 'youArt', 'woman', 'YOU - DRESSED FOR THE DANCE', { expr: 'neutral', mouth: 'smile', look: [-0.2, -0.05], lid: 0.14 }],
+    ['friendA', 'friendAArt', 'woman', 'FRIEND', { expr: 'neutral', mouth: 'smile', look: [0.3, 0], lid: 0.18 }],
+    ['friendB', 'friendBArt', 'woman', 'FRIEND', { expr: 'anxious', look: [-0.3, 0], lid: 0.22 }],
+    ['boss', 'bossArt', 'man', 'THE BOSS', { expr: 'stern', look: [0.2, 0.05], lid: 0.34 }],
+    ['dentist', 'dentistArt', 'man', 'THE DENTIST', { expr: 'neutral', look: [-0.2, 0.05], lid: 0.3, age: true }],
+    ['chemist', 'chemistArt', 'man', 'A CHEMIST, THE COMPANY LAB', { expr: 'neutral', look: [0.2, 0], lid: 0.3 }],
+    ['digger1', 'digger1Art', 'man', 'A GRAVE DIGGER, 1927', { expr: 'neutral', look: [-0.2, 0.05], lid: 0.3, age: true }]];
+  X.shot('SHEET', 0, 1, t => {
+    const cam = [540, 960, 1, 0]; X.CAM = cam;
+    let g = S.lg('rsBg', [[0, '#3a2e24'], [0.5, '#2c2219'], [1, '#1e1610']]) + `<rect x="-100" y="-100" width="1280" height="2120" fill="url(#rsBg)"/>`;
+    CELLS.forEach(([who, art, kind, name, face], i) => {
+      const cx = (i % 2) * 540, cy = Math.floor(i / 2) * 480, s = kind === 'woman' ? 0.74 : 0.68;
+      const o = ST.still(cx + 270, cy + 92 + (kind === 'woman' ? 1420 : 1460) * s, s);
+      const P = ST.up(Q[who](Object.assign(o, { noLegs: true, face,
+        armR: { hand: R.restHand(kind, 'R'), dir: [0.02, 1], pose: 'relaxed', facing: 'back' },
+        armL: { hand: R.restHand(kind, 'L'), dir: [-0.02, 1], pose: 'relaxed', facing: 'back' } })), o);
+      g += `<defs><clipPath id="cl${i}"><rect x="${cx + 3}" y="${cy + 3}" width="534" height="474"/></clipPath></defs><g clip-path="url(#cl${i})">` +
+        C.radial(cx + 200, cy + 120, 420, '#ffe0b0', 0.16) + Q.litHair(P, o, Q[art](), L) + `</g>` +
+        S.TXT(cx + 270, cy + 462, 17, '#e8d8b8', name, { ls: 3, w: 'bold' });
+    });
+    for (let i = 1; i < 4; i++) g += `<path d="M0,${i * 480} L1080,${i * 480}" stroke="#000" stroke-width="3" opacity="0.6"/>`;
+    g += `<path d="M540,0 L540,1920" stroke="#000" stroke-width="3" opacity="0.6"/>`;
+    return X.compose([{ p: 1, svg: g }], cam);
+  }, { grade: 'gHall' });
+})(window);
+</script></head>
+<body><div id="root"></div>
+<script>
+const root = document.getElementById('root'), X = ENG;
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+window.renderFrame = async n => {
+  if (window.__E && window.__E.length) throw new Error('PAGE ERR: ' + window.__E.join(' | '));
+  root.innerHTML = X.svgFrame(n);
+  for (let i = 0; i < 4; i++) await nextFrame();
+  await new Promise(r => setTimeout(r, 150));
+  return true;
+};
+window.READY = true;
+window.renderFrame(+(new URLSearchParams(location.search).get('f') || 30));
+</script></body></html>

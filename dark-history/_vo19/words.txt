@@ -1,0 +1,182 @@
+# total 44.640s; aligned by PocketSphinx (forced); chunks:
+#   0.00-  4.20 your boss hands you a paintbrush dipped in glowing paint and tells you to put it in your mouth
+#   4.36-  5.51 it's nineteen seventeen
+#   5.71-  6.47 you're nineteen
+#   6.64-  9.00 painting numbers on soldiers' watches in new jersey
+#   9.11-  9.46 lip
+#   9.62-  9.99 dip
+#  10.14- 10.56 paint
+#  10.71- 11.96 hundreds of times a day
+#  12.08- 14.57 because the company swears it's safe enough to eat
+#  14.68- 15.93 so you paint your nails with it
+#  16.05- 16.52 your teeth
+#  16.83- 19.65 you wear your best dress to work so it'll glow at the dance
+#  19.80- 20.89 then a tooth falls out
+#  20.98- 21.53 then another
+#  21.71- 24.68 the dentist touches your jaw and it comes away in his hand
+#  24.79- 25.76 and all this time
+#  25.90- 27.16 in the company's own lab
+#  27.36- 31.17 chemists handle the same paint with lead aprons masks and tongs
+#  31.33- 34.76 you die at twenty four and your death certificate says syphilis
+#  34.91- 37.58 five years later with your friends dying the same way
+#  37.71- 39.23 they dig you up lift the lid
+#  39.37- 40.98 and your body is still glowing
+#  41.08- 42.97 because the paint was radium and you
+#  43.15- 44.55 were one of the radium girls
+your 0.000 0.110
+boss 0.110 0.410
+hands 0.410 0.630
+you 0.630 0.730
+a 0.730 0.770
+paintbrush 0.770 1.380
+dipped 1.380 1.590
+in 1.590 1.720
+glowing 1.720 2.150
+paint 2.150 2.500
+and 2.500 2.940
+tells 2.940 3.150
+you 3.150 3.230
+to 3.230 3.290
+put 3.290 3.520
+it 3.520 3.590
+in 3.590 3.660
+your 3.660 3.770
+mouth 3.770 4.200 .
+it's 4.360 4.520
+nineteen 4.520 4.880
+seventeen 4.880 5.510 .
+you're 5.710 5.890
+nineteen 5.890 6.470 ,
+painting 6.640 6.960
+numbers 6.960 7.320
+on 7.320 7.440
+soldiers' 7.440 7.920
+watches 7.920 8.350
+in 8.350 8.440
+new 8.440 8.580
+jersey 8.580 9.000 .
+lip 9.110 9.460 ,
+dip 9.620 9.990 ,
+paint 10.140 10.560 ,
+hundreds 10.710 11.230
+of 11.230 11.310
+times 11.310 11.630
+a 11.630 11.660
+day 11.660 11.960 ,
+because 12.080 12.320
+the 12.320 12.380
+company 12.380 12.770
+swears 12.770 13.480
+it's 13.480 13.600
+safe 13.600 13.890
+enough 13.890 14.090
+to 14.090 14.170
+eat 14.170 14.570 .
+so 14.680 14.810
+you 14.810 14.920
+paint 14.920 15.140
+your 15.140 15.230
+nails 15.230 15.570
+with 15.570 15.710
+it 15.710 15.930 ,
+your 16.050 16.170
+teeth 16.170 16.520 ,
+you 16.830 16.940
+wear 16.940 17.090
+your 17.090 17.230
+best 17.230 17.620
+dress 17.620 17.850
+to 17.850 17.930
+work 17.930 18.220
+so 18.220 18.350
+it'll 18.350 18.550
+glow 18.550 19.000
+at 19.000 19.060
+the 19.060 19.140
+dance 19.140 19.650 .
+then 19.800 19.950
+a 19.950 20.020
+tooth 20.020 20.270
+falls 20.270 20.620
+out 20.620 20.890 ,
+then 20.980 21.110
+another 21.110 21.530 .
+the 21.710 21.810
+dentist 21.810 22.250
+touches 22.250 22.570
+your 22.570 22.670
+jaw 22.670 23.090 ,
+and 23.090 23.290
+it 23.290 23.360
+comes 23.360 23.700
+away 23.700 24.010
+in 24.010 24.080
+his 24.080 24.230
+hand 24.230 24.680 .
+and 24.790 24.940
+all 24.940 25.180
+this 25.180 25.400
+time 25.400 25.760 ,
+in 25.900 26.000
+the 26.000 26.060
+company's 26.060 26.570
+own 26.570 26.820
+lab 26.820 27.160 ,
+chemists 27.360 27.800
+handle 27.800 28.060
+the 28.060 28.130
+same 28.130 28.560
+paint 28.560 28.860
+with 28.860 29.020
+lead 29.020 29.270
+aprons 29.270 29.870 ,
+masks 29.870 30.440
+and 30.440 30.600
+tongs 30.600 31.170 .
+you 31.330 31.470
+die 31.470 31.780
+at 31.780 31.890
+twenty 31.890 32.230
+four 32.230 32.660 ,
+and 32.660 32.910
+your 32.910 33.000
+death 33.000 33.260
+certificate 33.260 33.790
+says 33.790 34.030
+syphilis 34.030 34.760 .
+five 34.910 35.190
+years 35.190 35.400
+later 35.400 35.880 ,
+with 35.910 36.020
+your 36.020 36.110
+friends 36.110 36.510
+dying 36.510 36.790
+the 36.790 36.850
+same 36.850 37.250
+way 37.250 37.580 ,
+they 37.710 37.800
+dig 37.800 38.040
+you 38.040 38.200
+up 38.200 38.490 ,
+lift 38.560 38.790
+the 38.790 38.870
+lid 38.870 39.230 ,
+and 39.370 39.480
+your 39.480 39.590
+body 39.590 40.010
+is 40.010 40.080
+still 40.080 40.580
+glowing 40.580 40.980 ,
+because 41.080 41.300
+the 41.300 41.380
+paint 41.380 41.720
+was 41.720 41.900
+radium 41.900 42.380 .
+and 42.460 42.600
+you 42.600 42.970
+were 43.150 43.250
+one 43.250 43.410
+of 43.410 43.510
+the 43.510 43.600
+radium 43.600 44.040
+girls 44.040 44.550 .
