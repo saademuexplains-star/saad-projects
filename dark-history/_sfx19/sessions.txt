@@ -1,0 +1,25 @@
+# ElevenLabs flow lkJRXXhmBoq4Gnozfr9M ("Radium Girls - SFX") - one take each, eleven_text_to_sound_v2 (label node)
+wa_studio XMZPu4aOciqmvhWvyncN
+wa_dark rg6DTNjJHPJs5jGi9iwU
+wa_dance s2xM1dz6yAuITUhwuIQl
+wa_lab mTnKJK9KJWTT6W6uTNhn
+wa_night vyGbaH8ImokYwHiBdSBI
+wa_room ooJOz34yj9kecC0nld45
+ws_shimmer mgW3wi3y0E48jjyZr8kL
+ws_lip 7zPyR55Jbn1hQ7fhA6ct
+ws_dip QVT4UWhyGKEgJqqXQ6uC
+ws_stroke fgw0qap2ZseerEvcAhMX
+ws_timelapse JCsjvKACRKMOMoQwTxaQ
+ws_switch QQAJzS6bZzxHUTxpst7Y
+ws_giggle tSlUk3TsFE5MO6Vqzf3B
+ws_tink YcR9xI30GGBJMPPVBU0K
+ws_gasp zcBmmrIObbODmYGiUzOP
+ws_crack LVbt9K5O21wzvcSHbPaT
+ws_stamp lsqjcnCLxi617V3K8RIH
+ws_paper PnVWHKGJATHckCCE2EYy
+ws_lid J2blXRgOBp8I1KsNWdGv
+ws_whoosh iTeioooIG9NFLr22ATnN
+ws_flame MG5LUkcFazAmpQ6ThHcm
+ws_riser VSyHmLxZKCNIiShduHSz
+ws_vial zCvWViEbzpoaf58Yk5eW
+ws_spade vMLTWvBMadVE5OK1oMPM
