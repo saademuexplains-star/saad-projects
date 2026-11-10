@@ -159,7 +159,8 @@
   // index, middle, ring, little: knuckle x, knuckle y, length (knuckle to tip), width (fractions of the hand length)
   const FING = [[0.143, 0.44, 0.485, 0.11], [0.048, 0.455, 0.53, 0.114], [-0.047, 0.44, 0.5, 0.108], [-0.139, 0.405, 0.39, 0.096]];
   function handV2(o) {
-    const L = o.size * HAND_K, skin = o.skin;
+    // (G.DBG_HANDS: every hand drawn in that colour - the hand audit counts the visible hand pixels in a frame)
+    const L = o.size * HAND_K, skin = G.DBG_HANDS || o.skin;
     let [dx, dy] = o.dir; const n = Math.hypot(dx, dy) || 1; dx /= n; dy /= n;
     const a = Math.atan2(-dx, dy), lx = [Math.cos(a), Math.sin(a)];
     let t;

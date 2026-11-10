@@ -64,5 +64,7 @@ window.renderFrame = async n => {
   return true;
 };
 const G_NOIMG = new URLSearchParams(location.search).has('noimg');
+// ?dbghands: every hand magenta, for the hand audit (_tools/handvis.py counts what shows)
+if (new URLSearchParams(location.search).has('dbghands')) window.DBG_HANDS = '#ff00ff';
 window.READY = true;
 </script></body></html>
