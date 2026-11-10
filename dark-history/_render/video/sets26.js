@@ -42,7 +42,7 @@
   S.paintPot = (x, y, s = 1, lum = 0.6, o = {}) => {
     const dk = o.dark || 0, por = mix('#f2ede2', '#141a12', dk * 0.85), por2 = mix('#d8d0c0', '#0c100a', dk * 0.85);
     let g = `<ellipse cx="${f(x)}" cy="${f(y + 3 * s)}" rx="${f(40 * s)}" ry="${f(9 * s)}" fill="#000" opacity="0.35" filter="url(#b4)"/>`;
-    g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(34 * s)}" ry="${f(8 * s)}" fill="${por2}" ${ol(1)}/><ellipse cx="${f(x)}" cy="${f(y - 1.5 * s)}" rx="${f(28 * s)}" ry="${f(5.5 * s)}" fill="${por}"/>`;
+    g += `<ellipse cx="${f(x)}" cy="${f(y - 2 * s)}" rx="${f(19 * s)}" ry="${f(4 * s)}" fill="${por2}"/>`;
     g += `<path d="M${f(x - 17 * s)},${f(y - 3 * s)} C${f(x - 22 * s)},${f(y - 10 * s)} ${f(x - 23 * s)},${f(y - 18 * s)} ${f(x - 22 * s)},${f(y - 22 * s)} L${f(x + 22 * s)},${f(y - 22 * s)} C${f(x + 23 * s)},${f(y - 18 * s)} ${f(x + 22 * s)},${f(y - 10 * s)} ${f(x + 17 * s)},${f(y - 3 * s)}Z" fill="${por}" ${ol(1.1)}/>`;
     g += `<path d="M${f(x - 15 * s)},${f(y - 6 * s)} C${f(x - 19 * s)},${f(y - 11 * s)} ${f(x - 19 * s)},${f(y - 16 * s)} ${f(x - 18 * s)},${f(y - 19 * s)}" stroke="#fff" stroke-width="${f(2.4 * s)}" fill="none" opacity="${f(0.6 * (1 - dk))}"/>`;
     g += `<ellipse cx="${f(x)}" cy="${f(y - 22 * s)}" rx="${f(22 * s)}" ry="${f(5 * s)}" fill="${por}" ${ol(1)}/><ellipse cx="${f(x)}" cy="${f(y - 21.5 * s)}" rx="${f(18 * s)}" ry="${f(3.6 * s)}" fill="${mix('#b8c890', GLOW, Math.min(1, 0.4 + lum))}"/>`;
@@ -69,7 +69,7 @@
   // world: the long worktable you sit at, its far edge at y 1440, near edge 1660; the room behind: cream walls, tall
   // windows with the morning in them, rows of tables with girls at the dials (drawn by the shot), the sign and the
   // calendar; overhead, shaded lamps
-  S.RG = { TOP: 1440, NEAR: 1660 };
+  S.RG = { TOP: 1440, NEAR: 1660, CAL: [580, 634] };
   S.studioBack = (t, o = {}) => {
     const L = [], r = rng(301), dark = o.dark || 0, day = 1 - dark;
     // the far wall: plaster, three tall windows with the morning in them, a pilaster between, wainscot below
@@ -92,7 +92,9 @@
     // the company's board between the windows: black, gilt letters
     w += `<rect x="468" y="430" width="224" height="118" rx="4" fill="${mix('#1e1812', '#080706', dark)}" ${ol(1.4)}/><rect x="476" y="438" width="208" height="102" fill="none" stroke="${mix('#b8964a', '#1a1810', dark)}" stroke-width="2"/>` +
       TXT(580, 478, 22, mix('#e2c47a', '#2a2618', dark), 'U.S. RADIUM', { w: 'bold', ls: 2, len: 180 }) + TXT(580, 508, 16, mix('#e2c47a', '#2a2618', dark), 'CORPORATION', { ls: 3, len: 150 }) + TXT(580, 531, 12, mix('#c8aa66', '#2a2618', dark), 'DIAL DEPARTMENT', { ls: 2, len: 130 });
-    w += `<rect x="560" y="880" width="110" height="110" fill="${mix('#efe6d0', '#16140e', dark)}" ${ol(1.1)}/><rect x="560" y="880" width="110" height="30" fill="${mix('#8a2a1a', '#140a08', dark)}"/>` + TXT(615, 903, 20, mix('#f4e8cc', '#2a2418', dark), '1917', { w: 'bold' });
+    // the calendar for 1917 under the board, high on the wall where no head hides it (S.RG.CAL: its centre)
+    w += `<rect x="525" y="578" width="110" height="112" fill="${mix('#efe6d0', '#16140e', dark)}" ${ol(1.1)}/><rect x="525" y="578" width="110" height="30" fill="${mix('#8a2a1a', '#140a08', dark)}"/>` + TXT(580, 601, 20, mix('#f4e8cc', '#2a2418', dark), '1917', { w: 'bold' });
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 7; j++) w += `<rect x="${532 + j * 14.5}" y="${618 + i * 16}" width="10" height="10" fill="${mix(i === 2 && j === 3 ? '#8a2a1a' : '#5a5040', '#14120c', dark)}" opacity="0.55"/>`;
     w += `<rect x="-40" y="880" width="120" height="150" fill="${mix('#c8a868', '#14120c', dark)}" ${ol(1.1)}/>` + TXT(20, 930, 14, mix('#3a1a10', '#1a1610', dark), 'BUY', { w: 'bold' }) + TXT(20, 960, 14, mix('#3a1a10', '#1a1610', dark), 'LIBERTY', { w: 'bold' }) + TXT(20, 990, 14, mix('#3a1a10', '#1a1610', dark), 'BONDS', { w: 'bold' });
     // the lit day: the windows' light falling, the dark corners
     if (day > 0.02) w += `<g opacity="${f(day)}">` + [-260, 300, 860].map(wx => `<path d="M${wx - 150},840 L${wx + 150},840 L${wx + 420},2200 L${wx - 60},2200Z" fill="#fff0d0" opacity="0.08" filter="url(#b14)"/>`).join('') + `</g>`;
@@ -135,96 +137,137 @@
   };
 
   // ======================================================= THE CEMETERY, 1927 (night)
-  // world: the diggers stand behind the spoil heap on the far side (its crest about y 1160, hiding them below the
-  // waist); the hole below it, its far wall from y 1290 down to the coffin; the casket lying in it across the frame, its
-  // top's far edge (the lid's hinge) at y 1420, near edge 1500; the near lip of the hole in the foreground at y 1640.
-  // o.lid 0..1 how far the lid has swung up (1: standing on its hinge, its satin lining toward us), o.glow 0..1 the
-  // light inside
-  S.CM = { HEAP: 1160, FAR: 1290, HINGE: 1400, NEARC: 1530, LIP: 1660, X0: 236, X1: 844 };
+  // (redesigned after the look test - the user: the open casket seen from the side "looks like a box") Seen from the
+  // foot of the grave, looking down its length: the two diggers behind the heaps of earth at its head, your headstone
+  // between them; the hole's walls; the old six-sided coffin, wide at the shoulders and narrow at the head and the feet,
+  // lying in it; its lid hinged along the right side swings up and over to lean on the grave's wall; you inside in your
+  // best dress, your red hair still round the skull, a posy of dried roses over your crossed hands, the bones glowing.
+  // World (camera [540, 960, 1] shows it as it is): the horizon y 560; the heaps' crests about y 645, the diggers'
+  // waists behind them; the hole's far rim y 780; the coffin's rim: the head end y 880 (half-width 96), the shoulders
+  // y 1080 (172), the foot end y 1800 (118).  o.lid 0..1 (shut .. leaning open at 120 degrees), o.glow 0..1
+  S.CM = { HOR: 560, HEAP: 645, RIM: 780, HEAD: 880, SHO: 1080, FOOT: 1800, HW: 96, SW: 172, FW: 118, CX: 540 };
+  const lerp = (a, b, u) => a + (b - a) * u;
+  const poly = pts => 'M' + pts.map(p => f(p[0]) + ',' + f(p[1])).join(' L') + 'Z';
   S.cemeteryBack = (t, o = {}) => {
-    const L = [], r = rng(401);
-    let w = lg('cmSky', [[0, '#0a0a12'], [0.55, '#16141a'], [1, '#221c16']], 0, 0, 0, 1) + `<rect x="-900" y="-600" width="2900" height="2800" fill="url(#cmSky)"/>`;
-    w += `<circle cx="830" cy="250" r="54" fill="#e8e2cc" opacity="0.55" filter="url(#b8)"/><circle cx="830" cy="250" r="46" fill="#f2ecd8" opacity="0.5"/>` + C.radial(830, 250, 320, '#c8c4b0', 0.14);
-    // clouds drifting over the moon
-    for (let i = 0; i < 4; i++) { const x = -200 + ((i * 420 + t * 12) % 1600), y = 180 + i * 70; w += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(260 + i * 40)}" ry="${f(26 + i * 6)}" fill="#2a2830" opacity="0.5" filter="url(#b14)"/>`; }
-    // bare trees, then the rows of headstones on the rise, a little mist between them
-    for (let i = 0; i < 5; i++) { const x = -200 + i * 360 + r() * 80, h = 520 + r() * 320, b = 1060; w += `<path d="M${f(x)},${b} L${f(x + 6)},${f(b - h)} M${f(x + 3)},${f(b - h * 0.62)} L${f(x + 96)},${f(b - h * 0.86)} M${f(x + 3)},${f(b - h * 0.45)} L${f(x - 84)},${f(b - h * 0.7)} M${f(x + 50)},${f(b - h * 0.76)} L${f(x + 80)},${f(b - h * 0.98)}" stroke="#08080a" stroke-width="${f(9 + r() * 8)}" fill="none" stroke-linecap="round"/>`; }
-    w += `<path d="M-900,1050 Q400,1000 2000,1060 L2000,2200 L-900,2200Z" fill="#141210"/>`;
-    for (let i = 0; i < 10; i++) { const x = -320 + i * 190 + r() * 60, y = 1040 + r() * 50, s = 0.55 + r() * 0.45; w += `<path d="M${f(x - 40 * s)},${f(y)} L${f(x - 40 * s)},${f(y - 120 * s)} Q${f(x)},${f(y - 172 * s)} ${f(x + 40 * s)},${f(y - 120 * s)} L${f(x + 40 * s)},${f(y)}Z" fill="#2a2824" stroke="#0a0806" stroke-width="2"/><path d="M${f(x - 30 * s)},${f(y - 118 * s)} Q${f(x)},${f(y - 160 * s)} ${f(x + 30 * s)},${f(y - 118 * s)}" stroke="#4a4840" stroke-width="2" fill="none" opacity="0.6"/>`; }
-    w += `<rect x="-900" y="980" width="2900" height="140" fill="#3a3a40" opacity="0.18" filter="url(#b14)"/>`;
+    const L = [], r = rng(401), H = o.hor ?? S.CM.HOR;
+    let w = lg('cmSky', [[0, '#08080e'], [0.5, '#14121a'], [1, '#201a16']], 0, 0, 0, 1) + `<rect x="-900" y="-900" width="2900" height="3000" fill="url(#cmSky)"/>`;
+    w += `<circle cx="820" cy="120" r="50" fill="#e8e2cc" opacity="0.55" filter="url(#b8)"/><circle cx="820" cy="120" r="42" fill="#f2ecd8" opacity="0.5"/>` + C.radial(820, 120, 300, '#c8c4b0', 0.14);
+    for (let i = 0; i < 4; i++) { const x = -200 + ((i * 420 + t * 12) % 1600), y = 70 + i * 60; w += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(260 + i * 40)}" ry="${f(24 + i * 6)}" fill="#2a2830" opacity="0.5" filter="url(#b14)"/>`; }
+    // bare trees on the rise, the rows of headstones and crosses, mist lying between them
+    for (let i = 0; i < 6; i++) { const x = -260 + i * 300 + r() * 80, h = 380 + r() * 260, b = H + 10; w += `<path d="M${f(x)},${b} L${f(x + 6)},${f(b - h)} M${f(x + 3)},${f(b - h * 0.62)} L${f(x + 90)},${f(b - h * 0.86)} M${f(x + 3)},${f(b - h * 0.45)} L${f(x - 80)},${f(b - h * 0.7)} M${f(x + 48)},${f(b - h * 0.76)} L${f(x + 76)},${f(b - h * 0.98)}" stroke="#07070a" stroke-width="${f(8 + r() * 7)}" fill="none" stroke-linecap="round"/>`; }
+    w += `<path d="M-900,${H} Q400,${H - 40} 2000,${H + 10} L2000,2400 L-900,2400Z" fill="#12100e"/>`;
+    for (let i = 0; i < 12; i++) { const x = -320 + i * 160 + r() * 60, y = H - 10 + r() * 30, s = 0.4 + r() * 0.3; w += r() > 0.3 ? `<path d="M${f(x - 40 * s)},${f(y)} L${f(x - 40 * s)},${f(y - 120 * s)} Q${f(x)},${f(y - 172 * s)} ${f(x + 40 * s)},${f(y - 120 * s)} L${f(x + 40 * s)},${f(y)}Z" fill="#26241f" stroke="#0a0806" stroke-width="2"/>` : `<path d="M${f(x)},${f(y)} L${f(x)},${f(y - 170 * s)} M${f(x - 46 * s)},${f(y - 120 * s)} L${f(x + 46 * s)},${f(y - 120 * s)}" stroke="#26241f" stroke-width="${f(22 * s)}"/>`; }
+    w += `<rect x="-900" y="${H - 60}" width="2900" height="120" fill="#3a3a42" opacity="0.2" filter="url(#b14)"/>`;
     L.push({ p: 0.7, svg: `<g filter="url(#dof1)">${w}</g>` });
     return L;
   };
-  // the ground the diggers stand on (drawn before them)
-  S.graveGround = (t, o = {}) => `<path d="M-300,1080 Q540,1060 1380,1080 L1380,1400 L-300,1400Z" fill="#1c1610"/>`;
-  // the spoil heap in front of them, the two lanterns on it (drawn over the diggers)
-  S.graveHeap = (t, o = {}) => {
-    const { HEAP, FAR } = S.CM, r = rng(421);
-    let g = `<path d="M-300,${HEAP + 30} Q-120,${HEAP - 30} 60,${HEAP + 6} Q240,${HEAP - 24} 420,${HEAP + 2} Q620,${HEAP - 28} 800,${HEAP + 4} Q980,${HEAP - 30} 1180,${HEAP + 8} L1380,${HEAP + 20} L1380,${FAR + 40} L-300,${FAR + 40}Z" fill="#3a2a1a" ${ol(1.4)}/>`;
-    g += lg('cmHeap', [[0, '#000', 0], [1, '#000', 0.5]], 0, 0, 0, 1) + `<path d="M-300,${HEAP + 30} Q-120,${HEAP - 30} 60,${HEAP + 6} Q240,${HEAP - 24} 420,${HEAP + 2} Q620,${HEAP - 28} 800,${HEAP + 4} Q980,${HEAP - 30} 1180,${HEAP + 8} L1380,${HEAP + 20} L1380,${FAR + 40} L-300,${FAR + 40}Z" fill="url(#cmHeap)"/>`;
-    for (let i = 0; i < 46; i++) { const x = -280 + r() * 1640, y = HEAP + 10 + r() * (FAR - HEAP); g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(4 + r() * 10)}" ry="${f(3 + r() * 6)}" fill="${r() > 0.5 ? '#5a4430' : '#22180e'}" opacity="0.7"/>`; }
-    // a spade stuck in the heap at the right
-    g += `<path d="M1010,${HEAP - 300} L1024,${HEAP + 10}" stroke="#2a1a0c" stroke-width="12" stroke-linecap="round"/><path d="M996,${HEAP - 312} L1030,${HEAP - 314}" stroke="#2a1a0c" stroke-width="12" stroke-linecap="round"/><path d="M1000,${HEAP - 6} L1050,${HEAP - 8} L1046,${HEAP + 40} Q1026,${HEAP + 60} 1006,${HEAP + 40}Z" fill="#4a4a48" ${ol(1.2)}/>`;
-    for (const [lx, ly] of [[110, HEAP - 4], [930, HEAP - 2]]) g += C.radial(lx, ly - 50, 300, '#ffb060', 0.3) + `<path d="M${lx - 24},${ly} L${lx - 28},${ly - 74} L${lx + 28},${ly - 74} L${lx + 24},${ly}Z" fill="#ffd890" opacity="0.92" ${ol(1.2)}/><path d="M${lx - 20},${ly - 70} L${lx + 20},${ly - 70} M${lx},${ly - 74} L${lx},${ly}" stroke="#3a2a14" stroke-width="3"/><path d="M${lx - 32},${ly - 74} L${lx + 32},${ly - 74} L${lx},${ly - 100}Z" fill="#2a2016" ${ol(1)}/><path d="M${lx - 10},${ly - 100} Q${lx},${ly - 124} ${lx + 10},${ly - 100}" stroke="#2a2016" stroke-width="4" fill="none"/>`;
+  // the ground at the head of the grave and your headstone (drawn before the diggers, who stand either side of it)
+  S.graveGround = (t, o = {}) => {
+    const { HOR, RIM, CX } = S.CM;
+    let g = `<path d="M-300,${HOR + 20} Q540,${HOR - 10} 1380,${HOR + 20} L1380,2300 L-300,2300Z" fill="#1a1510"/>`;
+    // the headstone: an arched slab, a carved border, AT REST and the years
+    const sx = CX, sb = RIM - 4, st = 460;
+    g += `<path d="M${sx - 98},${sb} L${sx - 98},${st + 80} Q${sx - 98},${st} ${sx},${st} Q${sx + 98},${st} ${sx + 98},${st + 80} L${sx + 98},${sb}Z" fill="#4a4842" ${ol(1.6)}/>`;
+    g += `<path d="M${sx - 80},${sb - 10} L${sx - 80},${st + 86} Q${sx - 80},${st + 20} ${sx},${st + 20} Q${sx + 80},${st + 20} ${sx + 80},${st + 86} L${sx + 80},${sb - 10}" fill="none" stroke="#2e2c28" stroke-width="3" opacity="0.8"/>`;
+    g += `<path d="M${sx - 92},${st + 84} Q${sx - 90},${st + 8} ${sx},${st + 6}" stroke="#8a887e" stroke-width="3" fill="none" opacity="0.45"/>`;
+    g += TXT(sx, st + 108, 26, '#1e1c18', 'AT REST', { w: 'bold', ls: 3, len: 120 }) + TXT(sx, st + 150, 20, '#1e1c18', '1898 - 1922', { ls: 2, len: 130 });
+    g += `<path d="M${sx - 40},${st + 176} Q${sx},${st + 190} ${sx + 40},${st + 176}" stroke="#1e1c18" stroke-width="2" fill="none" opacity="0.7"/>`;
     return g;
   };
-  // the hole: its far wall, the casket in it (the lid swinging up on its hinge along the far edge: its free edge runs
-  // from the near edge, closed, up past the hinge, open; the satin lining shows once it is past edge-on), the light
-  // inside, the near lip of the hole in the foreground
+  // the two heaps of earth in front of the diggers (drawn over them), a spade stuck in the right one, the lanterns
+  S.graveHeap = (t, o = {}) => {
+    const { HEAP, RIM } = S.CM, r = rng(421);
+    let g = '';
+    for (const [cx, w0, seed] of [[290, 250, 1], [800, 240, 2]]) {
+      const d = `M${cx - w0 - 40},${RIM + 20} C${cx - w0},${HEAP + 40} ${cx - w0 * 0.5},${HEAP - 6} ${cx - 30},${HEAP - 2} C${cx + 30},${HEAP + 2} ${cx + w0 * 0.5},${HEAP - 10} ${cx + w0 * 0.8},${HEAP + 30} C${cx + w0},${HEAP + 70} ${cx + w0 + 20},${RIM - 10} ${cx + w0 + 40},${RIM + 20}Z`;
+      g += `<path d="${d}" fill="#3a2a1a" ${ol(1.4)}/>` + lg('cmHp' + seed, [[0, '#000', 0], [1, '#000', 0.55]], 0, 0, 0, 1) + `<path d="${d}" fill="url(#cmHp${seed})"/>`;
+      for (let i = 0; i < 22; i++) { const x = cx - w0 * 0.8 + r() * w0 * 1.6, y = HEAP + 20 + r() * (RIM - HEAP - 10); g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(3 + r() * 8)}" ry="${f(2 + r() * 5)}" fill="${r() > 0.5 ? '#5a4430' : '#22180e'}" opacity="0.7"/>`; }
+    }
+    g += `<path d="M960,${HEAP - 250} L972,${HEAP + 30}" stroke="#2a1a0c" stroke-width="11" stroke-linecap="round"/><path d="M946,${HEAP - 262} L978,${HEAP - 264}" stroke="#2a1a0c" stroke-width="11" stroke-linecap="round"/><path d="M948,${HEAP + 16} L996,${HEAP + 14} L992,${HEAP + 58} Q972,${HEAP + 76} 952,${HEAP + 58}Z" fill="#4a4a48" ${ol(1.2)}/>`;
+    for (const [lx, ly] of [[86, RIM + 10], [1000, RIM + 30]]) g += C.radial(lx, ly - 50, 300, '#ffb060', 0.3) + `<path d="M${lx - 24},${ly} L${lx - 28},${ly - 74} L${lx + 28},${ly - 74} L${lx + 24},${ly}Z" fill="#ffd890" opacity="0.92" ${ol(1.2)}/><path d="M${lx - 20},${ly - 70} L${lx + 20},${ly - 70} M${lx},${ly - 74} L${lx},${ly}" stroke="#3a2a14" stroke-width="3"/><path d="M${lx - 32},${ly - 74} L${lx + 32},${ly - 74} L${lx},${ly - 100}Z" fill="#2a2016" ${ol(1)}/><path d="M${lx - 10},${ly - 100} Q${lx},${ly - 124} ${lx + 10},${ly - 100}" stroke="#2a2016" stroke-width="4" fill="none"/>`;
+    return g;
+  };
+  // the coffin's rim outline and its right edge (the lid's hinge) at height y
+  const coffin = () => { const { CX, HEAD, SHO, FOOT, HW, SW, FW } = S.CM; return [[CX - HW, HEAD], [CX + HW, HEAD], [CX + SW, SHO], [CX + FW, FOOT], [CX - FW, FOOT], [CX - SW, SHO]]; };
+  const hingeX = y => { const { CX, HEAD, SHO, FOOT, HW, SW, FW } = S.CM; return y <= SHO ? lerp(CX + HW, CX + SW, (y - HEAD) / (SHO - HEAD)) : lerp(CX + SW, CX + FW, (y - SHO) / (FOOT - SHO)); };
+  const dense = (pts, n = 10) => { const out = []; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; for (let k = 0; k < n; k++) out.push([lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); } return out; };
+  // a point of the shut lid turned th about the hinge (each slice across the coffin turns about its own hinge point; a
+  // height above the rim shows on screen at 0.62 of its size, the grave seen from above at a slant)
+  const lidPt = (p, th) => { const xh = hingeX(p[1]), d = xh - p[0]; return [xh - d * Math.cos(th), p[1] - d * Math.sin(th) * 0.62]; };
+  S.coffinLidPt = lidPt;
   S.grave = (t, o = {}) => {
-    const { FAR, HINGE, NEARC, LIP, X0, X1 } = S.CM, lid = o.lid || 0, gl = o.glow ?? lid, r = rng(431);
-    let g = `<path d="M-300,${FAR} L1380,${FAR} L1380,${LIP + 40} L-300,${LIP + 40}Z" fill="#120c08"/>`;
-    g += lg('cmWall', [[0, '#2a1e14'], [1, '#0a0604']], 0, 0, 0, 1) + `<path d="M150,${FAR} L930,${FAR} L960,${HINGE + 40} L120,${HINGE + 40}Z" fill="url(#cmWall)"/>`;
-    for (let i = 0; i < 30; i++) { const x = 160 + r() * 760, y = FAR + r() * (HINGE - FAR); g += `<path d="M${f(x)},${f(y)} l${f(6 + r() * 20)},${f(2 + r() * 6)}" stroke="#3a2a1a" stroke-width="2" opacity="0.6"/>`; }
-    // the casket: the near side panel, then the top (the lid closed, or the open box and the lining)
-    g += `<path d="M${X0 - 10},${NEARC} L${X1 + 10},${NEARC} L${X1 + 6},${NEARC + 64} L${X0 - 6},${NEARC + 64}Z" fill="#3a2414" ${ol(1.3)}/><path d="M${X0},${NEARC + 30} L${X1},${NEARC + 30}" stroke="#7a5a34" stroke-width="3" opacity="0.5"/>` + [X0 + 90, (X0 + X1) / 2, X1 - 90].map(x => `<rect x="${x - 26}" y="${NEARC + 20}" width="52" height="14" rx="5" fill="#8a7448" ${ol(1)}/>`).join('');
-    const th = lid * Math.PI / 2, yF = HINGE + (NEARC - HINGE) * Math.cos(th) - 230 * Math.sin(th);
-    // the quilted satin: diamonds of stitching with a button at each crossing, inside a box (x0..x1 along the top edge
-    // at y0, the bottom edge at y1, dx the bottom's overhang), lit by the glow (k)
-    const quilt = (x0, x1, y0, y1, dx, k, id) => {
-      let q = `<defs><clipPath id="${id}"><path d="M${x0},${f(y0)} L${x1},${f(y0)} L${x1 + dx},${f(y1)} L${x0 - dx},${f(y1)}Z"/></clipPath>` + `<linearGradient id="${id}g" gradientUnits="userSpaceOnUse" x1="0" y1="${f(y0)}" x2="0" y2="${f(y1)}"><stop offset="0" stop-color="${mix('#3a3428', '#9ac880', k * 0.7)}"/><stop offset="1" stop-color="${mix('#4a4436', '#e0f8c8', k)}"/></linearGradient></defs>`;
-      q += `<path d="M${x0},${f(y0)} L${x1},${f(y0)} L${x1 + dx},${f(y1)} L${x0 - dx},${f(y1)}Z" fill="url(#${id}g)"/><g clip-path="url(#${id})">`;
-      const h = Math.abs(y1 - y0), n = Math.max(2, Math.round(h / 40)), st = 52;
-      for (let xx = x0 - h; xx < x1 + h; xx += st) q += `<path d="M${f(xx)},${f(y0)} L${f(xx + h * 0.9)},${f(y1)} M${f(xx + h * 0.9)},${f(y0)} L${f(xx)},${f(y1)}" stroke="${mix('#2a2418', '#6a9a58', k)}" stroke-width="2" opacity="0.55"/>`;
-      for (let xx = x0 - h; xx < x1 + h; xx += st) for (let r2 = 0; r2 <= n; r2++) { const yy = y0 + (y1 - y0) * (r2 / n); q += `<circle cx="${f(xx + (r2 % 2 ? st / 2 : 0))}" cy="${f(yy)}" r="3" fill="${mix('#1a1610', '#4a7a3a', k)}" opacity="0.7"/>`; }
-      return q + `</g>`;
-    };
-    if (gl > 0.01 || lid > 0.01) {
-      // the open box: its rim, the quilted lining, the pillow, you in your dress - the bones glowing through
-      g += `<path d="M${X0 - 8},${HINGE - 6} L${X1 + 8},${HINGE - 6} L${X1 + 20},${NEARC + 4} L${X0 - 20},${NEARC + 4}Z" fill="#2a1a0e" ${ol(1.3)}/>`;
-      g += quilt(X0 + 4, X1 - 4, HINGE + 4, NEARC - 6, 10, gl, 'cmQb');
-      const by = (HINGE + NEARC) / 2, hx = X0 + 112, k = 0.62;
-      g += `<ellipse cx="${X0 + 84}" cy="${by - 6}" rx="62" ry="${f(46 * k)}" fill="${mix('#4a463c', '#f0ffe4', 0.8 * gl)}" ${ol(1)}/>`;
-      // you in your best dress (dusty rose silk gone dark): shoulders, the waist, the skirt flaring to the hem, the toes of
-      // your shoes; a lace shawl over the arms crossed at the waist (no hands); the bones glow through
-      const dr = mix('#4a3230', mix('#9a6e68', GLOW, 0.22), gl), drD = shade(dr, -0.35), X = (u, v) => `${f(u)},${f(by + v * k)}`;
-      const sh0 = hx + 70, wa = hx + 230, hip = hx + 280, hem = X1 - 74;
-      g += `<path d="M${X(sh0 - 14, -30)} C${X(sh0, -54)} ${X(sh0 + 30, -58)} ${X(sh0 + 60, -54)} C${X(wa - 50, -42)} ${X(wa, -36)} ${X(hip, -46)} C${X(hip + 120, -54)} ${X(hem - 60, -60)} ${X(hem, -62)} Q${X(hem + 12, 0)} ${X(hem, 62)} C${X(hem - 60, 60)} ${X(hip + 120, 54)} ${X(hip, 46)} C${X(wa, 36)} ${X(wa - 50, 42)} ${X(sh0 + 60, 54)} C${X(sh0 + 30, 58)} ${X(sh0, 54)} ${X(sh0 - 14, 30)}Z" fill="${dr}" ${ol(1.2)}/>`;
-      for (const v of [-40, -16, 10, 34]) g += `<path d="M${X(hip + 10, v * 0.85)} C${X(hip + 120, v)} ${X(hem - 80, v * 1.15)} ${X(hem - 6, v * 1.25)}" stroke="${drD}" stroke-width="2.4" fill="none" opacity="0.6"/>`;
-      g += `<path d="M${X(wa - 10, -38)} Q${X(wa + 6, 0)} ${X(wa - 10, 38)}" stroke="${drD}" stroke-width="3" fill="none" opacity="0.7"/>`;
-      for (const v of [-22, 22]) g += `<path d="M${X(hem + 2, v - 10)} C${X(hem + 24, v - 12)} ${X(hem + 36, v - 4)} ${X(hem + 36, v)} C${X(hem + 36, v + 6)} ${X(hem + 20, v + 10)} ${X(hem + 2, v + 10)}Z" fill="${mix('#1a1410', '#3a5a30', gl * 0.6)}" ${ol(1)}/>`;
-      const lc = mix('#5a564a', '#e8f8d8', 0.7 * gl);
-      g += `<path d="M${X(sh0 + 70, -52)} C${X(sh0 + 96, -20)} ${X(sh0 + 96, 20)} ${X(sh0 + 70, 52)} L${X(wa - 6, 40)} C${X(wa + 14, 14)} ${X(wa + 14, -14)} ${X(wa - 6, -40)}Z" fill="${lc}" opacity="0.92" ${ol(1)}/>`;
-      for (let i = 0; i < 6; i++) g += `<circle cx="${f(sh0 + 96 + i * 14)}" cy="${f(by + (i % 2 ? 16 : -16) * k)}" r="5" fill="none" stroke="${shade(lc, -0.35)}" stroke-width="1.6" opacity="0.7"/>`;
-      g += `<path d="M${X(sh0 - 10, -26)} Q${X(sh0 + 30, -6)} ${X(sh0 + 64, -30)} M${X(sh0 - 10, 26)} Q${X(sh0 + 30, 6)} ${X(sh0 + 64, 30)}" stroke="${mix('#3a3a30', '#c8f0a8', gl)}" stroke-width="3" fill="none" opacity="0.7"/>`;
-      // the skull on the pillow, lying with its crown toward the head of the coffin: the bone itself glows
-      const sk = mix('#6a6a58', GLOW, 0.9 * gl), sd = mix('#14160e', '#2a4a20', gl);
-      g += `<g transform="translate(${hx},${f(by)}) scale(1.18,${f(k * 1.18)})"><path d="M-36,0 C-36,-34 -10,-44 10,-40 C30,-36 40,-24 44,-12 L54,-12 C60,-6 60,6 54,12 L44,12 C40,24 30,36 10,40 C-10,44 -36,34 -36,0Z" fill="${sk}" ${ol(1.2)}/>` +
-        `<ellipse cx="22" cy="-16" rx="9" ry="11" fill="${sd}"/><ellipse cx="22" cy="16" rx="9" ry="11" fill="${sd}"/><path d="M36,-4 L42,0 L36,4Z" fill="${sd}"/>` +
-        `<path d="M48,-10 L48,10" stroke="${sd}" stroke-width="2.4"/>${[-6, -2, 2, 6].map(yy => `<path d="M44,${yy} L54,${yy}" stroke="${sd}" stroke-width="1.4" opacity="0.8"/>`).join('')}</g>`;
-      g += glow(hx, by, 130, 0.55 * gl, '#eaffd0') + glow((X0 + X1) / 2, by, 520, 0.42 * gl) + glow((X0 + X1) / 2, by - 220, 760, 0.22 * gl);
+    const { RIM, HEAD, SHO, FOOT, CX } = S.CM, lid = o.lid || 0, gl = o.glow ?? lid, r = rng(431), th = lid * Math.PI * 2 / 3;
+    // the hole: its far wall, the side walls slanting toward us, the floor in shadow
+    const hole = [[230, RIM], [850, RIM], [1190, 2000], [-110, 2000]];
+    let g = `<path d="${poly(hole)}" fill="#0c0805"/>`;
+    g += `<path d="M230,${RIM} L850,${RIM} L820,${HEAD - 6} L260,${HEAD - 6}Z" fill="#2a1e14"/>` + lg('cmFw', [[0, '#000', 0], [1, '#000', 0.6]], 0, 0, 0, 1) + `<path d="M230,${RIM} L850,${RIM} L820,${HEAD - 6} L260,${HEAD - 6}Z" fill="url(#cmFw)"/>`;
+    g += `<path d="M230,${RIM} L260,${HEAD - 6} L150,2000 L-110,2000Z" fill="#1e150d"/><path d="M850,${RIM} L820,${HEAD - 6} L930,2000 L1190,2000Z" fill="#1e150d"/>`;
+    g += lg('cmSw', [[0, '#000', 0.15], [1, '#000', 0.7]], 0, 0, 0, 1) + `<path d="M230,${RIM} L260,${HEAD - 6} L150,2000 L-110,2000Z M850,${RIM} L820,${HEAD - 6} L930,2000 L1190,2000Z" fill="url(#cmSw)"/>`;
+    // roots and stones in the walls, the spade's cuts
+    for (let i = 0; i < 40; i++) { const side = i % 2 ? 1 : -1, v = r(), y = RIM + 30 + v * 1100, x = side < 0 ? lerp(230, -110, (y - RIM) / (2000 - RIM)) + 20 + r() * 110 : lerp(850, 1190, (y - RIM) / (2000 - RIM)) - 20 - r() * 110; g += r() > 0.5 ? `<path d="M${f(x)},${f(y)} q${f(-side * 14)},${f(8 + r() * 10)} ${f(-side * (20 + r() * 30))},${f(18 + r() * 20)}" stroke="#3a2a1a" stroke-width="${f(2 + r() * 3)}" fill="none" opacity="0.7"/>` : `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(5 + r() * 9)}" ry="${f(4 + r() * 6)}" fill="#3a3028" opacity="0.6"/>`; }
+    // the coffin: its foot board toward us, the rim (wood), the lining, you
+    const rim = coffin(), ft = [[CX - 118, FOOT], [CX + 118, FOOT], [CX + 112, FOOT + 70], [CX - 112, FOOT + 70]];
+    g += `<path d="${poly(ft)}" fill="#2e1c0e" ${ol(1.4)}/><path d="M${CX - 100},${FOOT + 34} L${CX + 100},${FOOT + 34}" stroke="#5a3a1e" stroke-width="3" opacity="0.6"/>`;
+    g += `<path d="${poly(rim.map(([x, y]) => [x + (x - CX) * 0.08, y + (y < SHO ? -6 : 4)]))}" fill="#2a1a0c" ${ol(1.5)}/>`;
+    const fl = rim.map(([x, y]) => [CX + (x - CX) * 0.84, y + 44 * (1 - (y - HEAD) / (FOOT - HEAD))]);
+    g += `<path d="${poly(rim)}" fill="${mix('#1a140e', '#5a7a46', 0.8 * gl)}"/>`;
+    g += lg('cmLn', [[0, mix('#1e1a12', '#7aa866', gl)], [0.45, mix('#2a2618', '#a8d48e', gl)], [1, mix('#221e16', '#6a8a58', gl)]], 0, 0, 0, 1) + `<path d="${poly(fl)}" fill="url(#cmLn)"/>`;
+    // the lining's quilting on the floor, a pleated frill round the rim
+    { let q = `<defs><clipPath id="cmFl"><path d="${poly(fl)}"/></clipPath></defs><g clip-path="url(#cmFl)">`; for (let x = 200; x < 900; x += 46) q += `<path d="M${x},${HEAD} L${x + 300},${FOOT} M${x + 300},${HEAD} L${x},${FOOT}" stroke="${mix('#1a160e', '#6a9a58', gl)}" stroke-width="1.6" opacity="0.4"/>`; g += q + `</g>`; }
+    g += `<path d="${poly(rim)}" fill="none" stroke="${mix('#3a3428', '#b8d8a0', 0.55 * gl)}" stroke-width="8" stroke-dasharray="6 5" opacity="0.6"/>`;
+    // you: the depth u runs from the head (0) to the feet (1); nearer is bigger (ps)
+    const Y = u => lerp(HEAD + 44, FOOT - 16, u), ps = u => lerp(0.84, 1.16, u), P = (u, w) => `${f(CX + w * ps(u))},${f(Y(u))}`;
+    const dr = mix('#2a1a1a', mix('#8a5650', GLOW, 0.16), 0.3 + 0.6 * gl), drD = shade(dr, -0.45), lc = mix('#3a3a32', '#c8dcb8', 0.65 * gl);
+    g += `<ellipse cx="${CX}" cy="${f(Y(0.04))}" rx="${f(86 * ps(0.04))}" ry="30" fill="${mix('#2a2a22', '#b8d0a4', 0.7 * gl)}" ${ol(1)}/>`;
+    // your hair, still red, spread out on the pillow from under the skull: wavy locks to both sides and down past the
+    // shoulders (drawn first: the skull and the collar lie over it)
+    { const hc = mix('#3a1a0c', '#a04a22', 0.45 + 0.4 * gl), hl = mix('#5a2a10', '#d8804a', 0.6 * gl);
+      for (const sd of [-1, 1]) {
+        const W = w => w * sd;
+        g += `<path d="M${P(0.02, W(10))} C${P(0.0, W(50))} ${P(0.03, W(84))} ${P(0.07, W(92))} C${P(0.1, W(104))} ${P(0.13, W(96))} ${P(0.15, W(104))} C${P(0.18, W(112))} ${P(0.2, W(100))} ${P(0.22, W(92))} C${P(0.2, W(80))} ${P(0.17, W(70))} ${P(0.15, W(44))} L${P(0.12, W(10))}Z" fill="${hc}" ${ol(1.1)}/>`;
+        for (const k of [0.5, 0.75, 0.95]) g += `<path d="M${P(0.03, W(30 * k + 10))} C${P(0.06, W(70 * k + 20))} ${P(0.12, W(84 * k + 10))} ${P(0.18, W(92 * k + 6))}" stroke="${hl}" stroke-width="2" fill="none" opacity="0.55"/>`;
+      } }
+    // the dress: the lace collar, the bodice to the waist, the lace shawl over the crossed arms with the posy on it,
+    // the skirt to the hem, the toes of your shoes
+    const dress = `M${P(0.15, -30)} C${P(0.155, -62)} ${P(0.17, -86)} ${P(0.2, -90)} C${P(0.28, -86)} ${P(0.38, -70)} ${P(0.44, -66)} C${P(0.5, -84)} ${P(0.6, -92)} ${P(0.9, -110)} Q${P(0.93, 0)} ${P(0.9, 110)} C${P(0.6, 92)} ${P(0.5, 84)} ${P(0.44, 66)} C${P(0.38, 70)} ${P(0.28, 86)} ${P(0.2, 90)} C${P(0.17, 86)} ${P(0.155, 62)} ${P(0.15, 30)}Z`;
+    g += `<path d="${dress}" fill="${dr}" ${ol(1.3)}/>`;
+    for (const w of [-70, -36, 0, 36, 70]) g += `<path d="M${P(0.5, w * 0.8)} C${P(0.62, w * 0.95)} ${P(0.76, w * 1.05)} ${P(0.89, w * 1.15)}" stroke="${drD}" stroke-width="2.6" fill="none" opacity="0.6"/>`;
+    for (let i = 0; i < 2; i++) { const w = i ? 26 : -26; g += `<path d="M${P(0.905, w - 13)} C${P(0.94, w - 14)} ${P(0.955, w - 4)} ${P(0.955, w)} C${P(0.955, w + 4)} ${P(0.94, w + 14)} ${P(0.905, w + 13)}Z" fill="${mix('#140e0a', '#2a3a20', gl * 0.6)}" ${ol(1)}/>`; }
+    g += `<path d="M${P(0.15, -34)} Q${P(0.19, 0)} ${P(0.15, 34)} L${P(0.18, 38)} Q${P(0.22, 0)} ${P(0.18, -38)}Z" fill="${lc}" ${ol(1)}/>`;
+    g += `<path d="M${P(0.29, -92)} C${P(0.33, -40)} ${P(0.33, 40)} ${P(0.29, 92)} L${P(0.42, 76)} C${P(0.45, 30)} ${P(0.45, -30)} ${P(0.42, -76)}Z" fill="${lc}" opacity="0.94" ${ol(1)}/>`;
+    for (let i = 0; i < 7; i++) g += `<circle cx="${f(CX + (-60 + i * 20) * ps(0.36))}" cy="${f(Y(0.36) + (i % 2 ? 8 : -8))}" r="5" fill="none" stroke="${shade(lc, -0.35)}" stroke-width="1.6" opacity="0.7"/>`;
+    // the posy of dried roses on your crossed hands (the hands are under it)
+    { const pc = [CX, Y(0.4)]; g += `<path d="M${f(pc[0] - 10)},${f(pc[1] + 8)} L${f(pc[0] - 30)},${f(pc[1] + 60)} M${f(pc[0] + 4)},${f(pc[1] + 8)} L${f(pc[0] + 10)},${f(pc[1] + 66)} M${f(pc[0] + 14)},${f(pc[1] + 6)} L${f(pc[0] + 38)},${f(pc[1] + 56)}" stroke="${mix('#1e1a0e', '#4a6a30', gl * 0.6)}" stroke-width="4"/>`;
+      for (const [dx, dy, rr] of [[-26, -6, 15], [0, -14, 17], [24, -4, 15], [-12, 12, 14], [14, 12, 14]]) g += `<circle cx="${f(pc[0] + dx)}" cy="${f(pc[1] + dy)}" r="${rr}" fill="${mix('#2a0c0a', '#6a3a2a', 0.5 * gl)}" ${ol(1)}/><path d="M${f(pc[0] + dx - rr * 0.5)},${f(pc[1] + dy)} q${f(rr * 0.5)},${f(-rr * 0.6)} ${f(rr)},0 q${f(-rr * 0.3)},${f(rr * 0.5)} ${f(-rr * 0.6)},${f(rr * 0.2)}" stroke="${mix('#140404', '#3a1a10', gl)}" stroke-width="1.6" fill="none"/>`;
+      for (const [dx, dy, a] of [[-40, 0, -30], [40, 2, 30], [-4, 26, 90]]) g += `<ellipse cx="${f(pc[0] + dx)}" cy="${f(pc[1] + dy)}" rx="14" ry="6" transform="rotate(${a} ${f(pc[0] + dx)} ${f(pc[1] + dy)})" fill="${mix('#1e1e0e', '#4a5a2a', gl * 0.6)}" ${ol(0.8)}/>`; }
+    // the skull, face up: the bone itself glows; collarbones at the neckline
+    const sk = mix('#5a5a48', GLOW, 0.92 * gl), sd = mix('#101208', '#1e3a18', gl), sc = [CX, Y(0.095)];
+    const skull = `<g transform="translate(${f(sc[0])},${f(sc[1])}) scale(${f(ps(0.095))},0.78)"><path d="M-40,-10 C-42,-46 -20,-60 0,-60 C20,-60 42,-46 40,-10 C40,8 32,20 26,26 L24,46 C16,56 -16,56 -24,46 L-26,26 C-32,20 -40,8 -40,-10Z" fill="${sk}" ${ol(1.3)}/>` +
+      `<path d="M-30,-8 C-30,-22 -10,-24 -6,-12 C-4,0 -16,8 -24,6 C-30,4 -30,-2 -30,-8Z M30,-8 C30,-22 10,-24 6,-12 C4,0 16,8 24,6 C30,4 30,-2 30,-8Z" fill="${sd}"/><path d="M0,6 L-6,20 L6,20Z" fill="${sd}"/>` +
+      `<path d="M-18,32 L18,32 M-18,40 L18,40" stroke="${sd}" stroke-width="2"/>${[-12, -6, 0, 6, 12].map(x => `<path d="M${x},28 L${x},44" stroke="${sd}" stroke-width="1.4"/>`).join('')}</g>`;
+    g += skull;
+    g += `<path d="M${P(0.2, -50)} Q${P(0.19, -18)} ${P(0.21, -4)} M${P(0.2, 50)} Q${P(0.19, 18)} ${P(0.21, 4)}" stroke="${sk}" stroke-width="4" fill="none" opacity="0.9" stroke-linecap="round"/>`;
+    if (gl > 0.01) g += S.emissive(skull) + glow(sc[0], sc[1], 170, 0.5 * gl, '#eaffd0') + glow(CX, Y(0.35), 520, 0.28 * gl) + glow(CX, Y(0.2), 260, 0.2 * gl, '#eaffd0');
+    // light leaking out of the shut coffin's seams before the lid is lifted
+    if (lid < 0.05 && o.leak) g += `<path d="${poly(rim)}" fill="none" stroke="${GLOW}" stroke-width="5" opacity="${f(0.7 * o.leak)}" filter="url(#b2)"/>`;
+    // the lid: past upright its quilted lining faces us, lit from inside; before that its dark planks and the brass plate
+    const lp = dense(rim).map(p => lidPt(p, th)), plate = lidPt([CX, (HEAD + SHO) / 2 + 120], th);
+    if (th < Math.PI / 2 - 0.02) {
+      g += `<path d="${poly(lp)}" fill="#3a2414" ${ol(1.6)}/>` + `<path d="${poly(lp)}" fill="url(#cmLidSh)" opacity="0.5"/>` + lg('cmLidSh', [[0, '#fff', 0.08], [1, '#000', 0.3]], 0, 0, 1, 1);
+      const pw = 40 * Math.cos(th) + 4; g += `<rect x="${f(plate[0] - pw)}" y="${f(plate[1] - 16)}" width="${f(pw * 2)}" height="32" fill="#a88a4a" ${ol(1)}/>`;
+      for (const v of [0.3, 0.6]) { const a = lidPt([CX - 60, lerp(HEAD, FOOT, v)], th), b = lidPt([CX + 60, lerp(HEAD, FOOT, v)], th); g += `<path d="M${f(a[0])},${f(a[1])} L${f(b[0])},${f(b[1])}" stroke="#1e1208" stroke-width="2" opacity="0.6"/>`; }
+    } else if (th > Math.PI / 2 + 0.02) {
+      g += `<path d="${poly(lp)}" fill="${mix('#2a2418', '#7a9a62', 0.7 * gl)}" ${ol(1.6)}/>`;
+      const inner = dense(rim.map(([x, y]) => [CX + (x - CX) * 0.86, lerp(HEAD + 20, FOOT - 20, (y - HEAD) / (FOOT - HEAD))])).map(p => lidPt(p, th));
+      g += `<defs><clipPath id="cmLidC"><path d="${poly(inner)}"/></clipPath></defs><path d="${poly(inner)}" fill="${mix('#2a2620', '#a8c890', 0.65 * gl)}"/><g clip-path="url(#cmLidC)">`;
+      for (let k = 0; k < 18; k++) { const v = k / 17, a = lidPt([CX - 160, lerp(HEAD, FOOT, v)], th), b = lidPt([CX + 160, lerp(HEAD, FOOT, v + 0.12)], th), c = lidPt([CX + 160, lerp(HEAD, FOOT, v - 0.12)], th); g += `<path d="M${f(a[0])},${f(a[1])} L${f(b[0])},${f(b[1])} M${f(a[0])},${f(a[1])} L${f(c[0])},${f(c[1])}" stroke="${mix('#141008', '#3a5a2e', gl)}" stroke-width="2.2" opacity="0.75"/>`; }
+      for (let k = 0; k < 18; k++) for (const w of [-120, -40, 40, 120]) { const pp = lidPt([CX + w, lerp(HEAD, FOOT, (k + (w === -40 || w === 120 ? 0.5 : 0)) / 17)], th); g += `<circle cx="${f(pp[0])}" cy="${f(pp[1])}" r="3.2" fill="${mix('#141008', '#2a4a20', gl)}" opacity="0.8"/>`; }
+      g += `</g>` + glow(...lidPt([CX, (HEAD + FOOT) / 2], th), 300, 0.3 * gl, '#eaffd0');
     }
-    // the lid: closed it covers the top; past edge-on (yF above the hinge) its quilted lining faces us, lit from inside
-    if (yF > HINGE + 1) g += `<path d="M${X0 - 6},${HINGE} L${X1 + 6},${HINGE} L${X1 + 22},${f(yF)} L${X0 - 22},${f(yF)}Z" fill="#4a2e18" ${ol(1.4)}/><path d="M${X0 + 30},${f((HINGE + yF) / 2)} L${X1 - 30},${f((HINGE + yF) / 2)}" stroke="#7a5030" stroke-width="3" opacity="0.6"/>`;
-    else if (yF < HINGE - 1) {
-      g += `<path d="M${X0 - 8},${HINGE - 2} L${X1 + 8},${HINGE - 2} L${X1 + 2},${f(yF)} L${X0 - 2},${f(yF)}Z" fill="#3a2414" ${ol(1.4)}/>`;
-      g += quilt(X0 + 14, X1 - 14, yF + 14, HINGE - 14, -2, gl * 0.85, 'cmQl');
-      g += `<path d="M${X0 + 14},${f(yF + 14)} L${X1 - 14},${f(yF + 14)} L${X1 - 12},${HINGE - 14} L${X0 + 12},${HINGE - 14}Z" fill="none" stroke="#1a0e06" stroke-width="2" opacity="0.7"/>`;
-    }
-    // the near lip of the hole (the foreground), grass at its edge
-    g += `<path d="M-300,${LIP} Q140,${LIP - 26} 540,${LIP - 10} Q920,${LIP + 6} 1380,${LIP - 20} L1380,2300 L-300,2300Z" fill="#1a120a" ${ol(1.3)}/>`;
-    for (let i = 0; i < 60; i++) { const x = -260 + r() * 1600, y = LIP - 14 + r() * 20, h = 14 + r() * 26; g += `<path d="M${f(x)},${f(y)} q${f(-3 + r() * 6)},${f(-h * 0.6)} ${f(-6 + r() * 12)},${f(-h)}" stroke="#141a0e" stroke-width="3" fill="none"/>`; }
-    if (gl > 0.01) g += `<path d="M-300,${LIP} Q140,${LIP - 26} 540,${LIP - 10} Q920,${LIP + 6} 1380,${LIP - 20}" stroke="${GLOW}" stroke-width="4" fill="none" opacity="${f(0.35 * gl)}" filter="url(#b2)"/>`;
+    // the near end of the grave: the cut turf at the bottom of the frame, grass against the light
+    g += `<path d="M-300,1890 Q540,1870 1380,1890 L1380,2400 L-300,2400Z" fill="#100c08" ${ol(1.3)}/>`;
+    for (let i = 0; i < 70; i++) { const x = -260 + r() * 1600, y = 1882 + r() * 16, h = 14 + r() * 30; g += `<path d="M${f(x)},${f(y)} q${f(-3 + r() * 6)},${f(-h * 0.6)} ${f(-6 + r() * 12)},${f(-h)}" stroke="#0e1208" stroke-width="3" fill="none"/>`; }
+    if (gl > 0.01) g += `<path d="M-300,1890 Q540,1870 1380,1890" stroke="${GLOW}" stroke-width="4" fill="none" opacity="${f(0.3 * gl)}" filter="url(#b2)"/>`;
     return g;
   };
 })(window);

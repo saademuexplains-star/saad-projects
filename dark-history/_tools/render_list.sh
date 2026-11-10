@@ -13,7 +13,7 @@ for w in range(n):
 PY
 for ((w = 0; w < N; w++)); do
   L=$(cat "$OUT/logs/list$w.txt"); [ -z "$L" ] && continue
-  node _tools/cdp.cjs --page _render/video/main20.html --list "$L" --out "$OUT" --quality 98 > "$OUT/logs/r$w.log" 2>&1 &
+  node _tools/cdp.cjs --page "${PAGE:-_render/video/main20.html}" --list "$L" --out "$OUT" --quality 98 > "$OUT/logs/r$w.log" 2>&1 &
 done
 wait
 echo "done: $(ls "$OUT"/f*.jpg | wc -l) frames in $OUT"

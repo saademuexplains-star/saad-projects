@@ -70,6 +70,8 @@
   Q.you = mk(Object.assign({}, youBase, { costume: BLOUSE('#efe9de') + SKIRT('#5a4234') + PINAFORE(PIN) }), { expr: 'neutral', iris: '#5f7a46', lid: 0.16 });
   Q.youDress = mk(Object.assign({}, youBase, { tunic: '#c4928a', sleeve: '#d2a49c', costume: DRESS('#c4928a') }), { expr: 'neutral', iris: '#5f7a46', lid: 0.16 });
   Q.youArt = () => HK.centrePart({ fx: YFX, col: YHAIR, id: 'yhr', light: 1, bun: 1 });
+  // the same dress painted with radium (for the glow pass at the dance: S.emissive keeps only its green)
+  Q.youDressGlow = mk(Object.assign({}, youBase, { skin: '#888888', tunic: '#b8ff8a', sleeve: '#b8ff8a', costume: DRESS('#b8ff8a') }), { expr: 'neutral', iris: '#5f7a46', lid: 0.16 });
 
   // ======================================================= FRIENDS. A: fair, round-faced, wide blue-grey eyes, a straight
   // nose, a small mouth. B: dark, a long narrow face, deep-set brown eyes, a long nose, a wide mouth.

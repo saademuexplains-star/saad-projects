@@ -83,20 +83,22 @@
 
   // ======================================================= GRAVE
   // the light from the open coffin, green from below; the lanterns' warm rims at the sides
-  const LC = fx => ({ from: [fx, 1], shadow: '#000000', shadowOp: 0.74, ambient: '#5a7058', ambientOp: 1, floor: '#000000', floorOp: 0, contactOp: 0, key: GL, keyAdd: 0.34,
-    rims: [{ from: [fx, 1], col: GL, w: 6, op: 0.75 }, { from: [-fx * 2, -0.2], col: '#ffb060', w: 4, op: 0.45 }], face: { col: '#d8ffb0', op: 0.42, r: 1.8 } });
+  const LC = fx => ({ from: [fx, 1], shadow: '#000000', shadowOp: 0.66, ambient: '#6a8466', ambientOp: 1, floor: '#000000', floorOp: 0, contactOp: 0, key: GL, keyAdd: 0.42,
+    rims: [{ from: [fx, 1], col: GL, w: 6, op: 0.8 }, { from: [-fx * 2, -0.2], col: '#ffb060', w: 4, op: 0.5 }], face: { col: '#d8ffb0', op: 0.55, r: 1.9 } });
   X.shot('GRAVE', 2, 3, t => {
-    const cam = [540, 1000, 1, 0]; X.CAM = cam;
+    const cam = [540, 960, 1, 0]; X.CAM = cam;
     let men = '';
+    // the diggers stand at the head of the grave either side of your headstone, looking down into it; behind the heaps
+    // of earth from the waist down (their hands too)
     for (const [who, art, x, s, fx, look, tilt, face] of [
-      ['digger1', 'digger1Art', 330, 0.92, 0.45, [0.25, 0.85], 6, { expr: 'fear', mouth: 'parted', open: 0.14, brows: [-14, 8], lid: 0.06 }],
-      ['digger2', 'digger2Art', 760, 0.88, -0.45, [-0.3, 0.85], -7, { expr: 'fear', mouth: 'o', open: 0.3, brows: [-16, 10], lid: 0.0 }]]) {
-      const o = still(x, 1160 + 820 * s + 20, s, { tilt });
+      ['digger1', 'digger1Art', 290, 0.66, 0.35, [0.15, 0.9], 5, { expr: 'fear', mouth: 'parted', open: 0.16, brows: [-14, 8], lid: 0.08 }],
+      ['digger2', 'digger2Art', 800, 0.64, -0.35, [-0.2, 0.9], -6, { expr: 'fear', mouth: 'o', open: 0.32, brows: [-16, 10], lid: 0.02 }]]) {
+      const o = still(x, 662 + 820 * s, s, { tilt });
       const P = up(Q[who](Object.assign(o, { noLegs: true, face: Object.assign({ look, age: who === 'digger1' }, face), armR: rest('man', 'R'), armL: rest('man', 'L') })), o);
       men += Q.litHair(P, o, Q[art](), LC(fx));
     }
     const layers = S.cemeteryBack(t);
     layers.push({ p: 1, svg: S.graveGround(t) + men + S.graveHeap(t) + S.grave(t, { lid: 1, glow: 1 }) });
-    return S.EMIS + X.compose(layers, cam) + dark(560, 900, 0.55) + C.vignette(0.55, '#000000', 0.45);
+    return S.EMIS + X.compose(layers, cam) + dark(300, 560, 0.35) + C.vignette(0.55, '#000000', 0.42);
   }, { grade: 'gNight' });
 })(window);
