@@ -51,19 +51,27 @@
   // ======================================================= DEATH: your face on the pillow; the eyes closing; the lamp out
   const LB = { from: [-1, -0.2], shadow: '#2a1a12', shadowOp: 0.6, floor: '#1a100a', floorOp: 0.3, contactOp: 0, key: '#ffd8a0', keyAdd: 0.1,
     rims: [{ from: [-1, -0.1], col: '#ffb060', w: 5, op: 0.4 }], face: { col: '#ffd0a0', op: 0.16 } };
+  // (after the first full render: the lamp stood out of frame and the lab cut hard to the bed) the oil lamp on the night
+  // table in the left foreground - its flame is what the lab's glowing vial becomes, and it goes out on "die"
+  const LAMP = [290, 1345], FLAME = [290, 1155];
   X.shot('DEATH', 31.25, 32.76, t => {
     const c = hh(V.deCam(t), t, 0.35, 22);
-    const flame = 1 - ss(32.0, 32.55, t), close = ss(31.45, 32.2, t);
-    const o = { x: 540, y: 2260, s: 1.0, tilt: -8, sway: 0, breath: 0.2 * (1 - close), blink: 0 };
-    const P = up(Q.you(Object.assign(o, { noLegs: true, face: { expr: 'tired', look: [0.1, -0.1], lid: lerp(0.45, 1, close), brows: [-8, 4], mouth: 'parted', open: 0.06 * (1 - close), bags: 0.8, sweat: 0.2 }, armR: rest('woman', 'R'), armL: rest('woman', 'L') })), o);
+    const flame = 1 - ss(32.0, 32.55, t), close = ss(31.45, 32.2, t), smoke = ss(32.42, 32.75, t);
+    const o = { x: 620, y: 2260, s: 1.0, tilt: -8, sway: 0, breath: 0.2 * (1 - close), blink: 0 };
+    const P = up(Q.you(Object.assign(o, { noLegs: true, face: { expr: 'tired', look: [-0.3, -0.1], lid: lerp(0.45, 1, close), brows: [-8, 4], mouth: 'parted', open: 0.06 * (1 - close), bags: 0.8, sweat: 0.2 }, armR: rest('woman', 'R'), armL: rest('woman', 'L') })), o);
     const layers = S.bedBack(t);
     const head = V.facePt(o, 'woman', [0, 0]);
-    let g = S.pillow(head[0], head[1] - 30, 1.0) + Q.litHair(P, o, Q.youArt(), LB) + S.quilt(540, head[1] + 210, 1.0);
-    g += S.oilLamp(110, 1300, 1.1, flame, t) + `<rect x="-900" y="-600" width="2900" height="2900" fill="#000" opacity="${f(0.62 * (1 - flame))}"/>`;
+    let g = S.pillow(head[0], head[1] - 30, 1.0) + Q.litHair(P, o, Q.youArt(), LB) + S.quilt(620, head[1] + 210, 1.0);
+    // the night table and the lamp; the dark when the flame dies; a thread of smoke from the chimney
+    g += `<path d="M-400,${LAMP[1]} L470,${LAMP[1]} L500,${LAMP[1] + 46} L-400,${LAMP[1] + 46}Z" fill="#4a3220" filter="url(#woodH)" ${R.ol(1.4)}/><rect x="-400" y="${LAMP[1] + 46}" width="900" height="900" fill="#2e1e12"/><path d="M-400,${LAMP[1] + 4} L468,${LAMP[1] + 4}" stroke="#8a6a44" stroke-width="3" opacity="0.5"/>`;
+    g += S.oilLamp(LAMP[0], LAMP[1], 1.15, flame, t) + `<rect x="-900" y="-600" width="2900" height="2900" fill="#000" opacity="${f(0.62 * (1 - flame))}"/>`;
+    if (smoke > 0.01) { const top = LAMP[1] - 322, rise = 240 * smoke; let d = `M${LAMP[0]},${top}`; for (let k = 1; k <= 12; k++) { const u = k / 12; d += ` L${f(LAMP[0] + 22 * u * Math.sin(u * 7 + t * 3))},${f(top - rise * u)}`; } g += `<path d="${d}" stroke="#b8b4a8" stroke-width="${f(5 + 6 * smoke)}" fill="none" opacity="${f(0.32 * smoke * (1 - 0.5 * ss(32.9, 33.3, t)))}" stroke-linecap="round" filter="url(#b4)"/>`; }
     layers.push({ p: 1, svg: g });
     return X.compose(layers, c) + C.vignette(0.55, '#000000', 0.5);
   }, { grade: 'gHall' });
-  V.deCam = V.cam([[31.2, [540, 980, 1.5, 0]], [32.0, [540, 1000, 1.7, 0]], [32.8, [540, 1010, 1.85, 0]]]);
+  V.deCam = V.cam([[31.2, [500, 1000, 1.42, 0]], [32.0, [520, 1010, 1.56, 0]], [32.8, [530, 1015, 1.68, 0]]]);
+  // the vial's glow in the tongs becomes the lamp's flame
+  X.tr('radial', 31.3, 0.4, 'LAB', 'DEATH', { fa: scr([564, 1600], V.lbCam(31.3)), fb: scr(FLAME, V.deCam(31.3)), za: 1.15, zb: 1.1, soft: 0.5, ring: '#ffd8a0', ringOp: 0.4 });
 
   // ======================================================= CERT: the certificate; SYPHILIS stamped across it on the word
   X.shot('CERT', 32.7, 34.9, t => {
