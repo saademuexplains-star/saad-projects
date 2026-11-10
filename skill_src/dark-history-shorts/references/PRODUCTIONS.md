@@ -323,3 +323,33 @@ The full video continues these files in `main20.html`.
   blades off the hands; the take's own pauses back (`_tools/twarp.py`: the picture eased through each pause, the mix on
   the same map); the name held ~2 s. 3264 frames, 54.40 s. Every hand audited from the final frames
   (`_tools/handaudit.js`, `_tools/handcrops.py`), 0 spikes, loop seam 1.56, spot re-render bit-identical.
+## The Radium Girls ("Your boss hands you a paintbrush dipped in glowing paint...") - 10 November 2026
+- Files: `main21.html`, `cast22.js`, `sets26.js`, `sets27.js`, `shots_y1.js`, `shots_y2.js`, `shots_y3.js` (look test
+  `look21.html` + `shots_y0.js`, cast sheet `rig21.html`); VO `_vo19` (44.640 s with every pause over 0.22 s cut to
+  0.2 s; 2829 frames with the 2 s title hold and the loop morph), beats `_vo19/beats.md`, sound `_sfx19` (24 one-take
+  ElevenLabs effects, flow lkJRXXhmBoq4Gnozfr9M, ~230 credits; mixed by `_tools/mix_radium.py`); render
+  `_tools/render_film.sh <page> <out>`.
+- 21 shots: HOOK (frame 0: the glowing tip in macro, pull back to the boss holding it out) -> push face to face ->
+  MOUTH (the brush alone comes to your lips) -> push to the calendar -> STUDIO (1917, the rows of girls, you look up
+  on "19") -> rack -> DIALS (the brush paints the 12; trench watch, helmet, crate ORANGE, N.J.) -> zmatch -> LIP / DIP
+  / PAINT (one insert a word, whips between) -> push to the clock -> RHYTHM (the day racing, the tray filling) -> whip
+  -> BOSS (the jar, the card PERFECTLY HARMLESS, his wink, the girls laugh) -> eyelid -> GLOW (your hand rises with
+  glowing nails; your friends' grins light up) -> radial -> DANCE (your best dress by day; the room goes dark to the
+  dance hall and the dress glows) -> morph smile to smile -> MIRROR (two teeth fall into the washbowl) -> whip ->
+  DENTIST (his mouth mirror at your jaw) -> push -> PALM (the piece of jaw in his forceps) -> surface -> LAB (behind
+  lead glass: the vial out of the lead pot in tongs; apron, mask, tongs on the words) -> radial vial to lamp flame ->
+  DEATH (the lamp goes out as your eyes close) -> dip -> CERT (SYPHILIS stamped) -> carry -> NEWS (1927: DIAL PAINTERS
+  DYING, the friends' portraits get black ribbons) -> lantern sweep -> GRAVE (down the grave: the coffin's seams glow,
+  the lid swings open, the diggers recoil in green light) -> radial -> JAR (UNDARK - RADIUM LUMINOUS MATERIAL) -> push
+  -> END (every girl glowing in the dark, you in front; THE RADIUM GIRLS held ~2.3 s) -> loop morph (the paint pot's
+  glow to the brush tip of frame 0).
+- The user's notes: "DONT MAKE TOO LONG GAPS", "PLEASE NO HANDS AND ARMS MISTAKES IN THIS ONE", the look approved with
+  "KEEP GOING JUST THE COFFIN DONT LOOK OK ... LOOK LIKE A BOX" (the side-on casket replaced by the six-sided coffin seen
+  down the grave) - FEEDBACK_LOG 2026-11-10.
+- Delivered 10 Nov 2026 (04:25 UTC) without music (a 48 s score is 1,200 credits; the node `score_radium`
+  zWDWM2MwtBh8zmFW6JAH is ready on the flow, not run). QA: 0 spikes, loop seam 2.01 against a median step of 1.88;
+  every 10th frame re-rendered, worst block diff 0.73; the encoded audio sample-aligned with the mix. Hands: the audit
+  by difference (`?dbghands` frames against the final ones, `_tools/handdiff.py`) found hand pixels only in HOOK (the
+  boss's fist), GLOW (your hand from the frame's edge) and LAB (the chemist's fist) - nowhere else in the film.
+  A container restart mid-render lost nothing: `render_list.sh` resumed the missing frames.
+

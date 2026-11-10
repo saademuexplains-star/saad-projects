@@ -997,4 +997,10 @@ renders those frames, `_tools/handcrops.py` tiles every hand wrist-to-elbow, lab
   add `S.emissive(P.svg)` over the lit figure (a filter keeps only the glow-coloured pixels, sharp and bloomed); light
   the figures from below with a dimmed ambient (`ambient` in the light) so faces stay readable, and darken the top of
   the frame instead of the figures.
+- **Prove where the hands are.** Add `?dbghands` to the film page (rig3 `G.DBG_HANDS`: every hand magenta), render the
+  audit frames of `_tools/handaudit.js`, and run `_tools/handdiff.py <hands.json> <dbg dir> <final dir>`: every pixel that
+  differs from the final frame is a visible hand pixel (works in any light; counting magenta alone, `handvis.py`, fails in
+  coloured dark scenes). The list must contain only the shots staged with a hand; then look at those at 3x.
+- **Every cut needs its transition.** `qa.py scan` lists the largest frame-to-frame steps: any big step that is not a
+  whip, push or sweep you wrote is a forgotten transition (the lab cut hard to the deathbed until the scan showed it).
 
