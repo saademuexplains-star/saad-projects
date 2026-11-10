@@ -968,3 +968,33 @@ renders those frames, `_tools/handcrops.py` tiles every hand wrist-to-elbow, lab
     vessel's front wall cuts across the wrist.
   - The arms' contact shadow (`Q.armAO`) is for light-on-light only (white sleeve on a white jacket); on a white
     sleeve over a dark vest it lays a brown smudge.
+
+### The Radium Girls (2026-11-10): "U MADE TOO MUCH GAPS IN THIS COCA COLA ONE DONT MAKE TOO LONG GAPS IN THIS ONE", "PLEASE NO HANDS AND ARMS MISTAKES IN THIS ONE", "JUST THE COFFIN DONT LOOK OK ... CZ THAT ONE LOOK LIKE A BOX"
+- **Pauses: cap them at 0.2 s.** The Coca-Cola v2 voice kept the take's own pauses (0.15-0.46 s) and the user found the
+  gaps too long; v1's 0.11 s was too rigid. Trim every pause over 0.22 s to 0.2 s, keep the shorter ones; time the
+  shots straight to that voice (no time warp needed).
+- **A coffin must read as a coffin.** A rectangular casket seen from the side with its lid standing up "looks like a
+  box". The six-sided coffin (wide at the shoulders, narrow at the head and the feet) seen down its length from the
+  foot of the grave says "coffin" at once; the body in it (her dress, her hair on the pillow, a posy over the hands)
+  and the lid swinging open on its side hinge carry the beat. Sell an iconic object by its silhouette, not its label.
+- **Hands, the safe set for a whole film** (every hand in it audited):
+  - a forearm level across the body into a fist on the held thing (the boss's brush upright in his fist; the
+    chemist's tongs hanging from his fist, the vial in their jaws) - the brush/rod through the fist on the thumb axis,
+    the fingers continuing the forearm;
+  - a hand that comes in from the frame's edge with no joint in frame, its sleeve running off the frame (your hand
+    with glowing nails, seen from behind);
+  - **hands clasped behind the back** (rig3 arm `behind: true` with the hand target inside the torso: the whole arm is
+    drawn behind the body, only the upper arms show) - the clean pose for anyone standing in the open;
+  - everything else hangs behind a table, a desk, a basin, a heap of earth, a quilt, or below the frame (check the
+    rest-hand height against the furniture edge for every figure: a blurred hand peeking over a table still shows).
+  - **Not**: an open palm in close-up (the rig's palm view at 2x reads as a flat cut-out with striped creases) and a
+    pointing hand meant to touch (it reads as pointing). Show the action with the tool instead, coming in from the
+    frame's edge with no hand: the dentist's mouth mirror pressing the jaw, his forceps holding the piece of jaw.
+- **Set the camera before drawing a figure.** A figure's light pass is clipped to the view (`X.viewRect` from
+  `X.CAM`); a shot that drew its figures before calling its camera function used the previous frame's view and the
+  figure vanished (the lip close-up showed only the brush).
+- **Glow without losing faces:** draw radium-painted things (teeth, nails, numerals, a dress) in the glow colour and
+  add `S.emissive(P.svg)` over the lit figure (a filter keeps only the glow-coloured pixels, sharp and bloomed); light
+  the figures from below with a dimmed ambient (`ambient` in the light) so faces stay readable, and darken the top of
+  the frame instead of the figures.
+
